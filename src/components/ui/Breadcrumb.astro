@@ -1,0 +1,67 @@
+---
+interface Props {
+  items: Array<{ label: string; href?: string }>;
+}
+
+const { items } = Astro.props;
+---
+
+<nav aria-label="Breadcrumb" class="breadcrumb">
+  <ol role="list">
+    {items.map((item, i) => {
+      const isLast = i === items.length - 1;
+      return (
+        <li>
+          {isLast ? (
+            <span aria-current="page">{item.label}</span>
+          ) : (
+            <a href={item.href}>{item.label}</a>
+          )}
+        </li>
+      );
+    })}
+  </ol>
+</nav>
+
+<style>
+  .breadcrumb {
+    padding-block: var(--space-4);
+  }
+
+  ol {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    padding: 0;
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-muted);
+  }
+
+  li:not(:last-child)::after {
+    content: "\203A";
+    margin-left: var(--space-2);
+    color: var(--color-border);
+  }
+
+  a {
+    color: var(--color-muted);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  a:hover {
+    color: var(--color-accent);
+  }
+
+  span[aria-current="page"] {
+    color: var(--color-text);
+    background: var(--color-surface);
+    padding-inline: var(--space-2);
+    border-radius: 3px;
+  }
+</style>

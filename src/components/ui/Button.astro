@@ -1,0 +1,104 @@
+---
+interface Props {
+  href?: string;
+  variant?: "primary" | "secondary" | "outline";
+  [key: string]: any;
+}
+
+const { href, variant = "primary", ...rest } = Astro.props;
+const Tag = href ? "a" : "button";
+---
+
+<Tag href={href} class:list={["btn", `btn-${variant}`]} {...rest}>
+  <slot />
+</Tag>
+
+<style>
+  .btn {
+    display: inline-block;
+    padding: var(--space-3) var(--space-6);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 700;
+    text-decoration: none;
+    text-align: center;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .btn:active {
+    transform: scale(0.97);
+  }
+
+  /* ── Primary: prismatic gradient ── */
+  .btn-primary {
+    background: var(--gradient-prismatic);
+    background-size: 200% auto;
+    color: #fff;
+  }
+
+  .btn-primary:hover {
+    background-position: right center;
+    box-shadow: 0 4px 16px rgba(0, 191, 179, 0.25);
+  }
+
+  /* ── Secondary: transparent with gradient border ── */
+  .btn-secondary {
+    background: transparent;
+    color: var(--color-accent);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+
+  .btn-secondary::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    z-index: -1;
+    background: var(--gradient-prismatic);
+    border-radius: inherit;
+  }
+
+  .btn-secondary::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--color-bg);
+    border-radius: 2px;
+  }
+
+  .btn-secondary:hover {
+    color: var(--color-celebration-secondary);
+  }
+
+  /* ── Outline: solid accent border, fill on hover ── */
+  .btn-outline {
+    background: transparent;
+    color: var(--color-accent);
+    border: 2px solid var(--color-accent);
+  }
+
+  .btn-outline::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--color-accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+    z-index: -1;
+  }
+
+  .btn-outline:hover {
+    color: #fff;
+  }
+
+  .btn-outline:hover::before {
+    transform: scaleX(1);
+  }
+</style>
