@@ -1,0 +1,156 @@
+/* ==========================================================================
+   Theme Definitions — Prismatic Light Design System
+   Foundation tokens + per-event theme overrides
+   ========================================================================== */
+
+@property --gradient-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+:root {
+  /* Typography — Font Families (three-font system) */
+  --font-display: "Merriweather", Georgia, "Times New Roman", serif;
+  --font-body: "Lineto Brown", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono: "Roboto Mono", "SF Mono", "Fira Code", monospace;
+  --font-heading: "Lineto Brown", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  /* Typography — Scale (fluid via clamp) */
+  --text-xs: clamp(0.694rem, 0.66rem + 0.17vw, 0.8rem);
+  --text-sm: clamp(0.833rem, 0.78rem + 0.27vw, 1rem);
+  --text-base: clamp(1rem, 0.93rem + 0.36vw, 1.25rem);
+  --text-lg: clamp(1.2rem, 1.1rem + 0.5vw, 1.563rem);
+  --text-xl: clamp(1.44rem, 1.3rem + 0.7vw, 1.953rem);
+  --text-2xl: clamp(1.728rem, 1.53rem + 0.99vw, 2.441rem);
+  --text-3xl: clamp(2.074rem, 1.79rem + 1.42vw, 3.052rem);
+  --text-4xl: clamp(2.488rem, 2.09rem + 1.99vw, 3.815rem);
+  --text-5xl: clamp(3rem, 2.5rem + 2.5vw, 5rem);
+
+  /* Spacing Scale */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+
+  /* Grid */
+  --grid-columns: 12;
+  --grid-gutter: clamp(1rem, 2vw, 2rem);
+  --container-max: 1400px;
+
+  /* Base theme colors — CCA warm palette */
+  --color-bg: #FDFAF5;
+  --color-text: #222222;
+  --color-accent: #00BFB3;
+  --color-surface: #F7F3E9;
+  --color-border: #E2DDD3;
+  --color-muted: #6A737C;
+
+  /* Celebration accent spectrum */
+  --color-celebration-primary: #00BFB3;
+  --color-celebration-secondary: #563D82;
+  --color-celebration-warm: #FFC845;
+  --color-celebration-energy: #E57200;
+  --color-celebration-deep: #005776;
+
+  /* Gradient tokens */
+  --gradient-prismatic: linear-gradient(
+    var(--gradient-angle, 135deg),
+    #00BFB3,
+    #563D82,
+    #E57200
+  );
+  --gradient-hero: linear-gradient(
+    160deg,
+    #005776 0%,
+    #0f0f1a 40%,
+    #563D82 100%
+  );
+  --gradient-gold: linear-gradient(135deg, #FFC845, #E57200);
+
+  /* Default heading styles */
+  --heading-weight: 700;
+  --heading-transform: none;
+  --heading-tracking: -0.01em;
+
+  /* Theme gradient (default) */
+  --theme-gradient: linear-gradient(135deg, #00BFB3, #005776);
+}
+
+/* --------------------------------------------------------------------------
+   Commencement — Undergraduate
+   Formal, golden ceremony
+   -------------------------------------------------------------------------- */
+[data-theme="commencement-undergrad"] {
+  --color-bg: #1A1A2E;
+  --color-text: #f5f0e8;
+  --color-accent: #FFC845;
+  --color-surface: #252542;
+  --color-border: #3a3a5c;
+  --color-muted: #9998ac;
+  --theme-gradient: linear-gradient(135deg, #FFC845, #E57200);
+}
+
+/* --------------------------------------------------------------------------
+   Commencement — Graduate
+   Elegant, platinum
+   -------------------------------------------------------------------------- */
+[data-theme="commencement-grad"] {
+  --color-bg: #0F0F1A;
+  --color-text: #f5f0e8;
+  --color-accent: #C0C0D0;
+  --color-surface: #1a1a2e;
+  --color-border: #2e2e48;
+  --color-muted: #8a8998;
+  --theme-gradient: linear-gradient(135deg, #C0C0D0, #8a8998);
+}
+
+/* --------------------------------------------------------------------------
+   Showcase
+   Bold, energetic
+   -------------------------------------------------------------------------- */
+[data-theme="showcase"] {
+  --color-bg: #FDFAF5;
+  --color-text: #222222;
+  --color-accent: #E57200;
+  --color-surface: #F7F3E9;
+  --color-border: #E2DDD3;
+  --color-muted: #6A737C;
+  --theme-gradient: linear-gradient(135deg, #E57200, #FFC845);
+}
+
+/* --------------------------------------------------------------------------
+   Thesis — Undergraduate
+   Clean, studio
+   -------------------------------------------------------------------------- */
+[data-theme="thesis-undergrad"] {
+  --color-bg: #F7F3E9;
+  --color-text: #222222;
+  --color-accent: #00BFB3;
+  --color-surface: #FDFAF5;
+  --color-border: #E2DDD3;
+  --color-muted: #6A737C;
+  --theme-gradient: linear-gradient(135deg, #00BFB3, #005776);
+}
+
+/* --------------------------------------------------------------------------
+   Thesis — Graduate
+   Ethereal
+   -------------------------------------------------------------------------- */
+[data-theme="thesis-grad"] {
+  --color-bg: #1A0A2E;
+  --color-text: #f0e8f5;
+  --color-accent: #563D82;
+  --color-surface: #251540;
+  --color-border: #3d2660;
+  --color-muted: #8a7a9e;
+  --theme-gradient: linear-gradient(135deg, #563D82, #1A0A2E);
+}

@@ -1,0 +1,79 @@
+/* ==========================================================================
+   @font-face Declarations
+   CCA Brand Typography: Lineto Brown, Merriweather, Roboto Mono
+   ========================================================================== */
+
+/* Lineto Brown — Primary sans-serif (body, UI, navigation) */
+@font-face {
+  font-family: "Lineto Brown";
+  src: url("/fonts/lineto-brown-light.woff2") format("woff2");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lineto Brown";
+  src: url("/fonts/lineto-brown-regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lineto Brown";
+  src: url("/fonts/lineto-brown-bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Merriweather — Display serif (hero titles, ceremonial headings) */
+@font-face {
+  font-family: "Merriweather";
+  src: url("/fonts/merriweather_light-webfont.woff2") format("woff2");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Merriweather";
+  src: url("/fonts/merriweather-regular-webfont.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Merriweather";
+  src: url("/fonts/merriweather-bold-webfont.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Merriweather";
+  src: url("/fonts/merriweather-italic-webfont.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Roboto Mono — Monospace (dates, labels, meta, breadcrumbs) */
+@font-face {
+  font-family: "Roboto Mono";
+  src: url("/fonts/roboto-mono-regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Roboto Mono";
+  src: url("/fonts/roboto-mono-500.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
