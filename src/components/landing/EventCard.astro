@@ -1,0 +1,125 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { formatDate, formatDateRange } from "../../lib/utils/format";
+
+interface Props {
+  event: CollectionEntry<"events">;
+}
+
+const { event } = Astro.props;
+const { title, date, endDate, location, description, type, degreeLevel, themeKey } = event.data;
+
+function getEventUrl(type: string, degreeLevel: string): string {
+  const typeMap: Record<string, string> = {
+    commencement: "/commencement/",
+    showcase: "/showcase/",
+    "thesis-exhibition": "/thesis/",
+  };
+  const base = typeMap[type] ?? "/";
+  if (degreeLevel === "all") return base;
+  return `${base}${degreeLevel}/`;
+}
+
+const href = getEventUrl(type, degreeLevel);
+const dateDisplay = endDate ? formatDateRange(date, endDate) : formatDate(date);
+
+const badgeLabels: Record<string, string> = {
+  commencement: "COMMENCEMENT",
+  showcase: "SHOWCASE",
+  "thesis-exhibition": "THESIS",
+};
+const badgeLabel = badgeLabels[type] ?? type.toUpperCase();
+---
+
+<a href={href} class="event-card reveal" data-theme={themeKey}>
+  <article>
+    <span class="event-badge">{badgeLabel}</span>
+    <h3 class="event-title">{title}</h3>
+    <time class="event-date">{dateDisplay}</time>
+    <p class="event-location">{location}</p>
+    <p class="event-desc">{description}</p>
+  </article>
+</a>
+
+<style>
+  .event-card {
+    display: block;
+    text-decoration: none;
+    color: var(--color-text);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-left: none;
+    padding: var(--space-6);
+    padding-left: calc(var(--space-6) + 3px);
+    border-radius: 4px;
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  /* Animated prismatic gradient left border */
+  .event-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--gradient-prismatic);
+    border-radius: 4px 0 0 4px;
+  }
+
+  .event-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 191, 179, 0.15);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .event-card::before {
+      animation: prismatic-shift 6s linear infinite;
+    }
+
+    .event-card:hover::before {
+      animation-duration: 2s;
+    }
+  }
+
+  .event-badge {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: rgba(0, 191, 179, 0.15);
+    color: var(--color-accent);
+    padding: var(--space-1) var(--space-2);
+    border-radius: 3px;
+    margin-bottom: var(--space-3);
+  }
+
+  .event-title {
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-2);
+  }
+
+  .event-date {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-accent);
+    background: var(--color-surface);
+    padding: var(--space-1) var(--space-2);
+    border-radius: 3px;
+    margin-bottom: var(--space-1);
+  }
+
+  .event-location {
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+    margin-bottom: var(--space-3);
+  }
+
+  .event-desc {
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+  }
+</style>

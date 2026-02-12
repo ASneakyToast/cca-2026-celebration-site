@@ -1,0 +1,152 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import EventCard from '../components/landing/EventCard.astro';
+import WorkGrid from '../components/works/WorkGrid.astro';
+import ConfettiCanvas from '../components/effects/ConfettiCanvas.astro';
+import { fullName } from '../lib/utils/format';
+
+const events = (await getCollection('events')).sort((a, b) => a.data.order - b.data.order);
+
+const allWorks = await getCollection('works');
+const featuredWorks = allWorks.filter(w => w.data.featured);
+
+const students = await getCollection('students');
+const studentMap = new Map(students.map(s => [s.id, fullName(s)]));
+---
+
+<BaseLayout title="2026 Celebrations" description="Celebrate the achievements of CCA's Class of 2026 at commencement ceremonies, exhibitions, and showcases.">
+  <section class="hero" style="background: linear-gradient(160deg, #005776 0%, #0f0f1a 40%, #563D82 100%);">
+    <ConfettiCanvas />
+    <div class="hero__glow" aria-hidden="true"></div>
+    <div class="hero__content">
+      <span class="hero__cca">CCA</span>
+      <span class="hero__year shimmer-text">2026</span>
+      <p class="hero__subtitle">Celebrations</p>
+    </div>
+    <div class="hero__scroll" aria-hidden="true">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    </div>
+  </section>
+
+  <section class="events-section">
+    <div class="container">
+      <h2 class="section-heading">Events</h2>
+      <div class="grid-cards">
+        {events.map(event => (
+          <div class="reveal">
+            <EventCard event={event} />
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {featuredWorks.length > 0 && (
+    <section class="featured-section reveal">
+      <div class="container">
+        <h2 class="section-heading">Featured Works</h2>
+        <WorkGrid works={featuredWorks} studentMap={studentMap} />
+      </div>
+    </section>
+  )}
+</BaseLayout>
+
+<style>
+  /* ---- Hero ---- */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .hero__glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      ellipse 60% 50% at 50% 50%,
+      rgba(86, 61, 130, 0.35) 0%,
+      transparent 70%
+    );
+    animation: spotlight-breathe 6s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  .hero__content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-inline: var(--space-4);
+  }
+
+  .hero__cca {
+    display: block;
+    font-family: var(--font-body);
+    font-size: clamp(4rem, 10vw, 10rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: #fff;
+    line-height: 1;
+  }
+
+  .hero__year {
+    display: block;
+    font-family: var(--font-display);
+    font-size: clamp(4rem, 10vw, 10rem);
+    font-style: italic;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  .hero__subtitle {
+    font-family: var(--font-mono);
+    font-size: var(--text-lg);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: rgba(255, 255, 255, 0.6);
+    margin-top: var(--space-4);
+  }
+
+  /* ---- Scroll indicator ---- */
+  .hero__scroll {
+    position: absolute;
+    bottom: var(--space-8);
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255, 255, 255, 0.5);
+    animation: scroll-bounce 2s ease-in-out infinite;
+  }
+
+  /* ---- Sections ---- */
+  .events-section,
+  .featured-section {
+    padding-block: var(--space-16);
+  }
+
+  .section-heading {
+    font-family: var(--font-heading);
+    margin-bottom: var(--space-8);
+  }
+
+  /* ---- Reduced motion ---- */
+  @media (prefers-reduced-motion: reduce) {
+    .hero__glow {
+      animation: none;
+      opacity: 0.5;
+    }
+
+    .hero__scroll {
+      animation: none;
+      opacity: 0.6;
+    }
+  }
+</style>
