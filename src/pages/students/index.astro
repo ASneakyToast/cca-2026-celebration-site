@@ -1,0 +1,47 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import StudentGrid from '../../components/students/StudentGrid.astro';
+import Breadcrumb from '../../components/ui/Breadcrumb.astro';
+
+const students = await getCollection('students');
+const programs = await getCollection('programs');
+const programMap = new Map(programs.map(p => [p.id, p.data.name]));
+---
+
+<BaseLayout title="Students">
+  <div class="container">
+    <Breadcrumb items={[
+      { label: 'Home', href: '/' },
+      { label: 'Students' },
+    ]} />
+
+    <section class="students-intro reveal">
+      <h1>Students</h1>
+      <p>Meet the talented artists, designers, and makers of CCA's Class of 2026.</p>
+    </section>
+
+    <section class="students-grid-section reveal">
+      <StudentGrid students={students} programMap={programMap} />
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .students-intro {
+    padding-block: var(--space-10) var(--space-6);
+  }
+
+  .students-intro h1 {
+    margin-bottom: var(--space-4);
+  }
+
+  .students-intro p {
+    font-size: var(--text-lg);
+    color: var(--color-muted);
+  }
+
+  .students-grid-section {
+    padding-block: var(--space-6) var(--space-12);
+  }
+</style>

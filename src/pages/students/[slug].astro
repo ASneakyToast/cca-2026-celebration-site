@@ -1,0 +1,48 @@
+---
+import { getCollection } from 'astro:content';
+import StudentLayout from '../../layouts/StudentLayout.astro';
+import WorkGrid from '../../components/works/WorkGrid.astro';
+import Breadcrumb from '../../components/ui/Breadcrumb.astro';
+import { getWorksByStudent } from '../../lib/utils/collections';
+import { fullName } from '../../lib/utils/format';
+
+export async function getStaticPaths() {
+  const students = await getCollection('students');
+  return students.map(student => ({
+    params: { slug: student.data.slug },
+    props: { student },
+  }));
+}
+
+const { student } = Astro.props;
+
+const works = await getWorksByStudent(student.id);
+const allStudents = await getCollection('students');
+const studentMap = new Map(allStudents.map(s => [s.id, fullName(s)]));
+const name = fullName(student);
+---
+
+<StudentLayout student={student}>
+  <Breadcrumb items={[
+    { label: 'Home', href: '/' },
+    { label: 'Students', href: '/students/' },
+    { label: name },
+  ]} />
+
+  {works.length > 0 && (
+    <section class="student-works-section reveal">
+      <h2>Works</h2>
+      <WorkGrid works={works} studentMap={studentMap} />
+    </section>
+  )}
+</StudentLayout>
+
+<style>
+  .student-works-section {
+    padding-block: var(--space-4) var(--space-12);
+  }
+
+  .student-works-section h2 {
+    margin-bottom: var(--space-6);
+  }
+</style>

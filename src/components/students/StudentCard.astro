@@ -1,0 +1,105 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  student: CollectionEntry<"students">;
+  programName?: string;
+}
+
+const { student, programName } = Astro.props;
+const { firstName, lastName, slug, photo, degreeType } = student.data;
+const href = `/students/${slug}/`;
+---
+
+<a href={href} class="student-card reveal">
+  <article>
+    <div class="student-photo">
+      <img src={photo.src} alt={photo.alt} loading="lazy" />
+    </div>
+    <div class="student-info">
+      <h3 class="student-name">{firstName} {lastName}</h3>
+      {programName && <p class="student-program">{programName}</p>}
+      <p class="student-degree">{degreeType}</p>
+    </div>
+  </article>
+</a>
+
+<style>
+  .student-card {
+    display: block;
+    text-decoration: none;
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+  }
+
+  .student-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    transform: translateY(-4px);
+  }
+
+  .student-photo {
+    aspect-ratio: 1;
+    overflow: hidden;
+    background: var(--color-border);
+  }
+
+  .student-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    transition: outline-color 0.3s ease, outline-offset 0.3s ease;
+    outline: 2px solid transparent;
+    outline-offset: 0px;
+  }
+
+  .student-card:hover .student-photo img {
+    outline-color: var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  .student-info {
+    padding: var(--space-4);
+  }
+
+  .student-name {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: var(--text-base);
+    margin-bottom: var(--space-1);
+    transition: color 0.2s ease;
+  }
+
+  .student-card:hover .student-name {
+    color: var(--color-accent);
+  }
+
+  .student-program {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-muted);
+    margin-bottom: var(--space-1);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .student-program::before {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    flex-shrink: 0;
+  }
+
+  .student-degree {
+    font-size: var(--text-xs);
+    color: var(--color-muted);
+  }
+</style>

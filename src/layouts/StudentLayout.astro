@@ -1,0 +1,110 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import { fullName } from '../lib/utils/format';
+
+interface Props {
+  student: {
+    data: {
+      firstName: string;
+      lastName: string;
+      pronouns?: string;
+      photo: { src: string; alt: string };
+      program: { id: string };
+      degreeLevel: string;
+      degreeType: string;
+      expectedGraduation: string;
+      bio?: string;
+      links?: Array<{ label: string; url: string; type: string }>;
+    };
+  };
+}
+
+const { student } = Astro.props;
+const name = fullName(student);
+---
+
+<BaseLayout title={name}>
+  <article class="student-profile container">
+    <header class="student-header reveal">
+      <div class="student-photo">
+        <img src={student.data.photo.src} alt={student.data.photo.alt} loading="lazy" />
+      </div>
+      <div class="student-info">
+        <h1>{name}</h1>
+        {student.data.pronouns && <p class="pronouns">{student.data.pronouns}</p>}
+        <p class="degree">{student.data.degreeType} &middot; {student.data.expectedGraduation}</p>
+        {student.data.bio && <p class="bio">{student.data.bio}</p>}
+        {student.data.links && student.data.links.length > 0 && (
+          <ul class="links">
+            {student.data.links.map(link => (
+              <li><a href={link.url} target="_blank" rel="noopener noreferrer">{link.label}</a></li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </header>
+
+    <section class="student-works">
+      <slot />
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .student-profile {
+    padding-block: var(--space-12);
+  }
+
+  .student-header {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+    margin-bottom: var(--space-12);
+  }
+
+  @media (min-width: 768px) {
+    .student-header {
+      grid-template-columns: 280px 1fr;
+    }
+  }
+
+  .student-photo img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .student-info h1 {
+    margin-bottom: var(--space-2);
+  }
+
+  .pronouns {
+    font-family: var(--font-mono);
+    color: var(--color-muted);
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-2);
+  }
+
+  .degree {
+    font-family: var(--font-mono);
+    color: var(--color-muted);
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-6);
+  }
+
+  .bio {
+    margin-bottom: var(--space-6);
+  }
+
+  .links {
+    list-style: none;
+    display: flex;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+  }
+
+  .links a {
+    font-size: var(--text-sm);
+  }
+</style>

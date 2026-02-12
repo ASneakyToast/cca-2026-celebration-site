@@ -1,0 +1,18 @@
+---
+import type { CollectionEntry } from "astro:content";
+import StudentCard from "./StudentCard.astro";
+
+interface Props {
+  students: CollectionEntry<"students">[];
+  programMap?: Map<string, string>;
+}
+
+const { students, programMap } = Astro.props;
+---
+
+<div class="grid-cards">
+  {students.map((student) => {
+    const programName = programMap?.get(student.data.program.id);
+    return <StudentCard student={student} programName={programName} />;
+  })}
+</div>
