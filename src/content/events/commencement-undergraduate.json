@@ -1,0 +1,14 @@
+{
+  "title": "Undergraduate Commencement",
+  "slug": "commencement-undergraduate",
+  "shortTitle": "Undergrad Commencement",
+  "type": "commencement",
+  "degreeLevel": "undergraduate",
+  "themeKey": "commencement-undergrad",
+  "date": "2026-05-16",
+  "time": "10:00 AM",
+  "location": "Yerba Buena Center for the Arts",
+  "address": "701 Mission St, San Francisco, CA 94103",
+  "description": "Join us to celebrate the Class of 2026 undergraduate students as they receive their degrees.",
+  "order": 1
+}

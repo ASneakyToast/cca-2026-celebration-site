@@ -1,0 +1,19 @@
+{
+  "title": "Liminal Structures",
+  "slug": "liminal-structures",
+  "students": ["alex-kim", "maya-chen"],
+  "events": ["showcase"],
+  "medium": "Architectural model and digital rendering",
+  "year": 2026,
+  "description": "A collaborative project that reimagines transitional urban spaces as sites of community gathering, combining physical architectural models with immersive digital renderings.",
+  "media": [
+    {
+      "type": "image",
+      "src": "/images/works/liminal-structures-1.jpg",
+      "alt": "Liminal Structures model"
+    }
+  ],
+  "tags": ["architecture", "collaboration"],
+  "featured": false,
+  "order": 4
+}

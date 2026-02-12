@@ -1,0 +1,14 @@
+{
+  "title": "Graduate Commencement",
+  "slug": "commencement-graduate",
+  "shortTitle": "Grad Commencement",
+  "type": "commencement",
+  "degreeLevel": "graduate",
+  "themeKey": "commencement-grad",
+  "date": "2026-05-16",
+  "time": "3:00 PM",
+  "location": "Yerba Buena Center for the Arts",
+  "address": "701 Mission St, San Francisco, CA 94103",
+  "description": "Celebrate with our graduate students as they complete their advanced degrees and embark on the next chapter.",
+  "order": 2
+}

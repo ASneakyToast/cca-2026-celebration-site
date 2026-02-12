@@ -1,0 +1,15 @@
+{
+  "firstName": "Jordan",
+  "lastName": "Brooks",
+  "slug": "jordan-brooks",
+  "pronouns": "they/them",
+  "photo": {
+    "src": "/images/students/jordan-brooks.jpg",
+    "alt": "Jordan Brooks"
+  },
+  "program": "graphic-design",
+  "degreeLevel": "undergraduate",
+  "degreeType": "BFA",
+  "expectedGraduation": "Spring 2026",
+  "bio": "Jordan Brooks explores the intersection of design, technology, and social systems, creating interactive experiences that question how we navigate digital spaces."
+}

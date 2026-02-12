@@ -1,0 +1,20 @@
+{
+  "title": "Between Worlds",
+  "slug": "between-worlds",
+  "students": ["sofia-ramirez"],
+  "events": ["thesis-graduate", "showcase"],
+  "medium": "Mixed media installation",
+  "dimensions": "Variable",
+  "year": 2026,
+  "description": "An immersive installation that bridges the physical and the ephemeral, using light, textile, and sound to create a liminal space exploring themes of displacement and belonging.",
+  "media": [
+    {
+      "type": "image",
+      "src": "/images/works/between-worlds-1.jpg",
+      "alt": "Between Worlds installation view"
+    }
+  ],
+  "tags": ["installation", "sculpture", "mixed-media"],
+  "featured": true,
+  "order": 3
+}

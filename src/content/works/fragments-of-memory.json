@@ -1,0 +1,21 @@
+{
+  "title": "Fragments of Memory",
+  "slug": "fragments-of-memory",
+  "students": ["maya-chen"],
+  "events": ["thesis-undergraduate", "showcase"],
+  "medium": "Oil on canvas",
+  "dimensions": "48 \u00d7 60 in",
+  "year": 2026,
+  "description": "A series exploring the fragmented nature of memory through layered abstraction, combining traditional oil painting techniques with collage elements drawn from family photographs and personal archives.",
+  "media": [
+    {
+      "type": "image",
+      "src": "/images/works/fragments-of-memory-1.jpg",
+      "alt": "Fragments of Memory detail",
+      "caption": "Detail view"
+    }
+  ],
+  "tags": ["painting", "mixed-media"],
+  "featured": true,
+  "order": 1
+}

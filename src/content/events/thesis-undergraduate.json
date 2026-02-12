@@ -1,0 +1,15 @@
+{
+  "title": "Undergraduate Fine Art Thesis Exhibition",
+  "slug": "thesis-undergraduate",
+  "shortTitle": "Undergrad Thesis",
+  "type": "thesis-exhibition",
+  "degreeLevel": "undergraduate",
+  "themeKey": "thesis-undergrad",
+  "date": "2026-04-24",
+  "endDate": "2026-05-03",
+  "time": "12:00 PM \u2013 6:00 PM",
+  "location": "CCA Hubbell Street Galleries",
+  "address": "161 Hubbell St, San Francisco, CA 94107",
+  "description": "The culminating exhibition of undergraduate Fine Arts thesis work, showcasing the achievements of our BFA candidates.",
+  "order": 4
+}

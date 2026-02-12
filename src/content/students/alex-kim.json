@@ -1,0 +1,14 @@
+{
+  "firstName": "Alex",
+  "lastName": "Kim",
+  "slug": "alex-kim",
+  "photo": {
+    "src": "/images/students/alex-kim.jpg",
+    "alt": "Alex Kim"
+  },
+  "program": "architecture",
+  "degreeLevel": "graduate",
+  "degreeType": "MArch",
+  "expectedGraduation": "Spring 2026",
+  "bio": "Alex Kim investigates the boundaries between physical and digital architecture, creating speculative designs that reimagine urban spaces for climate resilience."
+}

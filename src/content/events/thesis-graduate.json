@@ -1,0 +1,15 @@
+{
+  "title": "Graduate Fine Art Thesis Exhibition",
+  "slug": "thesis-graduate",
+  "shortTitle": "Grad Thesis",
+  "type": "thesis-exhibition",
+  "degreeLevel": "graduate",
+  "themeKey": "thesis-grad",
+  "date": "2026-05-08",
+  "endDate": "2026-05-17",
+  "time": "12:00 PM \u2013 6:00 PM",
+  "location": "CCA Hubbell Street Galleries",
+  "address": "161 Hubbell St, San Francisco, CA 94107",
+  "description": "An exhibition of graduate Fine Arts thesis work, featuring the culminating projects of our MFA candidates.",
+  "order": 5
+}

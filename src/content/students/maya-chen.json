@@ -1,0 +1,27 @@
+{
+  "firstName": "Maya",
+  "lastName": "Chen",
+  "slug": "maya-chen",
+  "pronouns": "she/her",
+  "photo": {
+    "src": "/images/students/maya-chen.jpg",
+    "alt": "Maya Chen"
+  },
+  "program": "painting-drawing",
+  "degreeLevel": "undergraduate",
+  "degreeType": "BFA",
+  "expectedGraduation": "Spring 2026",
+  "bio": "Maya Chen is a multidisciplinary artist whose work investigates the intersections of personal memory, cultural heritage, and material transformation.",
+  "links": [
+    {
+      "label": "Website",
+      "url": "https://example.com",
+      "type": "website"
+    },
+    {
+      "label": "Instagram",
+      "url": "https://instagram.com/example",
+      "type": "social"
+    }
+  ]
+}

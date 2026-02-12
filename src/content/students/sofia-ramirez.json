@@ -1,0 +1,15 @@
+{
+  "firstName": "Sofia",
+  "lastName": "Ramirez",
+  "slug": "sofia-ramirez",
+  "pronouns": "she/her",
+  "photo": {
+    "src": "/images/students/sofia-ramirez.jpg",
+    "alt": "Sofia Ramirez"
+  },
+  "program": "painting-drawing",
+  "degreeLevel": "graduate",
+  "degreeType": "MFA",
+  "expectedGraduation": "Spring 2026",
+  "bio": "Sofia Ramirez's practice examines the relationship between body, space, and material, drawing on personal narrative and collective memory to create immersive installations."
+}

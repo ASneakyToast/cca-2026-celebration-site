@@ -1,0 +1,19 @@
+{
+  "title": "Digital Commons",
+  "slug": "digital-commons",
+  "students": ["jordan-brooks"],
+  "events": ["showcase"],
+  "medium": "Interactive web installation",
+  "year": 2026,
+  "description": "An interactive exploration of shared digital spaces, examining how online communities form, fracture, and rebuild through collective participation and open-source collaboration.",
+  "media": [
+    {
+      "type": "image",
+      "src": "/images/works/digital-commons-1.jpg",
+      "alt": "Digital Commons screenshot"
+    }
+  ],
+  "tags": ["interactive", "web", "design"],
+  "featured": true,
+  "order": 2
+}
