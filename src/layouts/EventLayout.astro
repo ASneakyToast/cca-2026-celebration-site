@@ -1,0 +1,30 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  event: {
+    data: {
+      title: string;
+      themeKey: string;
+      description: string;
+      [key: string]: unknown;
+    };
+  };
+  title?: string;
+}
+
+const { event, title } = Astro.props;
+const pageTitle = title ?? event.data.title;
+---
+
+<BaseLayout title={pageTitle} description={event.data.description} themeKey={event.data.themeKey}>
+  <div class="event-page" data-theme={event.data.themeKey}>
+    <slot />
+  </div>
+</BaseLayout>
+
+<style>
+  .event-page {
+    min-height: 100vh;
+  }
+</style>

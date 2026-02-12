@@ -1,0 +1,117 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/ui/Breadcrumb.astro';
+import { formatDateRange } from '../../lib/utils/format';
+
+const events = await getCollection('events');
+const undergradEvent = events.find(e => e.id === 'thesis-undergraduate');
+const gradEvent = events.find(e => e.id === 'thesis-graduate');
+---
+
+<BaseLayout title="Fine Art Thesis Exhibitions" themeKey="thesis-undergrad">
+  <div class="container">
+    <Breadcrumb items={[
+      { label: 'Home', href: '/' },
+      { label: 'Thesis Exhibitions' },
+    ]} />
+
+    <section class="thesis-intro reveal">
+      <h1>Fine Art Thesis Exhibitions</h1>
+      <p>The culminating exhibitions of CCA's Fine Arts thesis candidates. Experience the depth and ambition of student work developed over years of study, research, and creative practice.</p>
+    </section>
+
+    <section class="exhibition-cards">
+      {undergradEvent && (
+        <a href="/thesis/undergraduate/" class="exhibition-card reveal" data-theme={undergradEvent.data.themeKey}>
+          <h2>{undergradEvent.data.title}</h2>
+          <time>{formatDateRange(undergradEvent.data.date, undergradEvent.data.endDate)}</time>
+          <p class="time">{undergradEvent.data.time}</p>
+          <p class="location">{undergradEvent.data.location}</p>
+          <p class="desc">{undergradEvent.data.description}</p>
+        </a>
+      )}
+
+      {gradEvent && (
+        <a href="/thesis/graduate/" class="exhibition-card reveal" data-theme={gradEvent.data.themeKey}>
+          <h2>{gradEvent.data.title}</h2>
+          <time>{formatDateRange(gradEvent.data.date, gradEvent.data.endDate)}</time>
+          <p class="time">{gradEvent.data.time}</p>
+          <p class="location">{gradEvent.data.location}</p>
+          <p class="desc">{gradEvent.data.description}</p>
+        </a>
+      )}
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .thesis-intro {
+    padding-block: var(--space-10) var(--space-6);
+  }
+
+  .thesis-intro h1 {
+    margin-bottom: var(--space-4);
+  }
+
+  .thesis-intro p {
+    font-size: var(--text-lg);
+    color: var(--color-muted);
+  }
+
+  .exhibition-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(400px, 100%), 1fr));
+    gap: var(--grid-gutter);
+    padding-block: var(--space-6) var(--space-12);
+  }
+
+  .exhibition-card {
+    display: block;
+    text-decoration: none;
+    color: var(--color-text);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-left: 4px solid var(--color-accent);
+    border-radius: 4px;
+    padding: var(--space-6);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+
+  .exhibition-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--color-accent) 15%, transparent);
+  }
+
+  .exhibition-card h2 {
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-2);
+  }
+
+  .exhibition-card time {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-accent);
+    margin-bottom: var(--space-1);
+  }
+
+  .time {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+    margin-bottom: var(--space-1);
+  }
+
+  .location {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+    margin-bottom: var(--space-3);
+  }
+
+  .desc {
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+  }
+</style>

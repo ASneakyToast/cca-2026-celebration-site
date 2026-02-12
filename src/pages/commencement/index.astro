@@ -1,0 +1,117 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/ui/Breadcrumb.astro';
+import { formatDate } from '../../lib/utils/format';
+
+const events = await getCollection('events');
+const undergradEvent = events.find(e => e.id === 'commencement-undergraduate');
+const gradEvent = events.find(e => e.id === 'commencement-graduate');
+---
+
+<BaseLayout title="Commencement" themeKey="commencement-undergrad">
+  <div class="container">
+    <Breadcrumb items={[
+      { label: 'Home', href: '/' },
+      { label: 'Commencement' },
+    ]} />
+
+    <section class="commencement-intro reveal">
+      <h1>Commencement</h1>
+      <p>Join us as we celebrate the Class of 2026. CCA's commencement ceremonies honor the dedication and creative accomplishments of our graduating students.</p>
+    </section>
+
+    <section class="ceremony-cards">
+      {undergradEvent && (
+        <a href="/commencement/undergraduate/" class="ceremony-card reveal" data-theme={undergradEvent.data.themeKey}>
+          <h2>{undergradEvent.data.title}</h2>
+          <time>{formatDate(undergradEvent.data.date)}</time>
+          <p class="time">{undergradEvent.data.time}</p>
+          <p class="location">{undergradEvent.data.location}</p>
+          <p class="desc">{undergradEvent.data.description}</p>
+        </a>
+      )}
+
+      {gradEvent && (
+        <a href="/commencement/graduate/" class="ceremony-card reveal" data-theme={gradEvent.data.themeKey}>
+          <h2>{gradEvent.data.title}</h2>
+          <time>{formatDate(gradEvent.data.date)}</time>
+          <p class="time">{gradEvent.data.time}</p>
+          <p class="location">{gradEvent.data.location}</p>
+          <p class="desc">{gradEvent.data.description}</p>
+        </a>
+      )}
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .commencement-intro {
+    padding-block: var(--space-10) var(--space-6);
+  }
+
+  .commencement-intro h1 {
+    margin-bottom: var(--space-4);
+  }
+
+  .commencement-intro p {
+    font-size: var(--text-lg);
+    color: var(--color-muted);
+  }
+
+  .ceremony-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(400px, 100%), 1fr));
+    gap: var(--grid-gutter);
+    padding-block: var(--space-6) var(--space-12);
+  }
+
+  .ceremony-card {
+    display: block;
+    text-decoration: none;
+    color: var(--color-text);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-left: 4px solid var(--color-accent);
+    border-radius: 4px;
+    padding: var(--space-6);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+
+  .ceremony-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--color-accent) 15%, transparent);
+  }
+
+  .ceremony-card h2 {
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-2);
+  }
+
+  .ceremony-card time {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-accent);
+    margin-bottom: var(--space-1);
+  }
+
+  .time {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+    margin-bottom: var(--space-1);
+  }
+
+  .location {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+    margin-bottom: var(--space-3);
+  }
+
+  .desc {
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+  }
+</style>

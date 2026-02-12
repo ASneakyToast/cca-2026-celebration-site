@@ -1,0 +1,50 @@
+---
+import { getEntry, getCollection } from 'astro:content';
+import EventLayout from '../../layouts/EventLayout.astro';
+import EventHero from '../../components/events/EventHero.astro';
+import EventDetails from '../../components/events/EventDetails.astro';
+import WorkGrid from '../../components/works/WorkGrid.astro';
+import Breadcrumb from '../../components/ui/Breadcrumb.astro';
+import { getWorksByEvent } from '../../lib/utils/collections';
+import { fullName } from '../../lib/utils/format';
+
+const event = await getEntry('events', 'commencement-graduate');
+if (!event) throw new Error('Event commencement-graduate not found');
+
+const works = await getWorksByEvent('commencement-graduate');
+const students = await getCollection('students');
+const studentMap = new Map(students.map(s => [s.id, fullName(s)]));
+---
+
+<EventLayout event={event}>
+  <div class="container">
+    <Breadcrumb items={[
+      { label: 'Home', href: '/' },
+      { label: 'Commencement', href: '/commencement/' },
+      { label: 'Graduate' },
+    ]} />
+  </div>
+
+  <EventHero event={event} />
+
+  <div class="container">
+    <EventDetails event={event} />
+
+    {works.length > 0 && (
+      <section class="works-section reveal">
+        <h2>Student Works</h2>
+        <WorkGrid works={works} studentMap={studentMap} />
+      </section>
+    )}
+  </div>
+</EventLayout>
+
+<style>
+  .works-section {
+    padding-block: var(--space-8) var(--space-12);
+  }
+
+  .works-section h2 {
+    margin-bottom: var(--space-6);
+  }
+</style>
