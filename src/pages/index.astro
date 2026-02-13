@@ -31,6 +31,7 @@ const isPostEvent = new Date() > latestDate;
 <BaseLayout title="2026 Celebrations" description="Celebrate the achievements of CCA's Class of 2026 at commencement ceremonies, exhibitions, and showcases.">
   <section class="hero">
     <ConfettiCanvas />
+    <div class="hero__seal" aria-hidden="true"></div>
     <div class="hero__content">
       <span class="hero__cca">CCA</span>
       <span class="hero__year shimmer-text">2026</span>
@@ -144,6 +145,37 @@ const isPostEvent = new Date() > latestDate;
 
   .hero__cta {
     margin-top: var(--space-6);
+  }
+
+  /* ---- Seal watermark ---- */
+  .hero__seal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: clamp(280px, 60vw, 600px);
+    aspect-ratio: 1;
+    background: var(--color-accent);
+    opacity: 0.05;
+    mask-image: url('/images/cca-seal.svg');
+    -webkit-mask-image: url('/images/cca-seal.svg');
+    mask-size: contain;
+    -webkit-mask-size: contain;
+    mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  :global([data-theme="commencement"]) .hero__seal,
+  :global([data-theme="thesis-grad"]) .hero__seal {
+    opacity: 0.07;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hero__seal {
+      animation: seal-hero-breathe 12s ease-in-out infinite;
+    }
   }
 
   /* ---- Scroll indicator ---- */

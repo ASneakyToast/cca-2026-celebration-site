@@ -86,6 +86,30 @@ const calendarUrl = generateIcsDataUri({ title, date, endDate, time, location, a
     pointer-events: none;
   }
 
+  /* Decorative seal accent — top-right corner */
+  .event-hero::after {
+    content: "";
+    position: absolute;
+    top: -10%;
+    right: -5%;
+    width: clamp(200px, 30vw, 350px);
+    aspect-ratio: 1;
+    background: var(--color-accent);
+    opacity: 0.04;
+    mask-image: url('/images/cca-seal.svg');
+    -webkit-mask-image: url('/images/cca-seal.svg');
+    mask-size: contain;
+    -webkit-mask-size: contain;
+    mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
+    pointer-events: none;
+  }
+
+  :global([data-theme="commencement"]) .event-hero::after,
+  :global([data-theme="thesis-grad"]) .event-hero::after {
+    opacity: 0.06;
+  }
+
   .event-hero .container {
     position: relative;
   }

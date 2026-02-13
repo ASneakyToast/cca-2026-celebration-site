@@ -56,6 +56,18 @@
   animation: 180ms cubic-bezier(0.76, 0, 0.24, 1) both fade-in-up;
 }
 
+/* CCA Seal breathing animation */
+@keyframes seal-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+
+/* CCA Seal hero breathing (centered via translate) */
+@keyframes seal-hero-breathe {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.03); }
+}
+
 /* Constellation grid keyframes */
 @keyframes grid-breathe {
   0%, 100% { opacity: 1; }

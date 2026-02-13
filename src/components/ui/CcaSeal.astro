@@ -1,0 +1,49 @@
+---
+interface Props {
+  size?: string;
+  color?: string;
+  opacity?: number;
+  class?: string;
+  animate?: boolean;
+  decorative?: boolean;
+}
+
+const {
+  size = '1em',
+  color = 'currentColor',
+  opacity = 1,
+  class: className = '',
+  animate = false,
+  decorative = true,
+} = Astro.props;
+---
+
+<div
+  class:list={['cca-seal', { 'cca-seal--animate': animate }, className]}
+  style={`--seal-size: ${size}; --seal-color: ${color}; --seal-opacity: ${opacity};`}
+  {...decorative ? { 'aria-hidden': 'true' } : { role: 'img', 'aria-label': 'CCA seal' }}
+></div>
+
+<style>
+  .cca-seal {
+    width: var(--seal-size);
+    aspect-ratio: 1;
+    background: var(--seal-color);
+    opacity: var(--seal-opacity);
+    mask-image: url('/images/cca-seal.svg');
+    -webkit-mask-image: url('/images/cca-seal.svg');
+    mask-size: contain;
+    -webkit-mask-size: contain;
+    mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
+    mask-position: center;
+    -webkit-mask-position: center;
+    flex-shrink: 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cca-seal--animate {
+      animation: seal-breathe 8s ease-in-out infinite;
+    }
+  }
+</style>

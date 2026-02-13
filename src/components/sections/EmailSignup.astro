@@ -118,6 +118,33 @@ const {
     padding: var(--space-8);
     text-align: center;
     box-shadow: var(--shadow-card-rest);
+    overflow: hidden;
+  }
+
+  /* Decorative seal watermark behind card */
+  .signup-card::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120%;
+    aspect-ratio: 1;
+    background: var(--color-accent);
+    opacity: 0.03;
+    mask-image: url('/images/cca-seal.svg');
+    -webkit-mask-image: url('/images/cca-seal.svg');
+    mask-size: contain;
+    -webkit-mask-size: contain;
+    mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  :global([data-theme="commencement"]) .signup-card::after,
+  :global([data-theme="thesis-grad"]) .signup-card::after {
+    opacity: 0.04;
   }
 
   /* Prismatic gradient top border */
