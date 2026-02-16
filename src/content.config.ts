@@ -24,6 +24,7 @@ const programs = defineCollection({
         "MDes",
         "MDesign",
         "BArch",
+        "MAAD",
       ]),
     ),
     description: z.string(),
@@ -54,6 +55,7 @@ const students = defineCollection({
       "MDes",
       "MDesign",
       "BArch",
+      "MAAD",
     ]),
     expectedGraduation: z.string(),
     bio: z.string().optional(),
@@ -68,6 +70,23 @@ const students = defineCollection({
       )
       .optional(),
     ceremonies: z.array(reference("events")).optional(),
+    newsroomStories: z
+      .array(
+        z.object({
+          title: z.string(),
+          url: z.string(),
+          date: z.string().optional(),
+          summary: z.string().optional(),
+          listingTitle: z.string().optional(),
+          image: z
+            .object({
+              src: z.string(),
+              alt: z.string(),
+            })
+            .optional(),
+        }),
+      )
+      .optional(),
   }),
 });
 
