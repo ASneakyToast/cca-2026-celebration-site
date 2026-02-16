@@ -29,12 +29,6 @@
     { "time": "12:00 PM", "label": "Reception" }
   ],
   "ceremonyProgram": {
-    "studentSpeaker": {
-      "student": "maya-chen",
-      "name": "Maya Chen",
-      "program": "Painting / Drawing BFA",
-      "speechHighlights": "Maya will reflect on the transformative power of creative community, exploring how collaboration across disciplines has shaped the Class of 2026."
-    },
     "candidatesListUrl": "/downloads/undergraduate-candidates-2026.pdf"
   },
   "order": 1
