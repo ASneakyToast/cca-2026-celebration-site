@@ -1,0 +1,29 @@
+{
+  "firstName": "Lucy",
+  "lastName": "Harrington",
+  "slug": "lucy-harrington",
+  "photo": {
+    "src": "/images/students/placeholder.jpg",
+    "alt": "Lucy Harrington"
+  },
+  "program": "painting-drawing",
+  "degreeLevel": "undergraduate",
+  "degreeType": "BFA",
+  "expectedGraduation": "Spring 2026",
+  "ceremonies": [
+    "commencement-undergraduate"
+  ],
+  "newsroomStories": [
+    {
+      "title": "California College of the Arts announces the 2025 recipients of the Michael and Jeannette Lopez Endowed Scholarship",
+      "url": "/newsroom/cca-announces-the-2025-recipients-of-the-lopez-endowed-scholarship/",
+      "date": "2025-08-05",
+      "listingTitle": "California College of the Arts announces the 2025 recipients of the Michael and Jeannette Lopez Endowed Scholarship",
+      "summary": "For the third consecutive year, seniors in Fine Arts programs at CCA will receive funds to support the final year of tuition.",
+      "image": {
+        "src": "https://storage.googleapis.com/ccaedu-prod/media/original_images/small_digital_jpg-MFA_Fine_Arts_Open_Studio_Details_FA22-058.jpg",
+        "alt": "Detail photo from MFA Fine Arts open studios."
+      }
+    }
+  ]
+}

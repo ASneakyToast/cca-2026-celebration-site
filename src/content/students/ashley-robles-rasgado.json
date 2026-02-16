@@ -1,0 +1,51 @@
+{
+  "firstName": "Ashley",
+  "lastName": "Robles-Rasgado",
+  "slug": "ashley-robles-rasgado",
+  "photo": {
+    "src": "/images/students/placeholder.jpg",
+    "alt": "Ashley Robles-Rasgado"
+  },
+  "program": "fashion-design",
+  "degreeLevel": "undergraduate",
+  "degreeType": "BFA",
+  "expectedGraduation": "Spring 2026",
+  "ceremonies": [
+    "commencement-undergraduate"
+  ],
+  "newsroomStories": [
+    {
+      "title": "California College of the Arts gala honoring Carla Emil and Rich Silverstein raises over $1.23 million for student scholarships",
+      "url": "/newsroom/cca-gala-honoring-carla-emil-rich-silverstein-raises-over-1-23-million-for-student-scholarships/",
+      "date": "2023-05-24",
+      "listingTitle": "California College of the Arts gala honoring Carla Emil and Rich Silverstein raises over $1.23 million for student scholarships",
+      "summary": "CCA celebrated beloved Bay Area art collectors Carla Emil and Rich Silverstein as the 2023 honorees at its annual gala, which took place Tuesday, May 23. The event grossed over $1.23 million for student scholarships.",
+      "image": {
+        "src": "https://storage.googleapis.com/ccaedu-prod/media/original_images/galas_carla-emil-rich-silverstein-at-event_2023_listing-image_np.jpg",
+        "alt": "Carla Emil and Rich Silverstein."
+      }
+    },
+    {
+      "title": "Three questions with BFA Fashion Design student Ashley Robles-Rasgado",
+      "url": "/newsroom/three-questions-with-bfa-fashion-design-student-ashley-robles-rasgado/",
+      "date": "2024-04-16",
+      "listingTitle": "Three Questions with BFA Fashion Design student Ashley Robles-Rasgado",
+      "summary": "Second year BFA Fashion Design student Ashley Robles-Rasgado is striving for a more connected world through accessibility in fashion. Here she shares her thoughts on community, inspiration, and hearing the needs of others.",
+      "image": {
+        "src": "https://storage.googleapis.com/ccaedu-prod/media/original_images/headshot_ARR.png",
+        "alt": "Photo of Ashley Robles-Rasgado."
+      }
+    },
+    {
+      "title": "Fashion students set sail for sustainability",
+      "url": "/newsroom/fashion-students-set-sail-for-sustainability/",
+      "date": "2025-07-17",
+      "listingTitle": "Fashion students set sail for sustainability",
+      "summary": "In partnership with Cotton Incorporated and Materevolve, students explore the intersection of design, science, and ecology through interdisciplinary learning.",
+      "image": {
+        "src": "https://storage.googleapis.com/ccaedu-prod/media/original_images/small_digital_png-Fashion_Materevolve_sailing_trip_SP25-037_WBEY7Gb.png",
+        "alt": "Three students chat on the boat during the sailing field trip."
+      }
+    }
+  ]
+}

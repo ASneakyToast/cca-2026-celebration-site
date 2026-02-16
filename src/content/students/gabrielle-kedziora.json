@@ -1,0 +1,29 @@
+{
+  "firstName": "Gabrielle",
+  "lastName": "Kedziora",
+  "slug": "gabrielle-kedziora",
+  "photo": {
+    "src": "/images/students/placeholder.jpg",
+    "alt": "Gabrielle Kedziora"
+  },
+  "program": "writing-literature",
+  "degreeLevel": "undergraduate",
+  "degreeType": "BA",
+  "expectedGraduation": "Spring 2026",
+  "ceremonies": [
+    "commencement-undergraduate"
+  ],
+  "newsroomStories": [
+    {
+      "title": "Revisiting the 2024–2025 Deborah and Kenneth Novack Creative Citizens Series",
+      "url": "/newsroom/revisiting-24-25-deborah-kenneth-novack-creative-citizens-series/",
+      "date": "2025-07-07",
+      "listingTitle": "Revisiting the 2024–2025 Deborah and Kenneth Novack Creative Citizens Series",
+      "summary": "The 2024–2025 CCA@CCA program explored the theme \"Where do we go from here?\" During a time of instability and conflict in the world around us, our programs modeled ways to come together for discussion, reflection, and growth.",
+      "image": {
+        "src": "https://storage.googleapis.com/ccaedu-prod/media/original_images/unnamed_4.jpg",
+        "alt": "Take Action exhibition at the Novack Gallery."
+      }
+    }
+  ]
+}

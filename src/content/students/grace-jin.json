@@ -1,0 +1,29 @@
+{
+  "firstName": "Grace",
+  "lastName": "Jin",
+  "slug": "grace-jin",
+  "photo": {
+    "src": "/images/students/placeholder.jpg",
+    "alt": "Grace Jin"
+  },
+  "program": "fine-arts",
+  "degreeLevel": "graduate",
+  "degreeType": "MFA",
+  "expectedGraduation": "Spring 2026",
+  "ceremonies": [
+    "commencement-graduate"
+  ],
+  "newsroomStories": [
+    {
+      "title": "Where Creativity Meets Community",
+      "url": "/newsroom/where-creativity-meets-community/",
+      "date": "2025-10-23",
+      "listingTitle": "New campaign showcases CCA creativity across Bay Area",
+      "summary": "From bamboo structures to sculptural fashion, the campaign celebrates student creativity across Bay Area transit and demonstrates CCA's edge effect.",
+      "image": {
+        "src": "https://storage.googleapis.com/ccaedu-prod/media/original_images/large_digital_png-MarCom_Pole_banners_FA25-050-2025-10-jrl.jpeg",
+        "alt": "Two promotional banners for California College of the Arts (CCA) mounted on an urban street pole against a concrete building backdrop with yellow-leafed trees visible. The left banner features close-up hands touching vibrant blue and purple crystalline or textile materials, with the text \"WHERE EXPERIMENTATION\" and \"CCA\". The right banner showcases a fashion design student's work from the BFA Fashion Design 2025 program, featuring a model in a dramatic silver-blue striped avant-garde dress."
+      }
+    }
+  ]
+}
