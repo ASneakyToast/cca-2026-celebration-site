@@ -1,0 +1,10 @@
+{
+  "name": "Fine Arts",
+  "slug": "fine-arts",
+  "division": "fine-arts",
+  "degreeTypes": [
+    "MFA"
+  ],
+  "description": "TODO: Add program description.",
+  "url": "https://www.cca.edu/programs/fine-arts/"
+}

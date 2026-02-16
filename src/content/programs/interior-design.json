@@ -1,0 +1,10 @@
+{
+  "name": "Interior Design",
+  "slug": "interior-design",
+  "division": "design",
+  "degreeTypes": [
+    "BFA"
+  ],
+  "description": "TODO: Add program description.",
+  "url": "https://www.cca.edu/programs/interior-design/"
+}

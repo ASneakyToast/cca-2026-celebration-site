@@ -1,0 +1,10 @@
+{
+  "name": "Comics",
+  "slug": "comics",
+  "division": "fine-arts",
+  "degreeTypes": [
+    "MFA"
+  ],
+  "description": "TODO: Add program description.",
+  "url": "https://www.cca.edu/programs/comics/"
+}

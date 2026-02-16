@@ -1,0 +1,11 @@
+{
+  "name": "Film",
+  "slug": "film",
+  "division": "fine-arts",
+  "degreeTypes": [
+    "BFA",
+    "MFA"
+  ],
+  "description": "TODO: Add program description.",
+  "url": "https://www.cca.edu/programs/film/"
+}
