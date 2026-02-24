@@ -207,12 +207,13 @@ const commencementInfo = defineCollection({
       heading: z.string(),
       summary: z.string(),
       content: z.string(),
-    }),
+    }).optional(),
     forFamilies: z.object({
       heading: z.string(),
       summary: z.string(),
       content: z.string(),
-    }),
+    }).optional(),
+    intranetUrl: z.string().optional(),
   }),
 });
 
