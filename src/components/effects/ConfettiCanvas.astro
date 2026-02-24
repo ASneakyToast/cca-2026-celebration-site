@@ -10,140 +10,172 @@
 
 <style>
   .confetti-canvas {
-    position: absolute;
+    position: fixed;
     inset: 0;
     width: 100%;
     height: 100%;
+    z-index: -1;
     pointer-events: none;
   }
 </style>
 
 <script>
-  const canvas = document.querySelector<HTMLCanvasElement>('.confetti-canvas');
-  if (!canvas) throw new Error('ConfettiCanvas: canvas element not found');
+  function initConfetti() {
+    const canvas = document.querySelector<HTMLCanvasElement>('.confetti-canvas');
+    if (!canvas) return;
 
-  const ctx = canvas.getContext('2d');
-  if (!ctx) throw new Error('ConfettiCanvas: 2d context not available');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
 
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  const style = getComputedStyle(document.documentElement);
-  const COLORS = [
-    style.getPropertyValue('--color-celebration-primary').trim() || '#00BFB3',
-    style.getPropertyValue('--color-celebration-secondary').trim() || '#563D82',
-    style.getPropertyValue('--color-celebration-warm').trim() || '#FFC845',
-    style.getPropertyValue('--color-celebration-energy').trim() || '#E57200',
-    style.getPropertyValue('--color-celebration-deep').trim() || '#005776',
-  ];
-  const PARTICLE_COUNT = 70;
+    const style = getComputedStyle(document.documentElement);
+    const COLORS = [
+      style.getPropertyValue('--color-celebration-primary').trim() || '#00BFB3',
+      style.getPropertyValue('--color-celebration-secondary').trim() || '#563D82',
+      style.getPropertyValue('--color-celebration-warm').trim() || '#FFC845',
+      style.getPropertyValue('--color-celebration-energy').trim() || '#E57200',
+      style.getPropertyValue('--color-celebration-deep').trim() || '#005776',
+    ];
+    const PARTICLE_COUNT = 70;
 
-  interface Particle {
-    x: number;
-    y: number;
-    size: number;
-    color: string;
-    opacity: number;
-    rotation: number;
-    rotationSpeed: number;
-    speed: number;
-    drift: number;
-    driftPhase: number;
-    shape: 'rect' | 'circle' | 'triangle';
-  }
-
-  function resize() {
-    const dpr = window.devicePixelRatio || 1;
-    const rect = canvas!.getBoundingClientRect();
-    canvas!.width = rect.width * dpr;
-    canvas!.height = rect.height * dpr;
-    ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
-  }
-
-  function createParticle(): Particle {
-    const rect = canvas!.getBoundingClientRect();
-    const shapes: Particle['shape'][] = ['rect', 'circle', 'triangle'];
-    return {
-      x: Math.random() * rect.width,
-      y: Math.random() * rect.height,
-      size: 3 + Math.random() * 5,
-      color: COLORS[Math.floor(Math.random() * COLORS.length)],
-      opacity: 0.3 + Math.random() * 0.5,
-      rotation: Math.random() * Math.PI * 2,
-      rotationSpeed: (Math.random() - 0.5) * 0.02,
-      speed: 0.15 + Math.random() * 0.35,
-      drift: 0.3 + Math.random() * 0.7,
-      driftPhase: Math.random() * Math.PI * 2,
-      shape: shapes[Math.floor(Math.random() * shapes.length)],
-    };
-  }
-
-  function drawParticle(p: Particle) {
-    const c = ctx!;
-    c.save();
-    c.translate(p.x, p.y);
-    c.rotate(p.rotation);
-    c.globalAlpha = p.opacity;
-    c.fillStyle = p.color;
-
-    switch (p.shape) {
-      case 'rect':
-        c.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
-        break;
-      case 'circle':
-        c.beginPath();
-        c.arc(0, 0, p.size / 2, 0, Math.PI * 2);
-        c.fill();
-        break;
-      case 'triangle':
-        c.beginPath();
-        c.moveTo(0, -p.size / 2);
-        c.lineTo(p.size / 2, p.size / 2);
-        c.lineTo(-p.size / 2, p.size / 2);
-        c.closePath();
-        c.fill();
-        break;
+    interface Particle {
+      x: number;
+      y: number;
+      size: number;
+      color: string;
+      opacity: number;
+      rotation: number;
+      rotationSpeed: number;
+      speed: number;
+      drift: number;
+      driftPhase: number;
+      shape: 'rect' | 'circle' | 'triangle';
     }
 
-    c.restore();
-  }
+    function resize() {
+      const dpr = window.devicePixelRatio || 1;
+      canvas!.width = window.innerWidth * dpr;
+      canvas!.height = window.innerHeight * dpr;
+      ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
 
-  if (prefersReducedMotion) {
-    // Show a single static frame for reduced-motion users
-    resize();
-    const particles = Array.from({ length: PARTICLE_COUNT }, createParticle);
-    particles.forEach(drawParticle);
-  } else {
-    const particles = Array.from({ length: PARTICLE_COUNT }, createParticle);
-    let time = 0;
+    function createParticle(): Particle {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      const shapes: Particle['shape'][] = ['rect', 'circle', 'triangle'];
+      return {
+        x: Math.random() * w,
+        y: Math.random() * h,
+        size: 3 + Math.random() * 5,
+        color: COLORS[Math.floor(Math.random() * COLORS.length)],
+        opacity: 0.3 + Math.random() * 0.5,
+        rotation: Math.random() * Math.PI * 2,
+        rotationSpeed: (Math.random() - 0.5) * 0.02,
+        speed: 0.15 + Math.random() * 0.35,
+        drift: 0.3 + Math.random() * 0.7,
+        driftPhase: Math.random() * Math.PI * 2,
+        shape: shapes[Math.floor(Math.random() * shapes.length)],
+      };
+    }
 
-    resize();
-    window.addEventListener('resize', resize);
+    function drawParticle(p: Particle) {
+      const c = ctx!;
+      c.save();
+      c.translate(p.x, p.y);
+      c.rotate(p.rotation);
+      c.globalAlpha = p.opacity;
+      c.fillStyle = p.color;
 
-    function animate() {
-      const rect = canvas!.getBoundingClientRect();
-      ctx!.clearRect(0, 0, rect.width, rect.height);
-      time += 0.01;
-
-      for (const p of particles) {
-        p.y -= p.speed;
-        p.x += Math.sin(time + p.driftPhase) * p.drift * 0.3;
-        p.rotation += p.rotationSpeed;
-
-        // Wrap particles that float off the top back to the bottom
-        if (p.y < -p.size) {
-          p.y = rect.height + p.size;
-          p.x = Math.random() * rect.width;
-        }
-        // Wrap horizontal overflow
-        if (p.x < -p.size) p.x = rect.width + p.size;
-        if (p.x > rect.width + p.size) p.x = -p.size;
-
-        drawParticle(p);
+      switch (p.shape) {
+        case 'rect':
+          c.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+          break;
+        case 'circle':
+          c.beginPath();
+          c.arc(0, 0, p.size / 2, 0, Math.PI * 2);
+          c.fill();
+          break;
+        case 'triangle':
+          c.beginPath();
+          c.moveTo(0, -p.size / 2);
+          c.lineTo(p.size / 2, p.size / 2);
+          c.lineTo(-p.size / 2, p.size / 2);
+          c.closePath();
+          c.fill();
+          break;
       }
 
-      requestAnimationFrame(animate);
+      c.restore();
     }
 
-    animate();
+    if (prefersReducedMotion) {
+      resize();
+      const particles = Array.from({ length: PARTICLE_COUNT }, createParticle);
+      particles.forEach(drawParticle);
+    } else {
+      const particles = Array.from({ length: PARTICLE_COUNT }, createParticle);
+      let time = 0;
+
+      // Scroll-reactive wind gust constants
+      const SCROLL_SENSITIVITY = 0.08;
+      const SCROLL_INFLUENCE_ATTACK = 0.15;
+      const SCROLL_INFLUENCE_DECAY = 0.03;
+      const SCROLL_SPEED_BOOST = 2.5;
+      const SCROLL_ROTATION_BOOST = 4.0;
+      const SCROLL_DRIFT_BOOST = 2.0;
+
+      // Scroll tracking state
+      let lastScrollY = window.scrollY;
+      let scrollInfluence = 0;
+
+      resize();
+      window.addEventListener('resize', resize);
+
+      function animate() {
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        ctx!.clearRect(0, 0, w, h);
+        time += 0.01;
+
+        // Compute scroll velocity and smooth into wind influence
+        const currentScrollY = window.scrollY;
+        const scrollDelta = currentScrollY - lastScrollY;
+        lastScrollY = currentScrollY;
+
+        const target = Math.max(-1, Math.min(1, scrollDelta * SCROLL_SENSITIVITY));
+        const lerpRate = Math.abs(target) > Math.abs(scrollInfluence)
+          ? SCROLL_INFLUENCE_ATTACK
+          : SCROLL_INFLUENCE_DECAY;
+        scrollInfluence += (target - scrollInfluence) * lerpRate;
+
+        // Derive per-frame modifiers from scroll influence
+        const speedBoost = scrollInfluence * SCROLL_SPEED_BOOST;
+        const rotMultiplier = 1 + Math.abs(scrollInfluence) * SCROLL_ROTATION_BOOST;
+        const driftMultiplier = 1 + Math.abs(scrollInfluence) * SCROLL_DRIFT_BOOST;
+
+        for (const p of particles) {
+          p.y -= p.speed + speedBoost;
+          p.x += Math.sin(time + p.driftPhase) * p.drift * 0.3 * driftMultiplier;
+          p.rotation += p.rotationSpeed * rotMultiplier;
+
+          if (p.y < -p.size) {
+            p.y = h + p.size;
+            p.x = Math.random() * w;
+          }
+          if (p.x < -p.size) p.x = w + p.size;
+          if (p.x > w + p.size) p.x = -p.size;
+
+          drawParticle(p);
+        }
+
+        requestAnimationFrame(animate);
+      }
+
+      animate();
+    }
   }
+
+  initConfetti();
+  document.addEventListener('astro:page-load', initConfetti);
 </script>
