@@ -29,19 +29,63 @@ const isPostEvent = new Date() > latestDate;
 ---
 
 <BaseLayout title="2026 Celebrations" description="Celebrate the achievements of CCA's Class of 2026 at commencement ceremonies, exhibitions, and showcases.">
+
+  <!-- 1. Hero -->
   <section class="hero">
     <ConfettiCanvas />
     <div class="hero__seal" aria-hidden="true"></div>
-    <div class="hero__content">
-      <span class="hero__cca">CCA</span>
-      <span class="hero__year shimmer-text">2026</span>
-      <p class="hero__subtitle">{isPostEvent ? 'Congratulations, Class of 2026' : 'Celebrations'}</p>
-      <div class="hero__cta stagger-1">
+    <div class="hero__collage" aria-hidden="true">
+      <img
+        class="hero__fragment hero__fragment--1"
+        src="https://storage.googleapis.com/ccaedu-prod/media/images/commencement-masters24-2025-body-001.original.jpg"
+        alt=""
+        loading="eager"
+        width="640"
+        height="480"
+      />
+      <img
+        class="hero__fragment hero__fragment--2"
+        src="https://storage.googleapis.com/ccaedu-prod/media/images/large_digital_jpg-CCA_EOY-Show_SP25-115-jrl2.original.jpg"
+        alt=""
+        loading="eager"
+        width="480"
+        height="640"
+      />
+      <img
+        class="hero__fragment hero__fragment--3 hero__doodle"
+        src="https://storage.googleapis.com/ccaedu-prod/media/images/Doodle-spiral.original.svg"
+        alt=""
+        width="80"
+        height="80"
+      />
+      <img
+        class="hero__fragment hero__fragment--4 hero__doodle"
+        src="https://storage.googleapis.com/ccaedu-prod/media/images/Doodle-flower-teal.original.svg"
+        alt=""
+        width="60"
+        height="40"
+      />
+    </div>
+    <div class="hero__content" id="hero-content">
+      <span class="hero__eyebrow stagger-1">California College of the Arts</span>
+      <span class="hero__year shimmer-text stagger-2">2026</span>
+      <span class="hero__label stagger-3">{isPostEvent ? 'Congratulations' : 'Celebrations'}</span>
+      <p class="hero__tagline stagger-4">
+        {isPostEvent
+          ? 'Honoring the creativity, resilience, and vision of the Class of 2026.'
+          : 'Honoring the creativity, resilience, and vision of our graduating class.'}
+      </p>
+      <div class="hero__ctas stagger-5">
         {isPostEvent ? (
           <Button href="/commencement/recap/" variant="primary">Relive the Celebrations</Button>
+          <Button href="#events" variant="outline">Browse Events</Button>
         ) : (
           <Button href="#events" variant="primary">Explore Events</Button>
+          <Button href="/commencement/" variant="outline">Commencement</Button>
         )}
+      </div>
+      <div class="hero__date-badge stagger-6">
+        <span>Commencement&ensp;&mdash;&ensp;May 16, 2026</span>
       </div>
     </div>
     <div class="hero__scroll" aria-hidden="true">
@@ -51,30 +95,92 @@ const isPostEvent = new Date() > latestDate;
     </div>
   </section>
 
+  <!-- 2. Hero Media — Video -->
   <section class="hero-media">
     <div class="hero-media__frame" id="hero-frame">
-      <div class="hero-media__placeholder" aria-hidden="true"></div>
+      <video
+        class="hero-media__video"
+        autoplay
+        muted
+        loop
+        playsinline
+        aria-hidden="true"
+      >
+        <source src="https://storage.googleapis.com/ccaedu-prod/media/media/CCAEDU-Homepage-SP26-jrl.webm" type="video/webm" />
+      </video>
     </div>
   </section>
 
-  <section id="events" class="events-section">
+  <!-- 3. Stats Strip -->
+  <section class="stats-strip reveal">
     <div class="container">
-      <span class="section-label">{isPostEvent ? 'Class of 2026' : 'Upcoming'}</span>
-      <h2 class="section-heading">{isPostEvent ? 'Celebrations' : 'Events'}</h2>
+      <div class="stats-strip__grid">
+        <div class="stats-strip__item stagger-1">
+          <span class="stats-strip__number shimmer-text">119th</span>
+          <span class="stats-strip__label">Commencement</span>
+        </div>
+        <div class="stats-strip__item stagger-2">
+          <span class="stats-strip__number shimmer-text">700+</span>
+          <span class="stats-strip__label">Graduates</span>
+        </div>
+        <div class="stats-strip__item stagger-3">
+          <span class="stats-strip__number shimmer-text">30+</span>
+          <span class="stats-strip__label">Programs</span>
+        </div>
+        <div class="stats-strip__item stagger-4">
+          <span class="stats-strip__number shimmer-text">7</span>
+          <span class="stats-strip__label">Events</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Events -->
+  <section id="events" class="events-section reveal">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">{isPostEvent ? 'Class of 2026' : 'Upcoming'}</span>
+        <h2 class="section-heading section-heading--lg">{isPostEvent ? 'Celebrations' : 'Events'}</h2>
+        <p class="section-intro">
+          From commencement ceremonies to thesis exhibitions and showcases, explore the events that bring together our community to celebrate the Class of 2026.
+        </p>
+      </div>
       <BentoEvents events={events} />
     </div>
   </section>
 
+  <!-- 5. Quote -->
+  <section class="quote-section reveal">
+    <div class="quote-section__seal" aria-hidden="true"></div>
+    <div class="container">
+      <blockquote class="quote-section__quote">
+        <p class="quote-section__text">
+          &ldquo;Our graduates leave CCA not just as skilled artists and designers, but as creative leaders ready to shape a more just and joyful world.&rdquo;
+        </p>
+        <footer class="quote-section__attribution">
+          <span class="quote-section__name">Tamara Alvarado</span>
+          <span class="quote-section__role">President, California College of the Arts</span>
+        </footer>
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- 6. Featured Works -->
   {featuredWorks.length > 0 && (
-    <section class="works-section">
+    <section class="works-section reveal">
       <div class="container">
-        <span class="section-label">Featured</span>
-        <h2 class="section-heading">Student Works</h2>
+        <div class="section-header">
+          <span class="section-label">Featured</span>
+          <h2 class="section-heading section-heading--lg">Student Works</h2>
+          <p class="section-intro">
+            A glimpse into the extraordinary thesis projects and creative works from this year's graduating class.
+          </p>
+        </div>
         <div class="works-grid">
-          {featuredWorks.map(work => {
+          {featuredWorks.map((work, i) => {
             const names = work.data.students?.map(ref => studentMap.get(ref.id)).filter(Boolean) as string[] ?? [];
             return (
-              <div class="reveal">
+              <div class:list={['reveal', `stagger-${i + 1}`, { 'works-grid__featured': i === 0 }]}>
                 <WorkCard work={work} studentNames={names} />
               </div>
             );
@@ -87,10 +193,48 @@ const isPostEvent = new Date() > latestDate;
     </section>
   )}
 
-  <EmailSignup />
+  <!-- 7. Email Signup -->
+  <section class="signup-section">
+    <div class="signup-section__glow" aria-hidden="true"></div>
+    <EmailSignup heading="Don't Miss a Moment" description="Sign up for the CCA mailing list to receive updates on commencement, exhibitions, showcases, and more." />
+  </section>
+
 </BaseLayout>
 
 <script src="../scripts/hero-scale.ts"></script>
+
+<!-- Hero parallax: fade + translate content on scroll -->
+<script>
+  function initHeroParallax() {
+    const content = document.getElementById('hero-content');
+    if (!content) return;
+
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced) return;
+
+    let ticking = false;
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const scrollY = window.scrollY;
+        const viewH = window.innerHeight;
+        const progress = Math.min(scrollY / (viewH * 0.6), 1);
+        content!.style.opacity = String(1 - progress);
+        content!.style.transform = `translateY(${-progress * 60}px)`;
+        ticking = false;
+      });
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    // Reset on page load (Astro view transitions)
+    content.style.opacity = '1';
+    content.style.transform = 'translateY(0)';
+  }
+
+  initHeroParallax();
+  document.addEventListener('astro:page-load', initHeroParallax);
+</script>
 
 <style>
   /* ---- Hero ---- */
@@ -107,44 +251,74 @@ const isPostEvent = new Date() > latestDate;
 
   .hero__content {
     position: relative;
-    z-index: 1;
+    z-index: 2;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
     padding-inline: var(--space-4);
+    will-change: transform, opacity;
   }
 
-  .hero__cca {
+  .hero__eyebrow {
     display: block;
-    font-family: var(--font-body);
-    font-size: clamp(4rem, 10vw, 10rem);
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    color: var(--color-text);
-    line-height: 1;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--color-muted);
+    margin-bottom: var(--space-4);
   }
 
   .hero__year {
     display: block;
     font-family: var(--font-display);
-    font-size: clamp(4rem, 10vw, 10rem);
+    font-size: clamp(6rem, 20vw, 18rem);
     font-style: italic;
     font-weight: 700;
-    line-height: 1.1;
+    line-height: 1;
   }
 
-  .hero__subtitle {
-    font-family: var(--font-mono);
+  .hero__label {
+    display: block;
+    font-family: var(--font-heading);
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    color: var(--color-text);
+    margin-top: var(--space-2);
+    line-height: 1.2;
+  }
+
+  .hero__tagline {
+    font-family: var(--font-body);
     font-size: var(--text-lg);
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
     color: var(--color-muted);
+    max-width: 36ch;
     margin-top: var(--space-4);
+    line-height: 1.5;
   }
 
-  .hero__cta {
-    margin-top: var(--space-6);
+  .hero__ctas {
+    display: flex;
+    gap: var(--space-4);
+    margin-top: var(--space-8);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .hero__date-badge {
+    margin-top: var(--space-8);
+    padding: var(--space-2) var(--space-5);
+    border-radius: 999px;
+    border: 1px solid transparent;
+    background:
+      var(--color-bg) padding-box,
+      var(--gradient-prismatic) border-box;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-muted);
   }
 
   /* ---- Seal watermark ---- */
@@ -178,6 +352,86 @@ const isPostEvent = new Date() > latestDate;
     }
   }
 
+  /* ---- Photo + Geometric Collage ---- */
+  .hero__collage {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .hero__fragment {
+    position: absolute;
+    border-radius: 6px;
+    opacity: 0;
+    animation: fragment-enter 0.6s var(--ease-out-expo) forwards;
+  }
+
+  .hero__fragment--1 {
+    top: 8%;
+    right: 4%;
+    width: 24vw;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    rotate: 4deg;
+    animation-delay: 0.15s;
+  }
+
+  .hero__fragment--2 {
+    bottom: 10%;
+    left: 3%;
+    width: 20vw;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    rotate: -5deg;
+    animation-delay: 0.3s;
+  }
+
+  .hero__fragment--3 {
+    bottom: 30%;
+    right: 8%;
+    width: 6vw;
+    aspect-ratio: 1;
+    rotate: 15deg;
+    animation-delay: 0.45s;
+  }
+
+  .hero__fragment--4 {
+    top: 15%;
+    left: 8%;
+    width: 4vw;
+    aspect-ratio: 3 / 2;
+    rotate: -8deg;
+    animation-delay: 0.55s;
+  }
+
+  .hero__doodle {
+    border-radius: 0;
+    opacity: 0;
+  }
+
+  @media (max-width: 767px) {
+    .hero__collage {
+      opacity: 0.6;
+    }
+
+    .hero__fragment--1 {
+      width: 35vw;
+      right: -5%;
+    }
+
+    .hero__fragment--2 {
+      width: 28vw;
+      left: -3%;
+    }
+
+    .hero__fragment--3,
+    .hero__fragment--4 {
+      display: none;
+    }
+  }
+
   /* ---- Scroll indicator ---- */
   .hero__scroll {
     position: absolute;
@@ -188,7 +442,7 @@ const isPostEvent = new Date() > latestDate;
     animation: scroll-bounce 2s ease-in-out infinite;
   }
 
-  /* ---- Hero Media (scaling image section) ---- */
+  /* ---- Hero Media ---- */
   .hero-media {
     padding: var(--space-4) var(--space-4) var(--space-20);
     overflow: hidden;
@@ -202,17 +456,12 @@ const isPostEvent = new Date() > latestDate;
     transition: transform 0.1s linear, border-radius 0.1s linear;
   }
 
-  .hero-media__placeholder {
+  .hero-media__video {
+    display: block;
     width: 100%;
     aspect-ratio: 16 / 9;
-    background: var(--gradient-prismatic);
-    background-size: 200% 200%;
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .hero-media__placeholder {
-      animation: prismatic-shift 6s linear infinite;
-    }
+    object-fit: cover;
+    background: var(--color-surface);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -222,19 +471,143 @@ const isPostEvent = new Date() > latestDate;
     }
   }
 
-  /* ---- Sections ---- */
-  .events-section {
-    padding-block: var(--space-20);
+  /* ---- Stats Strip ---- */
+  .stats-strip {
+    background: var(--color-surface);
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    padding-block: var(--space-16);
+  }
+
+  .stats-strip__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-8);
+    text-align: center;
+  }
+
+  @media (min-width: 768px) {
+    .stats-strip__grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .stats-strip__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .stats-strip__number {
+    font-family: var(--font-display);
+    font-size: var(--text-4xl);
+    font-style: italic;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .stats-strip__label {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-muted);
+  }
+
+  /* ---- Section Header (shared) ---- */
+  .section-header {
+    max-width: 640px;
+    margin-bottom: var(--space-12);
   }
 
   .section-heading {
     font-family: var(--font-heading);
-    margin-bottom: var(--space-10);
+    margin-bottom: var(--space-4);
+  }
+
+  .section-heading--lg {
+    font-size: var(--text-4xl);
+  }
+
+  .section-intro {
+    font-size: var(--text-lg);
+    color: var(--color-muted);
+    line-height: 1.6;
+  }
+
+  /* ---- Events ---- */
+  .events-section {
+    padding-block: var(--space-24);
+  }
+
+  /* ---- Quote Section ---- */
+  .quote-section {
+    position: relative;
+    background: var(--gradient-hero);
+    padding-block: var(--space-24);
+    overflow: hidden;
+  }
+
+  .quote-section__seal {
+    position: absolute;
+    top: 50%;
+    right: -5%;
+    transform: translateY(-50%);
+    width: clamp(200px, 40vw, 500px);
+    aspect-ratio: 1;
+    background: white;
+    opacity: 0.04;
+    mask-image: url('/images/cca-seal.svg');
+    -webkit-mask-image: url('/images/cca-seal.svg');
+    mask-size: contain;
+    -webkit-mask-size: contain;
+    mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
+    pointer-events: none;
+  }
+
+  .quote-section__quote {
+    position: relative;
+    text-align: center;
+    max-width: 800px;
+    margin-inline: auto;
+  }
+
+  .quote-section__text {
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    font-style: italic;
+    font-weight: 400;
+    line-height: 1.4;
+    color: #fff;
+  }
+
+  .quote-section__attribution {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    margin-top: var(--space-8);
+  }
+
+  .quote-section__name {
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .quote-section__role {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255, 255, 255, 0.5);
   }
 
   /* ---- Featured Works ---- */
   .works-section {
-    padding-block: var(--space-20);
+    padding-block: var(--space-24);
   }
 
   .works-grid {
@@ -243,10 +616,52 @@ const isPostEvent = new Date() > latestDate;
     gap: var(--space-6);
   }
 
+  @media (min-width: 768px) {
+    .works-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .works-grid__featured {
+      grid-column: span 2;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .works-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .works-grid__featured {
+      grid-column: span 1;
+      grid-row: span 2;
+    }
+  }
+
   .works-cta {
     display: flex;
     justify-content: center;
     margin-top: var(--space-10);
+  }
+
+  /* ---- Email Signup Section ---- */
+  .signup-section {
+    position: relative;
+    background: var(--color-surface);
+    overflow: hidden;
+  }
+
+  .signup-section__glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 400px;
+    background: radial-gradient(
+      ellipse at center,
+      var(--color-accent) 0%,
+      transparent 70%
+    );
+    opacity: 0.06;
+    pointer-events: none;
   }
 
   /* ---- Reduced motion ---- */

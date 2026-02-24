@@ -84,6 +84,18 @@
   50% { stroke-opacity: 0.6; }
 }
 
+/* Fragment entrance for showcase collage */
+@keyframes fragment-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.85) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
 /* --------------------------------------------------------------------------
    Reveal System — Fade-up entrance animation
    -------------------------------------------------------------------------- */
@@ -210,6 +222,12 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .showcase-hero__fragment,
+  .hero__fragment {
+    animation: none !important;
+    opacity: 1;
+  }
+
   .reveal,
   .reveal-scale,
   .reveal-left,
