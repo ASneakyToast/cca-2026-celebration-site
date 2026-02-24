@@ -12,17 +12,7 @@ const commencementItems: Array<{ label: string; href?: string }> = [
   { label: "Multicultural Celebration", href: "/commencement/multicultural-celebration/" },
   { label: "Lavender Celebration", href: "/commencement/lavender-celebration/" },
   { label: "separator" },
-  { label: "For Students", href: "/commencement/for-students/" },
-  { label: "For Families & Friends", href: "/commencement/for-families/" },
-  { label: "separator" },
   { label: "Recap", href: "/commencement/recap/" },
-];
-
-const thesisEventsItems: Array<{ label: string; href?: string }> = [
-  { label: "End of Year Showcase", href: "/thesis/showcase/" },
-  { label: "separator" },
-  { label: "BFA Fine Arts", href: "/thesis/undergraduate/" },
-  { label: "MFA Fine Arts", href: "/thesis/graduate/" },
 ];
 
 const showcaseItems: Array<{ label: string; href?: string }> = [
@@ -37,22 +27,6 @@ const isSubscribeActive = currentPath.startsWith("/subscribe");
 
 // Mobile menu still uses grouped event data — filter out separators
 const mobileCommencementItems = commencementItems.filter(item => item.label !== "separator") as Array<{ label: string; href: string }>;
-const eventGroups = [
-  {
-    label: "Commencement",
-    href: "/commencement/",
-    items: mobileCommencementItems,
-  },
-  {
-    label: "Thesis Events",
-    href: "/thesis/showcase/",
-    items: [
-      { label: "End of Year Showcase", href: "/thesis/showcase/" },
-      { label: "BFA Fine Arts", href: "/thesis/undergraduate/" },
-      { label: "MFA Fine Arts", href: "/thesis/graduate/" },
-    ],
-  },
-];
 ---
 
 <header class:list={["site-header", { "site-header--minimal": minimal }]}>
@@ -102,38 +76,15 @@ const eventGroups = [
             </div>
           </li>
 
-          <li class="has-dropdown">
+          <li>
             <a
-              href="/thesis/showcase/"
-              class="nav-link dropdown-trigger"
-              aria-expanded="false"
-              aria-haspopup="true"
+              href="/thesis/"
+              class="nav-link"
               data-active={isThesisActive ? "true" : undefined}
+              aria-current={currentPath === "/thesis/" ? "page" : undefined}
             >
-              Thesis Events
-              <svg class="chevron" width="10" height="6" viewBox="0 0 10 6" aria-hidden="true">
-                <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
+              End of Year Showcase
             </a>
-            <div class="nav-dropdown" role="menu">
-              <ul role="list">
-                {thesisEventsItems.map((item) =>
-                  item.label === "separator" ? (
-                    <li class="dropdown-separator" role="separator"><hr /></li>
-                  ) : (
-                    <li>
-                      <a
-                        href={item.href}
-                        role="menuitem"
-                        aria-current={currentPath === item.href ? "page" : undefined}
-                      >
-                        {item.label}
-                      </a>
-                    </li>
-                  )
-                )}
-              </ul>
-            </div>
           </li>
 
           <li class="has-dropdown">
@@ -194,23 +145,31 @@ const eventGroups = [
     <ul class="mobile-nav-list" role="list">
       <li class="mobile-section">
         <span class="mobile-section-label">Events</span>
-        {eventGroups.map((group, gi) => (
-          <div class="mobile-group">
-            <a href={group.href} class="mobile-group-label" aria-current={currentPath === group.href ? "page" : undefined}>{group.label}</a>
-            <ul role="list">
-              {group.items.map((item, ii) => (
-                <li class="mobile-nav-item" style={`--stagger-delay: ${(gi * 2 + ii + 1) * 60}ms`}>
-                  <a
-                    href={item.href}
-                    aria-current={currentPath === item.href ? "page" : undefined}
-                  >
-                    {item.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
+        <div class="mobile-group">
+          <a href="/commencement/" class="mobile-group-label" aria-current={currentPath === "/commencement/" ? "page" : undefined}>Commencement</a>
+          <ul role="list">
+            {mobileCommencementItems.map((item, i) => (
+              <li class="mobile-nav-item" style={`--stagger-delay: ${(i + 1) * 60}ms`}>
+                <a
+                  href={item.href}
+                  aria-current={currentPath === item.href ? "page" : undefined}
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </li>
+      <li class="mobile-nav-item" style="--stagger-delay: 360ms">
+        <a
+          href="/thesis/"
+          class="mobile-top-link"
+          data-active={isThesisActive ? "true" : undefined}
+          aria-current={currentPath === "/thesis/" ? "page" : undefined}
+        >
+          End of Year Showcase
+        </a>
       </li>
       <li class="mobile-section" style="--stagger-delay: 420ms">
         <div class="mobile-group">
