@@ -31,12 +31,16 @@ const isPostEvent = new Date() > latestDate;
 <BaseLayout title="2026 Celebrations" description="Celebrate the achievements of CCA's Class of 2026 at commencement ceremonies, exhibitions, and showcases.">
 
   <!-- 1. Hero -->
-  <section class="hero">
+  <section class="hero" data-cursor-scope>
     <ConfettiCanvas />
     <div class="hero__seal" aria-hidden="true"></div>
     <div class="hero__collage" aria-hidden="true">
       <img
         class="hero__fragment hero__fragment--1"
+        data-cursor-track
+        data-cursor-strength="0.02"
+        data-cursor-max="24"
+        data-cursor-lerp="0.05"
         src="https://storage.googleapis.com/ccaedu-prod/media/images/commencement-masters24-2025-body-001.original.jpg"
         alt=""
         loading="eager"
@@ -45,6 +49,10 @@ const isPostEvent = new Date() > latestDate;
       />
       <img
         class="hero__fragment hero__fragment--2"
+        data-cursor-track
+        data-cursor-strength="0.028"
+        data-cursor-max="20"
+        data-cursor-lerp="0.07"
         src="https://storage.googleapis.com/ccaedu-prod/media/images/large_digital_jpg-CCA_EOY-Show_SP25-115-jrl2.original.jpg"
         alt=""
         loading="eager"
@@ -53,6 +61,10 @@ const isPostEvent = new Date() > latestDate;
       />
       <img
         class="hero__fragment hero__fragment--3 hero__doodle"
+        data-cursor-track
+        data-cursor-strength="0.05"
+        data-cursor-max="45"
+        data-cursor-lerp="0.12"
         src="https://storage.googleapis.com/ccaedu-prod/media/images/Doodle-spiral.original.svg"
         alt=""
         width="80"
@@ -60,6 +72,10 @@ const isPostEvent = new Date() > latestDate;
       />
       <img
         class="hero__fragment hero__fragment--4 hero__doodle"
+        data-cursor-track
+        data-cursor-strength="0.038"
+        data-cursor-max="32"
+        data-cursor-lerp="0.09"
         src="https://storage.googleapis.com/ccaedu-prod/media/images/Doodle-flower-teal.original.svg"
         alt=""
         width="60"
@@ -202,6 +218,8 @@ const isPostEvent = new Date() > latestDate;
 </BaseLayout>
 
 <script src="../scripts/hero-scale.ts"></script>
+<script src="../scripts/cursor-track.ts"></script>
+<script src="../scripts/doodle-antics.ts"></script>
 
 <!-- Hero parallax: fade + translate content on scroll -->
 <script>
@@ -409,6 +427,8 @@ const isPostEvent = new Date() > latestDate;
   .hero__doodle {
     border-radius: 0;
     opacity: 0;
+    pointer-events: auto;
+    cursor: pointer;
   }
 
   @media (max-width: 767px) {
