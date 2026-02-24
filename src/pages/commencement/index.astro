@@ -1,9 +1,12 @@
 ---
 import { getCollection, getEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import Breadcrumb from '../../components/ui/Breadcrumb.astro';
-import StickyTocLayout from '../../components/ui/StickyTocLayout.astro';
+import ConfettiCanvas from '../../components/effects/ConfettiCanvas.astro';
+import CelebrationCard from '../../components/events/CelebrationCard.astro';
+import QuoteBlock from '../../components/ui/QuoteBlock.astro';
+import EmailSignup from '../../components/sections/EmailSignup.astro';
 import ContactBlock from '../../components/ui/ContactBlock.astro';
+import Button from '../../components/ui/Button.astro';
 import { formatDate } from '../../lib/utils/format';
 import { getCelebrationEvents } from '../../lib/utils/collections';
 
@@ -12,347 +15,537 @@ const undergradEvent = events.find(e => e.id === 'commencement-undergraduate');
 const gradEvent = events.find(e => e.id === 'commencement-graduate');
 const celebrations = await getCelebrationEvents();
 const info = await getEntry('commencement-info', 'current');
+const recap = await getEntry('recap', 'current');
 
-const tocItems = [
-  { label: 'Ceremonies', href: '#ceremonies' },
-  { label: 'Special Celebrations', href: '#celebrations' },
-  { label: 'Preparation Guides', href: '#info-guides' },
-  { label: 'Recap', href: '#recap' },
-  { label: 'Contact', href: '#contact' },
-];
+// Determine if commencement has passed
+const commencementEvents = events.filter(e => e.data.type === 'commencement');
+const latestDate = commencementEvents.reduce((latest, e) => {
+  const d = new Date(e.data.date);
+  return d > latest ? d : latest;
+}, new Date(0));
+const isPostEvent = new Date() > latestDate;
 ---
 
 <BaseLayout title="Commencement" themeKey="commencement">
-  <div class="container">
-    <Breadcrumb items={[
-      { label: 'Home', href: '/' },
-      { label: 'Commencement' },
-    ]} />
-
-    <section class="commencement-intro reveal">
-      <h1 class="commencement-title">Commencement</h1>
-      <p>Join us as we celebrate the Class of 2026. CCA's commencement ceremonies honor the dedication and creative accomplishments of our graduating students.</p>
-    </section>
-
-    <StickyTocLayout items={tocItems}>
-      <section id="ceremonies" class="page-section">
-        <h2 class="section-heading reveal">Ceremonies</h2>
-        <div class="ceremony-features">
-          {undergradEvent && (
-            <a href="/commencement/undergraduate/" class="ceremony-feature reveal">
-              <span class="ceremony-label">UNDERGRADUATE</span>
-              <h3 class="ceremony-name">{undergradEvent.data.title}</h3>
-              <time class="ceremony-date">{formatDate(undergradEvent.data.date)}</time>
-              <p class="ceremony-meta">{undergradEvent.data.time} &middot; {undergradEvent.data.location}</p>
-              <p class="ceremony-desc">{undergradEvent.data.description}</p>
-            </a>
-          )}
-
-          {gradEvent && (
-            <a href="/commencement/graduate/" class="ceremony-feature reveal">
-              <span class="ceremony-label">GRADUATE</span>
-              <h3 class="ceremony-name">{gradEvent.data.title}</h3>
-              <time class="ceremony-date">{formatDate(gradEvent.data.date)}</time>
-              <p class="ceremony-meta">{gradEvent.data.time} &middot; {gradEvent.data.location}</p>
-              <p class="ceremony-desc">{gradEvent.data.description}</p>
-            </a>
+  {/* ── Hero ── */}
+  <section class="comm-hero" data-cursor-scope>
+    <ConfettiCanvas />
+    <div class="comm-hero__seal" aria-hidden="true"></div>
+    <div class="comm-hero__inner">
+      <div class="comm-hero__content">
+        <span class="comm-hero__label">CCA {info?.data.commencementNumber}</span>
+        <h1 class="comm-hero__title shimmer-text">Commencement</h1>
+        <p class="comm-hero__subtitle">
+          {isPostEvent
+            ? 'Congratulations to the Class of 2026'
+            : 'Celebrate the Class of 2026'}
+        </p>
+        <div class="comm-hero__cta stagger-1">
+          {isPostEvent ? (
+            <Button href="/commencement/recap/" variant="primary">Relive the Celebration</Button>
+          ) : (
+            <Button href="#ceremonies" variant="primary">View Ceremonies</Button>
           )}
         </div>
-      </section>
+      </div>
+      <div class="comm-hero__media">
+        <div class="comm-hero__frame" data-cursor-track data-cursor-strength="0.012" data-cursor-max="12" data-cursor-lerp="0.04">
+          <img
+            src="https://storage.googleapis.com/ccaedu-prod/media/images/commencement-masters24-2025-body-001.original.jpg"
+            alt="Graduates celebrating at CCA Commencement"
+            class="comm-hero__img"
+            loading="eager"
+          />
+        </div>
+      </div>
+    </div>
+    <div class="comm-hero__scroll" aria-hidden="true">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    </div>
+  </section>
 
-      {celebrations.length > 0 && (
-        <section id="celebrations" class="page-section">
-          <h2 class="section-heading reveal">Special Celebrations</h2>
-          <p class="section-desc reveal">Pre-commencement celebrations for all graduating students.</p>
-          <div class="celebration-rows">
-            {celebrations.map((event) => (
-              <a href={`/commencement/${event.data.slug}/`} class="celebration-row reveal">
-                <span class="celebration-name">{event.data.title}</span>
-                <span class="celebration-details">
-                  {formatDate(event.data.date)} &middot; {event.data.time} &middot; {event.data.location}
-                </span>
-              </a>
-            ))}
-          </div>
-        </section>
-      )}
+  {/* ── Ceremonies ── */}
+  <section id="ceremonies" class="ceremonies-section">
+    <div class="container">
+      <span class="section-label reveal">Ceremonies</span>
+      <h2 class="section-heading reveal">Two Ceremonies, One Celebration</h2>
+      <div class="ceremony-cards">
+        {undergradEvent && (
+          <a href="/commencement/undergraduate/" class="ceremony-card reveal">
+            <div class="ceremony-card__accent" aria-hidden="true"></div>
+            <span class="ceremony-card__badge">Undergraduate</span>
+            <h3 class="ceremony-card__title">{undergradEvent.data.title}</h3>
+            <time class="ceremony-card__date">{formatDate(undergradEvent.data.date)}</time>
+            <p class="ceremony-card__meta">{undergradEvent.data.time}</p>
+            <p class="ceremony-card__meta">{undergradEvent.data.location}</p>
+            <span class="ceremony-card__cta">Details &rarr;</span>
+          </a>
+        )}
 
-      {info && (
-        <>
-          <section id="info-guides" class="page-section">
-            <h2 class="section-heading reveal">Prepare for Commencement</h2>
-            <div class="info-cards">
-              <a id="for-students" href="/commencement/for-students/" class="info-card reveal">
-                <h3 class="info-card-heading">{info.data.forStudents.heading}</h3>
-                <p class="info-card-summary">{info.data.forStudents.summary}</p>
-                <span class="info-card-link">View guide &rarr;</span>
-              </a>
-              <a id="for-families" href="/commencement/for-families/" class="info-card reveal">
-                <h3 class="info-card-heading">{info.data.forFamilies.heading}</h3>
-                <p class="info-card-summary">{info.data.forFamilies.summary}</p>
-                <span class="info-card-link">View guide &rarr;</span>
-              </a>
-            </div>
-          </section>
+        {gradEvent && (
+          <a href="/commencement/graduate/" class="ceremony-card reveal">
+            <div class="ceremony-card__accent" aria-hidden="true"></div>
+            <span class="ceremony-card__badge">Graduate</span>
+            <h3 class="ceremony-card__title">{gradEvent.data.title}</h3>
+            <time class="ceremony-card__date">{formatDate(gradEvent.data.date)}</time>
+            <p class="ceremony-card__meta">{gradEvent.data.time}</p>
+            <p class="ceremony-card__meta">{gradEvent.data.location}</p>
+            <span class="ceremony-card__cta">Details &rarr;</span>
+          </a>
+        )}
+      </div>
+    </div>
+  </section>
 
-          <section id="recap" class="page-section info-section">
-            <h2 class="section-heading reveal">Commencement Recap</h2>
-            <p class="info-summary reveal">Relive the ceremony with video highlights, photos, statistics, honorary doctorate recipients, and downloadable programs.</p>
-            <a href="/commencement/recap/" class="info-link reveal">View Recap &rarr;</a>
-          </section>
+  {/* ── Special Celebrations ── */}
+  {celebrations.length > 0 && (
+    <section class="celebrations-section">
+      <div class="container">
+        <span class="section-label reveal">Pre-Commencement</span>
+        <h2 class="section-heading reveal">Special Celebrations</h2>
+        <p class="section-desc reveal">Join us for celebrations honoring all graduating students before the main ceremonies.</p>
+        <div class="celebrations-grid">
+          {celebrations.map((event) => (
+            <CelebrationCard event={event} />
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
 
-          <section id="contact" class="page-section">
-            <h2 class="section-heading reveal">Contact</h2>
-            <p class="section-desc reveal">Questions about commencement? We're here to help.</p>
-            <ContactBlock email={info.data.contact.email} phone={info.data.contact.phone} />
-          </section>
-        </>
-      )}
-    </StickyTocLayout>
-  </div>
+  {/* ── Quote ── */}
+  {recap?.data.presidentQuote && (
+    <section class="quote-section">
+      <div class="container container--narrow">
+        <QuoteBlock
+          text={recap.data.presidentQuote.text}
+          attribution={recap.data.presidentQuote.attribution}
+        />
+      </div>
+    </section>
+  )}
+
+  {/* ── Recap CTA ── */}
+  <section class="recap-section">
+    <div class="container">
+      <div class="recap-card reveal">
+        <div class="recap-card__inner">
+          <span class="section-label">Commencement Recap</span>
+          <h2 class="recap-card__heading">Relive the Celebration</h2>
+          <p class="recap-card__desc">Watch ceremony highlights, browse photos, explore statistics, and download programs from CCA's {info?.data.commencementNumber} Commencement.</p>
+          <Button href="/commencement/recap/" variant="outline">View Recap</Button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ── Intranet note ── */}
+  {info?.data.intranetUrl && (
+    <aside class="intranet-note">
+      <div class="container">
+        <p class="reveal">
+          Current students and staff can find detailed preparation guides, regalia ordering, and day-of logistics on the <a href={info.data.intranetUrl}>CCA Intranet</a>.
+        </p>
+      </div>
+    </aside>
+  )}
+
+  {/* ── Email Signup ── */}
+  <EmailSignup />
+
+  {/* ── Contact ── */}
+  {info && (
+    <section class="contact-section">
+      <div class="container container--narrow">
+        <h2 class="contact-heading reveal">Questions?</h2>
+        <ContactBlock email={info.data.contact.email} phone={info.data.contact.phone} />
+      </div>
+    </section>
+  )}
 </BaseLayout>
 
+<script src="../../scripts/cursor-track.ts"></script>
+
 <style>
-  .commencement-intro {
-    padding-block: var(--space-10) var(--space-6);
+  /* ── Hero ── */
+  .comm-hero {
+    position: relative;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: var(--color-bg);
   }
 
-  .commencement-title {
-    margin-bottom: var(--space-4);
-    background: var(--theme-gradient);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    display: inline-block;
+  .comm-hero__inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: center;
+    gap: var(--space-8);
+    width: 100%;
+    max-width: 1440px;
+    padding-inline: var(--space-4);
   }
 
-  .commencement-intro p {
-    font-size: var(--text-lg);
+  @media (min-width: 768px) {
+    .comm-hero__inner {
+      grid-template-columns: 45fr 55fr;
+      gap: var(--space-10);
+      padding-inline: var(--space-10);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .comm-hero__inner {
+      padding-inline: var(--space-12);
+    }
+  }
+
+  .comm-hero__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  @media (min-width: 768px) {
+    .comm-hero__content {
+      align-items: flex-start;
+      text-align: left;
+    }
+  }
+
+  .comm-hero__label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
     color: var(--color-muted);
+    margin-bottom: var(--space-4);
   }
 
-  .page-section {
-    padding-block: var(--space-8);
+  .comm-hero__title {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 8vw, 8rem);
+    font-style: italic;
+    font-weight: 700;
+    line-height: 1;
+    margin: 0;
+  }
+
+  .comm-hero__subtitle {
+    font-family: var(--font-mono);
+    font-size: var(--text-lg);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--color-muted);
+    margin-top: var(--space-4);
+  }
+
+  .comm-hero__cta {
+    margin-top: var(--space-6);
+  }
+
+  /* ── Hero media ── */
+  .comm-hero__media {
+    display: flex;
+    justify-content: center;
+  }
+
+  .comm-hero__frame {
+    border-radius: var(--radius-card);
+    padding: 3px;
+    background: var(--gradient-prismatic);
+    background-size: 200% 200%;
+    width: 95%;
+    max-width: 560px;
+  }
+
+  @media (min-width: 768px) {
+    .comm-hero__frame {
+      width: 100%;
+      max-width: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .comm-hero__frame {
+      animation: prismatic-shift 6s linear infinite;
+    }
+  }
+
+  .comm-hero__img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    object-position: center 30%;
+    border-radius: calc(var(--radius-card) - 2px);
+  }
+
+  .comm-hero__seal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: clamp(280px, 60vw, 600px);
+    aspect-ratio: 1;
+    background: var(--color-accent);
+    opacity: 0.07;
+    mask-image: url('/images/cca-seal.svg');
+    -webkit-mask-image: url('/images/cca-seal.svg');
+    mask-size: contain;
+    -webkit-mask-size: contain;
+    mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  @media (min-width: 768px) {
+    .comm-hero__seal {
+      left: 70%;
+      width: clamp(200px, 35vw, 400px);
+      opacity: 0.05;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .comm-hero__seal {
+      animation: seal-hero-breathe 12s ease-in-out infinite;
+    }
+  }
+
+  .comm-hero__scroll {
+    position: absolute;
+    bottom: var(--space-8);
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--color-muted);
+    animation: scroll-bounce 2s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .comm-hero__scroll {
+      animation: none;
+      opacity: 0.6;
+    }
+  }
+
+  /* ── Section rhythm ── */
+  .ceremonies-section,
+  .celebrations-section,
+  .quote-section,
+  .recap-section {
+    padding-block: var(--space-20);
   }
 
   .section-heading {
-    font-size: var(--text-2xl);
-    margin-bottom: var(--space-4);
+    font-family: var(--font-heading);
+    margin-bottom: var(--space-10);
   }
 
   .section-desc {
     font-size: var(--text-base);
     color: var(--color-muted);
-    margin-bottom: var(--space-6);
-    max-width: 60ch;
-  }
-
-  /* Ceremonies */
-
-  .ceremony-features {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-8);
-  }
-
-  @media (min-width: 768px) {
-    .ceremony-features {
-      grid-template-columns: 1fr 1fr;
-      gap: 0;
-    }
-
-    .ceremony-feature:first-child {
-      border-right: 1px solid var(--color-border);
-      padding-right: var(--space-8);
-    }
-
-    .ceremony-feature:last-child {
-      padding-left: var(--space-8);
-    }
-  }
-
-  .ceremony-feature {
-    display: block;
-    text-decoration: none;
-    color: var(--color-text);
-    padding: var(--space-4) var(--space-2);
-    border-radius: var(--radius-card);
-    transition: background-color 0.15s ease;
-  }
-
-  .ceremony-feature:hover {
-    background-color: var(--color-surface);
-  }
-
-  .ceremony-label {
-    display: inline-block;
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    letter-spacing: 0.08em;
-    color: var(--color-muted);
-    margin-bottom: var(--space-3);
-  }
-
-  .ceremony-name {
-    font-size: var(--text-2xl);
-    margin-bottom: var(--space-3);
-    line-height: 1.2;
-  }
-
-  .ceremony-date {
-    display: block;
-    font-size: var(--text-lg);
-    font-weight: 600;
-    color: var(--color-accent);
-    margin-bottom: var(--space-2);
-  }
-
-  .ceremony-meta {
-    font-family: var(--font-mono);
-    font-size: var(--text-sm);
-    color: var(--color-muted);
-    margin-bottom: var(--space-4);
-  }
-
-  .ceremony-desc {
-    font-size: var(--text-base);
-    color: var(--color-muted);
-    max-width: 50ch;
+    max-width: 55ch;
     line-height: 1.6;
+    margin-bottom: var(--space-8);
   }
 
-  /* Celebrations */
-
-  .celebration-rows {
-    display: flex;
-    flex-direction: column;
+  .container--narrow {
+    max-width: 700px;
+    margin-inline: auto;
   }
 
-  .celebration-row {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: var(--space-4);
-    padding: var(--space-4) var(--space-2);
-    border-bottom: 1px solid var(--color-border);
-    text-decoration: none;
-    color: var(--color-text);
-    border-radius: 2px;
-    transition: background-color 0.15s ease;
-  }
-
-  .celebration-row:first-child {
-    border-top: 1px solid var(--color-border);
-  }
-
-  .celebration-row:hover {
-    background-color: var(--color-surface);
-  }
-
-  .celebration-name {
-    font-weight: 600;
-    font-size: var(--text-base);
-    flex-shrink: 0;
-  }
-
-  .celebration-details {
-    font-family: var(--font-mono);
-    font-size: var(--text-sm);
-    color: var(--color-muted);
-    text-align: right;
-  }
-
-  @media (max-width: 640px) {
-    .celebration-row {
-      flex-direction: column;
-      gap: var(--space-1);
-    }
-
-    .celebration-details {
-      text-align: left;
-    }
-  }
-
-  /* Info sections */
-
-  .info-section {
-    padding-block: var(--space-6);
-  }
-
-  .info-section .section-heading {
-    font-size: var(--text-xl);
-    margin-bottom: var(--space-2);
-  }
-
-  .info-summary {
-    font-size: var(--text-base);
-    color: var(--color-muted);
-    max-width: 60ch;
-    line-height: 1.6;
-    margin-bottom: var(--space-3);
-  }
-
-  .info-link {
-    display: inline-block;
-    font-size: var(--text-sm);
-    font-weight: 600;
-    color: var(--color-accent);
-    text-decoration: none;
-    transition: color 0.15s ease;
-  }
-
-  .info-link:hover {
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-
-  /* Info guide cards */
-
-  .info-cards {
+  /* ── Ceremony cards ── */
+  .ceremony-cards {
     display: grid;
     grid-template-columns: 1fr;
     gap: var(--space-6);
   }
 
   @media (min-width: 768px) {
-    .info-cards {
+    .ceremony-cards {
       grid-template-columns: 1fr 1fr;
     }
   }
 
-  .info-card {
+  .ceremony-card {
     display: block;
+    position: relative;
     text-decoration: none;
     color: var(--color-text);
     background: var(--color-surface);
     border: 1px solid var(--color-border);
-    border-left: 4px solid var(--color-accent);
     border-radius: var(--radius-card);
-    padding: var(--space-6);
-    box-shadow: var(--shadow-card-rest);
-    transition: box-shadow 0.2s ease, transform 0.2s ease;
+    padding: var(--space-8);
+    overflow: hidden;
+    transition: transform 0.3s var(--ease-out-expo),
+                box-shadow 0.3s var(--ease-out-expo);
   }
 
-  .info-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 16px color-mix(in srgb, var(--color-accent) 15%, transparent);
+  .ceremony-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 40px color-mix(in srgb, var(--color-accent) 15%, transparent);
   }
 
-  .info-card-heading {
+  .ceremony-card__accent {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--gradient-prismatic);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .ceremony-card__accent {
+      animation: prismatic-shift 6s linear infinite;
+    }
+
+    .ceremony-card:hover .ceremony-card__accent {
+      animation-duration: 2s;
+    }
+  }
+
+  .ceremony-card__badge {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-accent);
+    background: var(--color-accent-tint);
+    padding: var(--space-1) var(--space-2);
+    border-radius: 3px;
+    margin-bottom: var(--space-4);
+  }
+
+  .ceremony-card__title {
+    font-size: var(--text-2xl);
+    line-height: 1.2;
+    margin-bottom: var(--space-4);
+  }
+
+  .ceremony-card__date {
+    display: block;
     font-size: var(--text-lg);
+    font-weight: 600;
+    color: var(--color-accent);
     margin-bottom: var(--space-2);
   }
 
-  .info-card-summary {
-    font-size: var(--text-base);
+  .ceremony-card__meta {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
     color: var(--color-muted);
-    line-height: 1.6;
-    margin-bottom: var(--space-3);
+    margin-bottom: var(--space-1);
   }
 
-  .info-card-link {
+  .ceremony-card__cta {
+    display: inline-block;
+    margin-top: var(--space-6);
     font-size: var(--text-sm);
-    font-weight: 600;
+    font-weight: 700;
     color: var(--color-accent);
+    transition: letter-spacing 0.2s var(--ease-out-expo);
+  }
+
+  .ceremony-card:hover .ceremony-card__cta {
+    letter-spacing: 0.05em;
+  }
+
+  /* ── Celebrations grid ── */
+  .celebrations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
+    gap: var(--space-6);
+  }
+
+  /* ── Quote section ── */
+  .quote-section {
+    border-block: 1px solid var(--color-border);
+  }
+
+  /* ── Recap CTA card ── */
+  .recap-card {
+    position: relative;
+    border-radius: var(--radius-card);
+    padding: 3px;
+    background: var(--gradient-prismatic);
+    background-size: 200% 200%;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .recap-card {
+      animation: prismatic-shift 6s linear infinite;
+    }
+  }
+
+  .recap-card__inner {
+    background: var(--color-surface);
+    border-radius: calc(var(--radius-card) - 2px);
+    padding: var(--space-10) var(--space-8);
+    text-align: center;
+  }
+
+  .recap-card__heading {
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-4);
+  }
+
+  .recap-card__desc {
+    font-size: var(--text-base);
+    color: var(--color-muted);
+    max-width: 50ch;
+    margin-inline: auto;
+    line-height: 1.6;
+    margin-bottom: var(--space-6);
+  }
+
+  /* ── Intranet note ── */
+  .intranet-note {
+    padding-block: var(--space-8);
+  }
+
+  .intranet-note p {
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+    text-align: center;
+    max-width: 55ch;
+    margin-inline: auto;
+    line-height: 1.6;
+  }
+
+  .intranet-note a {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color 0.15s ease;
+  }
+
+  .intranet-note a:hover {
+    color: color-mix(in srgb, var(--color-accent) 80%, #000);
+  }
+
+  /* ── Contact section ── */
+  .contact-section {
+    padding-block: var(--space-12) var(--space-20);
+  }
+
+  .contact-heading {
+    font-family: var(--font-heading);
+    font-size: var(--text-2xl);
+    margin-bottom: var(--space-6);
+    text-align: center;
   }
 </style>
