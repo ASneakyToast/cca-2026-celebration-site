@@ -67,3 +67,96 @@ export async function getWorksByTag(tag: string) {
     .filter(w => w.data.tags?.includes(tag))
     .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
 }
+
+const DIVISION_ORDER = [
+  'architecture',
+  'design',
+  'fine-arts',
+  'humanities-sciences',
+  'writing',
+] as const;
+
+const DIVISION_LABELS: Record<string, string> = {
+  'architecture': 'Architecture',
+  'design': 'Design',
+  'fine-arts': 'Fine Arts',
+  'humanities-sciences': 'Humanities & Sciences',
+  'writing': 'Writing',
+};
+
+export interface CandidateGroup {
+  division: string;
+  divisionLabel: string;
+  programs: Array<{
+    programName: string;
+    degreeType: string;
+    students: Array<{
+      id: string;
+      firstName: string;
+      lastName: string;
+      slug: string;
+    }>;
+  }>;
+}
+
+export async function getCandidatesGroupedByDivision(eventId: string): Promise<CandidateGroup[]> {
+  const students = await getStudentsByCeremony(eventId);
+  const programs = await getCollection('programs');
+  const programMap = new Map(programs.map(p => [p.id, p.data]));
+
+  // Build a map: division -> program -> students
+  const divisionMap = new Map<string, Map<string, typeof students>>();
+
+  for (const student of students) {
+    const programData = programMap.get(student.data.program.id);
+    if (!programData) continue;
+
+    const division = programData.division;
+    if (!divisionMap.has(division)) {
+      divisionMap.set(division, new Map());
+    }
+
+    const programKey = `${programData.name}|||${student.data.degreeType}`;
+    const programStudents = divisionMap.get(division)!;
+    if (!programStudents.has(programKey)) {
+      programStudents.set(programKey, []);
+    }
+    programStudents.get(programKey)!.push(student);
+  }
+
+  // Sort and structure
+  const result: CandidateGroup[] = [];
+
+  const sortedDivisions = [...divisionMap.keys()].sort(
+    (a, b) => DIVISION_ORDER.indexOf(a as any) - DIVISION_ORDER.indexOf(b as any)
+  );
+
+  for (const division of sortedDivisions) {
+    const programStudentsMap = divisionMap.get(division)!;
+    const programEntries = [...programStudentsMap.entries()]
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([key, studs]) => {
+        const [programName, degreeType] = key.split('|||');
+        return {
+          programName,
+          degreeType,
+          students: studs
+            .map(s => ({
+              id: s.id,
+              firstName: s.data.firstName,
+              lastName: s.data.lastName,
+              slug: s.data.slug,
+            }))
+            .sort((a, b) => a.lastName.localeCompare(b.lastName)),
+        };
+      });
+
+    result.push({
+      division,
+      divisionLabel: DIVISION_LABELS[division] ?? division,
+      programs: programEntries,
+    });
+  }
+
+  return result;
+}

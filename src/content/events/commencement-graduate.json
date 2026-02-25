@@ -36,7 +36,30 @@
       "speechHighlights": "Jordan will speak on the role of speculative practice in shaping resilient futures, drawing on their thesis research in climate fiction."
     },
     "distinguishedAlumni": "david-kim-distinguished",
-    "candidatesListUrl": "/downloads/graduate-candidates-2026.pdf"
+    "candidatesListUrl": "/downloads/graduate-candidates-2026.pdf",
+    "programItems": [
+      { "order": 1, "label": "Grand Marshal", "presenter": "Professor Elena Vasquez, Professor Emerita of Sculpture", "type": "processional" },
+      { "order": 2, "label": "Academic Processional", "type": "processional" },
+      { "order": 3, "label": "Welcome", "presenter": "Tamara Maloney, Provost", "type": "welcome" },
+      { "order": 4, "label": "Land Acknowledgment", "type": "address" },
+      { "order": 5, "label": "In Memoriam", "type": "recognition" },
+      { "order": 6, "label": "President's Address", "presenter": "Dr. Leslie T. Hsu, President", "type": "address" },
+      { "order": 7, "label": "Conferral of Professor Emeritus", "presenter": "Professor Elena Vasquez", "type": "recognition" },
+      { "order": 8, "label": "Distinguished Alumni Award", "presenter": "David Kim", "type": "recognition" },
+      { "order": 9, "label": "Conferral of Honorary Degrees", "type": "recognition" },
+      { "order": 10, "label": "Student Remarks", "presenter": "Jordan Rivera, MFA Writing", "type": "address" },
+      { "order": 11, "label": "Commencement Video", "type": "performance" },
+      { "order": 12, "label": "Conferring of Degrees", "presenter": "Dr. Leslie T. Hsu, President", "description": "Candidates presented by division chairs", "type": "conferring" },
+      { "order": 13, "label": "Class Presentation", "type": "other" },
+      { "order": 14, "label": "Recessional", "type": "recessional" }
+    ],
+    "grandMarshal": {
+      "name": "Professor Elena Vasquez",
+      "title": "Professor Emerita of Sculpture"
+    },
+    "presidentName": "Dr. Leslie T. Hsu",
+    "landAcknowledgment": "California College of the Arts acknowledges that our campus is located on the unceded territory of Chochenyo and Karkin Ohlone peoples, who have stewarded this land throughout the generations. We recognize their continuing connection to the land and pay our respects to their elders past and present.",
+    "disclaimer": "The list of degree candidates represents those who have applied for graduation. Inclusion in the commencement program does not confirm that a degree has been conferred. Degrees are officially conferred only upon completion of all academic requirements as certified by the Registrar."
   },
   "order": 2
 }

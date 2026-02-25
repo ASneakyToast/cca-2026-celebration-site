@@ -1,0 +1,189 @@
+---
+import { getEntry } from "astro:content";
+import EventLayout from "../../../layouts/EventLayout.astro";
+import Breadcrumb from "../../../components/ui/Breadcrumb.astro";
+import TableOfContents from "../../../components/ui/TableOfContents.astro";
+import ProgramHero from "../../../components/program/ProgramHero.astro";
+import ProgramAgenda from "../../../components/program/ProgramAgenda.astro";
+import ProgramDisclaimer from "../../../components/program/ProgramDisclaimer.astro";
+import CandidatesList from "../../../components/program/CandidatesList.astro";
+import SpeakerFeature from "../../../components/events/SpeakerFeature.astro";
+import InMemoriam from "../../../components/sections/InMemoriam.astro";
+import Button from "../../../components/ui/Button.astro";
+import { getCandidatesGroupedByDivision } from "../../../lib/utils/collections";
+
+const eventId = "commencement-graduate";
+const event = await getEntry("events", eventId);
+if (!event) throw new Error(`Event ${eventId} not found`);
+
+const { ceremonyProgram } = event.data;
+
+// Resolve student speaker reference
+let studentSpeakerEntry = null;
+if (ceremonyProgram?.studentSpeaker?.student) {
+  studentSpeakerEntry = await getEntry("students", ceremonyProgram.studentSpeaker.student.id);
+}
+
+// Get in memoriam from recap
+const recap = await getEntry("recap", "current");
+const inMemoriam = recap?.data.inMemoriam ?? [];
+
+// Get candidates grouped by division
+const candidateGroups = await getCandidatesGroupedByDivision(eventId);
+
+// Build TOC
+const tocItems: Array<{ label: string; href: string }> = [];
+if (ceremonyProgram?.programItems?.length) tocItems.push({ label: "Order of Ceremony", href: "#program" });
+if (ceremonyProgram?.landAcknowledgment) tocItems.push({ label: "Land Acknowledgment", href: "#land-acknowledgment" });
+if (ceremonyProgram?.studentSpeaker) tocItems.push({ label: "Student Speaker", href: "#student-speaker" });
+if (inMemoriam.length > 0) tocItems.push({ label: "In Memoriam", href: "#in-memoriam" });
+if (candidateGroups.length > 0) tocItems.push({ label: "Degree Candidates", href: "#candidates" });
+if (ceremonyProgram?.disclaimer) tocItems.push({ label: "Disclaimer", href: "#disclaimer" });
+---
+
+<EventLayout event={event} title={`Digital Program — ${event.data.title}`}>
+  <div class="container">
+    <Breadcrumb items={[
+      { label: "Home", href: "/" },
+      { label: "Commencement", href: "/commencement/" },
+      { label: "Graduate", href: "/commencement/graduate/" },
+      { label: "Program" },
+    ]} />
+  </div>
+
+  <ProgramHero event={event} />
+
+  <div class="container">
+    <div class="program-layout">
+      <div class="program-main">
+
+        {/* Order of Ceremony */}
+        {ceremonyProgram?.programItems && ceremonyProgram.programItems.length > 0 && (
+          <section id="program" class="program-section">
+            <h2 class="section-heading">Order of Ceremony</h2>
+            <ProgramAgenda items={ceremonyProgram.programItems} />
+          </section>
+        )}
+
+        {/* Land Acknowledgment */}
+        {ceremonyProgram?.landAcknowledgment && (
+          <section id="land-acknowledgment" class="program-section">
+            <h2 class="section-heading">Land Acknowledgment</h2>
+            <p class="acknowledgment-text">{ceremonyProgram.landAcknowledgment}</p>
+          </section>
+        )}
+
+        {/* Student Speaker */}
+        {ceremonyProgram?.studentSpeaker && (
+          <section id="student-speaker" class="program-section">
+            <h2 class="section-heading">Student Speaker</h2>
+            <SpeakerFeature
+              speaker={ceremonyProgram.studentSpeaker}
+              student={studentSpeakerEntry}
+            />
+          </section>
+        )}
+
+        {/* In Memoriam */}
+        {inMemoriam.length > 0 && (
+          <section id="in-memoriam" class="program-section">
+            <InMemoriam entries={inMemoriam} />
+          </section>
+        )}
+
+        {/* Degree Candidates */}
+        {candidateGroups.length > 0 && (
+          <section id="candidates" class="program-section">
+            <h2 class="section-heading">Degree Candidates</h2>
+            <CandidatesList groups={candidateGroups} />
+          </section>
+        )}
+
+        {/* Disclaimer */}
+        {ceremonyProgram?.disclaimer && (
+          <section id="disclaimer" class="program-section">
+            <ProgramDisclaimer text={ceremonyProgram.disclaimer} />
+          </section>
+        )}
+
+        {/* Back link */}
+        <div class="program-back">
+          <Button href="/commencement/graduate/" variant="outline">
+            &larr; Back to Graduate Commencement
+          </Button>
+        </div>
+
+      </div>
+
+      <aside class="program-sidebar">
+        <TableOfContents items={tocItems} />
+      </aside>
+    </div>
+  </div>
+</EventLayout>
+
+<style>
+  .program-layout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+  }
+
+  .program-sidebar {
+    order: -1;
+  }
+
+  .program-main {
+    flex: 1;
+    min-width: 0;
+  }
+
+  @media (min-width: 1024px) {
+    .program-layout {
+      flex-direction: row;
+      gap: var(--space-10);
+    }
+
+    .program-sidebar {
+      order: 0;
+      flex: 0 0 220px;
+      position: sticky;
+      top: calc(60px + var(--space-8));
+      align-self: flex-start;
+    }
+  }
+
+  .program-section {
+    padding-block: var(--space-6);
+    scroll-margin-top: calc(60px + var(--space-4));
+  }
+
+  .section-heading {
+    font-size: var(--text-2xl);
+    margin-bottom: var(--space-6);
+    position: relative;
+    display: inline-block;
+  }
+
+  :global([data-theme^="commencement"]) .section-heading::after {
+    content: "";
+    display: block;
+    width: 40px;
+    height: 2px;
+    background: var(--color-gold, var(--color-accent));
+    margin-top: var(--space-2);
+  }
+
+  .acknowledgment-text {
+    font-size: var(--text-base);
+    line-height: 1.8;
+    color: var(--color-muted);
+    max-width: 65ch;
+    font-style: italic;
+  }
+
+  .program-back {
+    padding-block: var(--space-8);
+    text-align: center;
+  }
+</style>

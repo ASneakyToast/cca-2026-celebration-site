@@ -1,0 +1,117 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { formatDate } from "../../lib/utils/format";
+
+interface Props {
+  event: CollectionEntry<"events">;
+}
+
+const { event } = Astro.props;
+const { title, date, time, location, address } = event.data;
+const dateDisplay = formatDate(date);
+---
+
+<section class="program-hero">
+  <div class="container">
+    <p class="program-label">Digital Program</p>
+    <h1 class="hero-title">{title}</h1>
+    <p class="hero-subtitle">119th Commencement</p>
+    <div class="hero-meta">
+      <time class="hero-date">{dateDisplay}</time>
+      <span class="hero-separator" aria-hidden="true">&#9670;</span>
+      <span class="hero-time">{time}</span>
+    </div>
+    <p class="hero-location">
+      <a href={`https://maps.google.com/?q=${encodeURIComponent(address)}`} target="_blank" rel="noopener noreferrer">
+        {location}
+      </a>
+    </p>
+  </div>
+</section>
+
+<style>
+  .program-hero {
+    padding-block: var(--space-10) var(--space-8);
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+  }
+
+  .program-hero::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--color-accent) 6%, transparent), transparent 70%);
+    pointer-events: none;
+  }
+
+  .program-hero .container {
+    position: relative;
+  }
+
+  .program-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-gold, var(--color-accent));
+    margin-bottom: var(--space-4);
+  }
+
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: var(--text-4xl);
+    background: var(--theme-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+  }
+
+  .hero-subtitle {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    color: var(--color-muted);
+    margin-top: var(--space-2);
+  }
+
+  .hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-3);
+    font-family: var(--font-mono);
+    font-size: var(--text-base);
+    color: var(--color-muted);
+    margin-top: var(--space-6);
+  }
+
+  .hero-date {
+    color: var(--color-accent);
+  }
+
+  .hero-separator {
+    color: var(--color-accent);
+    opacity: 0.5;
+    font-size: 0.6em;
+  }
+
+  .hero-location {
+    margin-top: var(--space-3);
+    font-size: var(--text-sm);
+  }
+
+  .hero-location a {
+    color: var(--color-muted);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .hero-location a:hover {
+    color: var(--color-accent);
+  }
+</style>

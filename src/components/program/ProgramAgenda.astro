@@ -1,0 +1,90 @@
+---
+interface ProgramItem {
+  order: number;
+  label: string;
+  presenter?: string;
+  description?: string;
+  type: string;
+}
+
+interface Props {
+  items: ProgramItem[];
+}
+
+const { items } = Astro.props;
+const sorted = [...items].sort((a, b) => a.order - b.order);
+
+const highlightTypes = new Set(["processional", "recessional", "conferring"]);
+---
+
+<div class="program-agenda">
+  <ol class="agenda-list" role="list">
+    {sorted.map((item) => (
+      <li class:list={["agenda-item", { "agenda-highlight": highlightTypes.has(item.type) }]}>
+        <span class="agenda-label">{item.label}</span>
+        {item.presenter && (
+          <span class="agenda-presenter">{item.presenter}</span>
+        )}
+        {item.description && (
+          <span class="agenda-description">{item.description}</span>
+        )}
+      </li>
+    ))}
+  </ol>
+</div>
+
+<style>
+  .program-agenda {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    padding: var(--space-6);
+  }
+
+  .agenda-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    counter-reset: agenda;
+  }
+
+  .agenda-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding-block: var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .agenda-item:first-child {
+    padding-top: 0;
+  }
+
+  .agenda-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .agenda-label {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: var(--text-base);
+    color: var(--color-text);
+  }
+
+  .agenda-highlight .agenda-label {
+    color: var(--color-gold, var(--color-accent));
+  }
+
+  .agenda-presenter {
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+  }
+
+  .agenda-description {
+    font-size: var(--text-sm);
+    font-style: italic;
+    color: var(--color-muted);
+    opacity: 0.8;
+  }
+</style>

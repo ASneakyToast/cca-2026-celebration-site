@@ -135,6 +135,35 @@ const events = defineCollection({
           .optional(),
         distinguishedAlumni: reference("people").optional(),
         candidatesListUrl: z.string().optional(),
+        programItems: z
+          .array(
+            z.object({
+              order: z.number(),
+              label: z.string(),
+              presenter: z.string().optional(),
+              description: z.string().optional(),
+              type: z.enum([
+                "processional",
+                "welcome",
+                "address",
+                "recognition",
+                "performance",
+                "conferring",
+                "recessional",
+                "other",
+              ]),
+            }),
+          )
+          .optional(),
+        grandMarshal: z
+          .object({
+            name: z.string(),
+            title: z.string().optional(),
+          })
+          .optional(),
+        presidentName: z.string().optional(),
+        landAcknowledgment: z.string().optional(),
+        disclaimer: z.string().optional(),
       })
       .optional(),
     videoUrl: z.string().optional(),
