@@ -1,24 +1,17 @@
 ---
 import { getEntry, getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import WorkGrid from '../../components/works/WorkGrid.astro';
 import EmailSignup from '../../components/sections/EmailSignup.astro';
 import BentoEvents from '../../components/landing/BentoEvents.astro';
 import Button from '../../components/ui/Button.astro';
-import { getWorksByEvent } from '../../lib/utils/collections';
-import { fullName, formatDateRange } from '../../lib/utils/format';
+import PastGallery from '../../components/sections/PastGallery.astro';
+import { formatDateRange } from '../../lib/utils/format';
 
 const event = await getEntry('events', 'showcase');
 if (!event) throw new Error('Event showcase not found');
 
-const works = await getWorksByEvent('showcase');
-const students = await getCollection('students');
-const studentMap = new Map(students.map(s => [s.id, fullName(s)]));
-
-const events = (await getCollection('events')).sort((a, b) => a.data.order - b.data.order);
-const undergradEvent = events.find(e => e.id === 'thesis-undergraduate');
-const gradEvent = events.find(e => e.id === 'thesis-graduate');
-
+const allEvents = (await getCollection('events')).sort((a, b) => a.data.order - b.data.order);
+const events = allEvents.filter(e => e.data.type !== 'commencement');
 // Determine if showcase has passed
 const isPostEvent = new Date() > new Date(event.data.endDate ?? event.data.date);
 ---
@@ -83,9 +76,9 @@ const isPostEvent = new Date() > new Date(event.data.endDate ?? event.data.date)
         {isPostEvent ? (
           <Button href="/showcase/works/" variant="primary">Browse Student Work</Button>
         ) : (
-          <Button href="#about" variant="primary">Learn More</Button>
+          <Button href="https://www.eventbrite.com/" variant="primary">RSVP</Button>
         )}
-        <Button href="/showcase/students/" variant="outline">Meet the Students</Button>
+        <Button href="#about" variant="outline">Learn More</Button>
       </div>
     </div>
     <div class="showcase-hero__scroll" aria-hidden="true">
@@ -98,84 +91,47 @@ const isPostEvent = new Date() > new Date(event.data.endDate ?? event.data.date)
   {/* ── About ── */}
   <section id="about" class="about-section">
     <div class="container">
-      <span class="section-label reveal">About the Exhibitions</span>
-      <h2 class="section-heading reveal">Three Days of Art, Design &amp; Making</h2>
-      <p class="about-desc reveal">{event.data.description}</p>
-      <div class="about-details reveal">
-        <div class="about-detail">
-          <span class="about-detail__label">When</span>
-          <span class="about-detail__value">{formatDateRange(event.data.date, event.data.endDate)}</span>
-          {event.data.time && <span class="about-detail__sub">{event.data.time}</span>}
-        </div>
-        <div class="about-detail">
-          <span class="about-detail__label">Where</span>
-          <span class="about-detail__value">{event.data.location}</span>
-          {event.data.address && <span class="about-detail__sub">{event.data.address}</span>}
-        </div>
-      </div>
-    </div>
-  </section>
-
-  {/* ── Featured Works ── */}
-  {works.length > 0 && (
-    <section class="works-section">
-      <div class="container">
-        <span class="section-label reveal">Student Work</span>
-        <h2 class="section-heading reveal">Featured Works</h2>
-        <WorkGrid works={works} studentMap={studentMap} />
-      </div>
-    </section>
-  )}
-
-  {/* ── Explore CTA ── */}
-  <section class="explore-section">
-    <div class="container">
-      <div class="explore-card reveal">
-        <div class="explore-card__inner">
-          <span class="section-label">Student Showcase</span>
-          <h2 class="explore-card__heading">Explore the Full Showcase</h2>
-          <p class="explore-card__desc">Browse thesis work from every program, meet graduating students, and discover the breadth of creative practice at CCA.</p>
-          <div class="explore-card__ctas">
-            <Button href="/showcase/students/" variant="primary">Meet the Students</Button>
-            <Button href="/showcase/works/" variant="outline">Browse All Work</Button>
+      <div class="about-grid">
+        <div class="about-grid__content">
+          <span class="section-label reveal">About the Exhibitions</span>
+          <h2 class="section-heading reveal">Three Days of Art, Design &amp; Making</h2>
+          <p class="about-desc reveal">{event.data.description}</p>
+          <div class="about-details reveal">
+            <div class="about-detail">
+              <span class="about-detail__label">When</span>
+              <span class="about-detail__value">{formatDateRange(event.data.date, event.data.endDate)}</span>
+              {event.data.time && <span class="about-detail__sub">{event.data.time}</span>}
+            </div>
+            <div class="about-detail">
+              <span class="about-detail__label">Where</span>
+              <span class="about-detail__value">{event.data.location}</span>
+              {event.data.address && <span class="about-detail__sub">{event.data.address}</span>}
+            </div>
           </div>
+          <a href="https://www.eventbrite.com/" class="about-rsvp reveal">RSVP on Eventbrite &rarr;</a>
+        </div>
+        <div class="about-grid__poster reveal">
+          <img src="/images/thesis/poster.png" alt="Graduation Exhibitions 2026 poster" class="about-poster" />
         </div>
       </div>
     </div>
   </section>
 
-  {/* ── Related Exhibitions ── */}
-  {(undergradEvent || gradEvent) && (
-    <section class="exhibitions-section">
-      <div class="container">
-        <span class="section-label reveal">Fine Art Thesis Exhibitions</span>
-        <h2 class="section-heading reveal">Related Exhibitions</h2>
-        <div class="exhibition-cards">
-          {undergradEvent && (
-            <a href="/thesis/undergraduate/" class="exhibition-card reveal">
-              <div class="exhibition-card__accent" aria-hidden="true"></div>
-              <span class="exhibition-card__badge">BFA</span>
-              <h3 class="exhibition-card__title">{undergradEvent.data.title}</h3>
-              <time class="exhibition-card__date">{formatDateRange(undergradEvent.data.date, undergradEvent.data.endDate)}</time>
-              <p class="exhibition-card__location">{undergradEvent.data.location}</p>
-              <span class="exhibition-card__cta">View Exhibition &rarr;</span>
-            </a>
-          )}
-
-          {gradEvent && (
-            <a href="/thesis/graduate/" class="exhibition-card reveal">
-              <div class="exhibition-card__accent" aria-hidden="true"></div>
-              <span class="exhibition-card__badge">MFA</span>
-              <h3 class="exhibition-card__title">{gradEvent.data.title}</h3>
-              <time class="exhibition-card__date">{formatDateRange(gradEvent.data.date, gradEvent.data.endDate)}</time>
-              <p class="exhibition-card__location">{gradEvent.data.location}</p>
-              <span class="exhibition-card__cta">View Exhibition &rarr;</span>
-            </a>
-          )}
-        </div>
-      </div>
-    </section>
-  )}
+  {/* ── Past Exhibitions Gallery ── */}
+  <PastGallery
+    label="Past Exhibitions"
+    title="A Legacy of Creative Work"
+    images={[
+      { src: 'https://storage.googleapis.com/ccaedu-prod/media/images/large_digital_jpg-CCA_EOY-Show_SP25-115-jrl2.original.jpg', alt: 'Student artwork from a previous CCA exhibition' },
+      { src: 'https://storage.googleapis.com/ccaedu-prod/media/images/commencement-masters24-2025-body-001.original.jpg', alt: 'Installation view from a past graduation exhibition' },
+      { src: 'https://storage.googleapis.com/ccaedu-prod/media/images/large_digital_jpg-CCA_EOY-Show_SP25-115-jrl2.original.jpg', alt: 'Gallery view of student design work' },
+      { src: 'https://storage.googleapis.com/ccaedu-prod/media/images/commencement-masters24-2025-body-001.original.jpg', alt: 'Visitors engaging with student installations' },
+      { src: 'https://storage.googleapis.com/ccaedu-prod/media/images/large_digital_jpg-CCA_EOY-Show_SP25-115-jrl2.original.jpg', alt: 'Mixed media works on display' },
+      { src: 'https://storage.googleapis.com/ccaedu-prod/media/images/commencement-masters24-2025-body-001.original.jpg', alt: 'Graduate thesis exhibition walkthrough' },
+      { src: 'https://storage.googleapis.com/ccaedu-prod/media/images/large_digital_jpg-CCA_EOY-Show_SP25-115-jrl2.original.jpg', alt: 'Detail of student sculpture work' },
+      { src: 'https://storage.googleapis.com/ccaedu-prod/media/images/commencement-masters24-2025-body-001.original.jpg', alt: 'Opening night at a previous exhibition' },
+    ]}
+  />
 
   {/* ── All Celebration Events ── */}
   <section class="all-events-section">
@@ -381,10 +337,7 @@ const isPostEvent = new Date() > new Date(event.data.endDate ?? event.data.date)
   }
 
   /* ── Section rhythm ── */
-  .about-section,
-  .works-section,
-  .explore-section,
-  .exhibitions-section {
+  .about-section {
     padding-block: var(--space-20);
   }
 
@@ -394,6 +347,52 @@ const isPostEvent = new Date() > new Date(event.data.endDate ?? event.data.date)
   }
 
   /* ── About ── */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-12);
+  }
+
+  @media (min-width: 768px) {
+    .about-grid {
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+      gap: var(--space-16);
+    }
+  }
+
+  .about-grid__poster {
+    order: -1;
+  }
+
+  @media (min-width: 768px) {
+    .about-grid__poster {
+      order: 0;
+    }
+  }
+
+  .about-poster {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-card);
+    object-fit: cover;
+  }
+
+  .about-rsvp {
+    display: inline-block;
+    margin-top: var(--space-6);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-text);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    transition: color 0.2s ease;
+  }
+
+  .about-rsvp:hover {
+    color: var(--color-accent, var(--color-muted));
+  }
+
   .about-desc {
     font-size: var(--text-lg);
     color: var(--color-muted);
@@ -441,156 +440,6 @@ const isPostEvent = new Date() > new Date(event.data.endDate ?? event.data.date)
     font-size: var(--text-sm);
     color: var(--color-muted);
     margin-top: var(--space-1);
-  }
-
-  /* ── Works ── */
-  .works-section {
-    border-top: 1px solid var(--color-border);
-  }
-
-  /* ── Explore CTA card ── */
-  .explore-card {
-    position: relative;
-    border-radius: var(--radius-card);
-    padding: 3px;
-    background: var(--gradient-prismatic);
-    background-size: 200% 200%;
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .explore-card {
-      animation: prismatic-shift 6s linear infinite;
-    }
-  }
-
-  .explore-card__inner {
-    background: var(--color-surface);
-    border-radius: calc(var(--radius-card) - 2px);
-    padding: var(--space-10) var(--space-8);
-    text-align: center;
-  }
-
-  .explore-card__heading {
-    font-family: var(--font-display);
-    font-size: var(--text-3xl);
-    margin-bottom: var(--space-4);
-  }
-
-  .explore-card__desc {
-    font-size: var(--text-base);
-    color: var(--color-muted);
-    max-width: 50ch;
-    margin-inline: auto;
-    line-height: 1.6;
-    margin-bottom: var(--space-6);
-  }
-
-  .explore-card__ctas {
-    display: flex;
-    gap: var(--space-3);
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  /* ── Exhibition cards ── */
-  .exhibitions-section {
-    border-top: 1px solid var(--color-border);
-  }
-
-  .exhibition-cards {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-6);
-  }
-
-  @media (min-width: 768px) {
-    .exhibition-cards {
-      grid-template-columns: 1fr 1fr;
-    }
-  }
-
-  .exhibition-card {
-    display: block;
-    position: relative;
-    text-decoration: none;
-    color: var(--color-text);
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-card);
-    padding: var(--space-8);
-    overflow: hidden;
-    transition: transform 0.3s var(--ease-out-expo),
-                box-shadow 0.3s var(--ease-out-expo);
-  }
-
-  .exhibition-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 12px 40px color-mix(in srgb, var(--color-accent) 15%, transparent);
-  }
-
-  .exhibition-card__accent {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: var(--gradient-prismatic);
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .exhibition-card__accent {
-      animation: prismatic-shift 6s linear infinite;
-    }
-
-    .exhibition-card:hover .exhibition-card__accent {
-      animation-duration: 2s;
-    }
-  }
-
-  .exhibition-card__badge {
-    display: inline-block;
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--color-accent);
-    background: var(--color-accent-tint);
-    padding: var(--space-1) var(--space-2);
-    border-radius: 3px;
-    margin-bottom: var(--space-4);
-  }
-
-  .exhibition-card__title {
-    font-size: var(--text-2xl);
-    line-height: 1.2;
-    margin-bottom: var(--space-4);
-  }
-
-  .exhibition-card__date {
-    display: block;
-    font-size: var(--text-lg);
-    font-weight: 600;
-    color: var(--color-accent);
-    margin-bottom: var(--space-2);
-  }
-
-  .exhibition-card__location {
-    font-family: var(--font-mono);
-    font-size: var(--text-sm);
-    color: var(--color-muted);
-    margin-bottom: var(--space-6);
-  }
-
-  .exhibition-card__cta {
-    display: inline-block;
-    font-size: var(--text-sm);
-    font-weight: 700;
-    color: var(--color-accent);
-    transition: letter-spacing 0.2s var(--ease-out-expo);
-  }
-
-  .exhibition-card:hover .exhibition-card__cta {
-    letter-spacing: 0.05em;
   }
 
   /* ── All Events ── */

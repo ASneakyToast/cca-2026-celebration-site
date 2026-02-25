@@ -1,0 +1,312 @@
+---
+interface Props {
+  title: string;
+  label: string;
+  images: { src: string; alt: string }[];
+  marqueeDuration?: number;
+}
+
+const { title, label, images, marqueeDuration = 60 } = Astro.props;
+const doubledImages = [...images, ...images];
+---
+
+<section class="past-gallery">
+  <div class="container past-gallery__header">
+    <div>
+      <span class="section-label reveal">{label}</span>
+      <h2 class="section-heading reveal">{title}</h2>
+    </div>
+    <button
+      class="past-gallery__pause-btn reveal"
+      type="button"
+      data-pause-btn
+      aria-label="Pause gallery animation"
+    >
+      Pause
+    </button>
+  </div>
+  <div class="past-gallery__viewport reveal">
+    <div
+      class="past-gallery__track"
+      data-gallery-track
+      data-marquee-duration={marqueeDuration}
+    >
+      {doubledImages.map(({ src, alt }) => (
+        <button class="past-gallery__item" type="button" data-lightbox-trigger>
+          <img src={src} alt={alt} loading="lazy" />
+        </button>
+      ))}
+    </div>
+  </div>
+  <dialog class="past-gallery__lightbox" data-lightbox>
+    <button class="past-gallery__lightbox-close" type="button" aria-label="Close lightbox">&times;</button>
+    <img class="past-gallery__lightbox-img" src="" alt="" />
+  </dialog>
+</section>
+
+<script>
+  function initPastGallery() {
+  document.querySelectorAll<HTMLElement>('.past-gallery').forEach((section) => {
+    // Skip already-initialized sections
+    if (section.dataset.galleryInit) return;
+    section.dataset.galleryInit = 'true';
+    const track = section.querySelector<HTMLElement>('[data-gallery-track]');
+    const pauseBtn = section.querySelector<HTMLButtonElement>('[data-pause-btn]');
+    const dialog = section.querySelector<HTMLDialogElement>('[data-lightbox]');
+    const lightboxImg = dialog?.querySelector<HTMLImageElement>('.past-gallery__lightbox-img');
+    const triggers = section.querySelectorAll<HTMLButtonElement>('[data-lightbox-trigger]');
+
+    if (!track || !pauseBtn || !dialog || !lightboxImg) return;
+
+    // Marquee state
+    const duration = parseFloat(track.dataset.marqueeDuration || '60');
+    const halfWidth = track.scrollWidth / 2;
+    const baseSpeed = halfWidth / (duration * 60); // px per frame at 60fps
+    let position = 0;
+    let currentSpeed = baseSpeed;
+    let targetSpeed = baseSpeed;
+    let paused = false;
+    let hovering = false;
+    const lerpFactor = 0.03;
+
+    // Respect prefers-reduced-motion
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let reducedMotion = motionQuery.matches;
+
+    function updatePauseBtn() {
+      const stopped = paused || reducedMotion;
+      pauseBtn.textContent = stopped ? 'Play' : 'Pause';
+      pauseBtn.setAttribute('aria-label', stopped ? 'Play gallery animation' : 'Pause gallery animation');
+    }
+
+    function recalcTarget() {
+      targetSpeed = (paused || hovering || reducedMotion) ? 0 : baseSpeed;
+    }
+
+    motionQuery.addEventListener('change', (e) => {
+      reducedMotion = e.matches;
+      recalcTarget();
+      updatePauseBtn();
+    });
+
+    if (reducedMotion) {
+      targetSpeed = 0;
+      currentSpeed = 0;
+      updatePauseBtn();
+    }
+
+    // Pause/Play toggle
+    pauseBtn.addEventListener('click', () => {
+      paused = !paused;
+      recalcTarget();
+      updatePauseBtn();
+    });
+
+    // Hover pause
+    const viewport = section.querySelector<HTMLElement>('.past-gallery__viewport');
+    viewport?.addEventListener('mouseenter', () => {
+      hovering = true;
+      recalcTarget();
+    });
+    viewport?.addEventListener('mouseleave', () => {
+      hovering = false;
+      recalcTarget();
+    });
+
+    // Animation loop
+    function animate() {
+      currentSpeed += (targetSpeed - currentSpeed) * lerpFactor;
+
+      // Snap to zero when close enough to avoid jittering
+      if (Math.abs(currentSpeed) < 0.01 && targetSpeed === 0) {
+        currentSpeed = 0;
+      }
+
+      position -= currentSpeed;
+
+      // Seamless loop reset
+      if (position <= -halfWidth) {
+        position += halfWidth;
+      }
+
+      track.style.transform = `translateX(${position}px)`;
+      requestAnimationFrame(animate);
+    }
+
+    requestAnimationFrame(animate);
+
+    // Lightbox
+    triggers.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const img = btn.querySelector('img');
+        if (!img) return;
+        lightboxImg.src = img.src;
+        lightboxImg.alt = img.alt;
+        dialog.showModal();
+      });
+    });
+
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) {
+        dialog.close();
+      }
+    });
+
+    dialog.querySelector('.past-gallery__lightbox-close')?.addEventListener('click', () => {
+      dialog.close();
+    });
+  });
+  }
+
+  initPastGallery();
+  document.addEventListener('astro:page-load', initPastGallery);
+</script>
+
+<style>
+  .past-gallery {
+    padding-block: var(--space-20);
+    border-top: 1px solid var(--color-border);
+    overflow: hidden;
+  }
+
+  .past-gallery__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .past-gallery__pause-btn {
+    background: none;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+    white-space: nowrap;
+  }
+
+  .past-gallery__pause-btn:hover {
+    color: var(--color-text);
+    border-color: var(--color-text);
+  }
+
+  .past-gallery__viewport {
+    margin-top: var(--space-8);
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 4%,
+      black 96%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 4%,
+      black 96%,
+      transparent 100%
+    );
+    overflow: hidden;
+  }
+
+  .past-gallery__track {
+    display: flex;
+    gap: var(--space-4);
+    padding-block: var(--space-2);
+    width: max-content;
+    will-change: transform;
+  }
+
+  .past-gallery__item {
+    flex-shrink: 0;
+    width: 380px;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+
+  .past-gallery__item:hover {
+    transform: scale(1.02);
+  }
+
+  @media (min-width: 768px) {
+    .past-gallery__item {
+      width: 520px;
+    }
+  }
+
+  .past-gallery__item img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    display: block;
+    user-select: none;
+    -webkit-user-drag: none;
+    pointer-events: none;
+  }
+
+  /* Lightbox */
+  .past-gallery__lightbox {
+    border: none;
+    background: transparent;
+    padding: 0;
+    max-width: none;
+    max-height: none;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    inset: 0;
+  }
+
+  .past-gallery__lightbox:not([open]) {
+    display: none;
+  }
+
+  .past-gallery__lightbox::backdrop {
+    background: rgba(0, 0, 0, 0.85);
+  }
+
+  .past-gallery__lightbox-img {
+    max-width: 90vw;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: var(--radius-card);
+    transform: scale(0.9);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+
+  .past-gallery__lightbox[open] .past-gallery__lightbox-img {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  .past-gallery__lightbox-close {
+    position: absolute;
+    top: var(--space-4);
+    right: var(--space-4);
+    background: none;
+    border: none;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: var(--space-2);
+    z-index: 1;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+
+  .past-gallery__lightbox-close:hover {
+    opacity: 1;
+  }
+</style>

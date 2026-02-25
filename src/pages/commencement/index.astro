@@ -6,6 +6,7 @@ import QuoteBlock from '../../components/ui/QuoteBlock.astro';
 import EmailSignup from '../../components/sections/EmailSignup.astro';
 import ContactBlock from '../../components/ui/ContactBlock.astro';
 import Button from '../../components/ui/Button.astro';
+import PastGallery from '../../components/sections/PastGallery.astro';
 import { formatDate } from '../../lib/utils/format';
 import { getCelebrationEvents } from '../../lib/utils/collections';
 
@@ -96,6 +97,22 @@ const isPostEvent = new Date() > latestDate;
       </div>
     </div>
   </section>
+
+  {/* ── Past Commencement Gallery ── */}
+  <PastGallery
+    label="Past Commencements"
+    title="Celebrating Generations of Graduates"
+    images={[
+      { src: 'https://storage.googleapis.com/ccaedu-prod/media/images/commencement-masters24-2025-body-001.original.jpg', alt: 'Graduates celebrating at a previous CCA commencement' },
+      { src: 'https://storage.googleapis.com/ccaedu-prod/media/images/large_digital_jpg-CCA_EOY-Show_SP25-115-jrl2.original.jpg', alt: 'Commencement ceremony processional' },
+      { src: 'https://storage.googleapis.com/ccaedu-prod/media/images/commencement-masters24-2025-body-001.original.jpg', alt: 'Students receiving their diplomas' },
+      { src: 'https://storage.googleapis.com/ccaedu-prod/media/images/large_digital_jpg-CCA_EOY-Show_SP25-115-jrl2.original.jpg', alt: 'Families and friends at commencement' },
+      { src: 'https://storage.googleapis.com/ccaedu-prod/media/images/commencement-masters24-2025-body-001.original.jpg', alt: 'Cap toss celebration moment' },
+      { src: 'https://storage.googleapis.com/ccaedu-prod/media/images/large_digital_jpg-CCA_EOY-Show_SP25-115-jrl2.original.jpg', alt: 'Graduate portraits from past years' },
+      { src: 'https://storage.googleapis.com/ccaedu-prod/media/images/commencement-masters24-2025-body-001.original.jpg', alt: 'Decorated graduation caps' },
+      { src: 'https://storage.googleapis.com/ccaedu-prod/media/images/large_digital_jpg-CCA_EOY-Show_SP25-115-jrl2.original.jpg', alt: 'Celebration with faculty and staff' },
+    ]}
+  />
 
   {/* ── Special Celebrations ── */}
   {celebrations.length > 0 && (
