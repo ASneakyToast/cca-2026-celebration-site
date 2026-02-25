@@ -1,0 +1,296 @@
+---
+interface Story {
+  title: string;
+  url: string;
+  date?: string;
+  summary?: string;
+  image?: { src: string; alt: string };
+  studentNames: string[];
+}
+
+interface Props {
+  stories: Story[];
+}
+
+const { stories } = Astro.props;
+const featured = stories[0];
+const rest = stories.slice(1);
+
+function formatStoryDate(dateStr?: string): string {
+  if (!dateStr) return '';
+  const d = new Date(dateStr + 'T00:00:00');
+  return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+---
+
+{stories.length > 0 && (
+  <section class="newsroom-section reveal" id="in-the-news">
+    <div class="container">
+      <span class="section-label">In the News</span>
+      <h2 class="newsroom-section__heading">Student Stories</h2>
+
+      <div class="newsroom-grid">
+        {featured && (
+          <a href={featured.url} class="news-card news-card--featured" target={featured.url.startsWith('http') ? '_blank' : undefined} rel={featured.url.startsWith('http') ? 'noopener noreferrer' : undefined}>
+            <article>
+              {featured.image && (
+                <div class="news-card__image">
+                  <img src={featured.image.src} alt={featured.image.alt} loading="lazy" />
+                </div>
+              )}
+              <div class="news-card__body">
+                <h3 class="news-card__title">{featured.title}</h3>
+                {featured.summary && <p class="news-card__summary">{featured.summary}</p>}
+                <div class="news-card__meta">
+                  {featured.studentNames.length > 0 && (
+                    <div class="news-card__students">
+                      {featured.studentNames.map((name) => (
+                        <span class="news-card__pill">{name}</span>
+                      ))}
+                    </div>
+                  )}
+                  {featured.date && <time class="news-card__date">{formatStoryDate(featured.date)}</time>}
+                </div>
+                {featured.url.startsWith('http') && (
+                  <span class="news-card__external" aria-label="External link">
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M12 9.3V13a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h3.7" />
+                      <polyline points="9 2 14 2 14 7" />
+                      <line x1="6.5" y1="9.5" x2="14" y2="2" />
+                    </svg>
+                  </span>
+                )}
+              </div>
+            </article>
+          </a>
+        )}
+
+        {rest.map((story) => (
+          <a href={story.url} class="news-card" target={story.url.startsWith('http') ? '_blank' : undefined} rel={story.url.startsWith('http') ? 'noopener noreferrer' : undefined}>
+            <article>
+              {story.image && (
+                <div class="news-card__image">
+                  <img src={story.image.src} alt={story.image.alt} loading="lazy" />
+                </div>
+              )}
+              <div class="news-card__body">
+                <h3 class="news-card__title">{story.title}</h3>
+                {story.summary && <p class="news-card__summary">{story.summary}</p>}
+                <div class="news-card__meta">
+                  {story.studentNames.length > 0 && (
+                    <div class="news-card__students">
+                      {story.studentNames.map((name) => (
+                        <span class="news-card__pill">{name}</span>
+                      ))}
+                    </div>
+                  )}
+                  {story.date && <time class="news-card__date">{formatStoryDate(story.date)}</time>}
+                </div>
+                {story.url.startsWith('http') && (
+                  <span class="news-card__external" aria-label="External link">
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M12 9.3V13a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h3.7" />
+                      <polyline points="9 2 14 2 14 7" />
+                      <line x1="6.5" y1="9.5" x2="14" y2="2" />
+                    </svg>
+                  </span>
+                )}
+              </div>
+            </article>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+)}
+
+<style>
+  .newsroom-section {
+    padding-block: var(--space-20);
+  }
+
+  .newsroom-section__heading {
+    font-family: var(--font-heading);
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-10);
+  }
+
+  .newsroom-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--space-6);
+  }
+
+  .news-card--featured {
+    grid-column: 1 / -1;
+  }
+
+  @media (min-width: 768px) {
+    .news-card--featured {
+      grid-column: span 2;
+    }
+  }
+
+  .news-card {
+    display: block;
+    text-decoration: none;
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card-rest);
+    overflow: hidden;
+    position: relative;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+  }
+
+  .news-card::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    z-index: 1;
+    background: var(--gradient-prismatic);
+    border-radius: 5px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .news-card::after {
+    content: "";
+    position: absolute;
+    inset: 1px;
+    z-index: 1;
+    background: var(--color-surface);
+    border-radius: 3px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .news-card:hover::before,
+  .news-card:hover::after {
+    opacity: 1;
+  }
+
+  .news-card:hover {
+    box-shadow: var(--shadow-card-hover);
+    transform: translateY(-2px);
+  }
+
+  .news-card > article {
+    position: relative;
+    z-index: 2;
+  }
+
+  .news-card--featured > article {
+    display: grid;
+    grid-template-columns: 1fr;
+    height: 100%;
+  }
+
+  @media (min-width: 768px) {
+    .news-card--featured > article {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .news-card__image {
+    aspect-ratio: 1;
+    overflow: hidden;
+    background: var(--color-border);
+  }
+
+  .news-card--featured .news-card__image {
+    aspect-ratio: auto;
+    min-height: 240px;
+  }
+
+  .news-card__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .news-card:hover .news-card__image img {
+    transform: scale(1.03);
+  }
+
+  .news-card__body {
+    padding: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .news-card--featured .news-card__body {
+    padding: var(--space-6);
+    justify-content: center;
+  }
+
+  .news-card__title {
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: var(--text-base);
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .news-card--featured .news-card__title {
+    font-size: var(--text-xl);
+    -webkit-line-clamp: none;
+  }
+
+  .news-card__summary {
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin: 0;
+  }
+
+  .news-card--featured .news-card__summary {
+    -webkit-line-clamp: 3;
+  }
+
+  .news-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+  }
+
+  .news-card__students {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+  }
+
+  .news-card__pill {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-accent);
+    background: var(--color-accent-tint);
+    padding: 2px var(--space-2);
+    border-radius: 3px;
+  }
+
+  .news-card__date {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-muted);
+  }
+
+  .news-card__external {
+    color: var(--color-muted);
+    margin-top: auto;
+  }
+</style>

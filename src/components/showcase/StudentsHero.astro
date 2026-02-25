@@ -1,0 +1,107 @@
+---
+import Breadcrumb from "../ui/Breadcrumb.astro";
+
+interface Props {
+  studentCount: number;
+}
+
+const { studentCount } = Astro.props;
+---
+
+<section class="students-hero">
+  <div class="students-hero__seal" aria-hidden="true"></div>
+  <div class="students-hero__accent" aria-hidden="true"></div>
+  <div class="container">
+    <Breadcrumb items={[
+      { label: 'Home', href: '/' },
+      { label: 'Student Showcase', href: '/showcase/' },
+      { label: 'Students' },
+    ]} />
+    <div class="students-hero__content reveal">
+      <span class="students-hero__count shimmer-text">{studentCount}</span>
+      <h1 class="students-hero__title">Graduating Students</h1>
+      <p class="students-hero__subtitle">Meet the talented artists, designers, writers, and architects of CCA's Class of 2026.</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .students-hero {
+    position: relative;
+    min-height: 50vh;
+    display: flex;
+    align-items: flex-end;
+    padding-block: var(--space-8) var(--space-10);
+    overflow: hidden;
+    background: var(--gradient-hero);
+  }
+
+  .students-hero .container {
+    position: relative;
+    z-index: 1;
+  }
+
+  .students-hero__seal {
+    position: absolute;
+    top: 50%;
+    right: -5%;
+    transform: translateY(-50%);
+    width: clamp(200px, 30vw, 350px);
+    aspect-ratio: 1;
+    background: var(--color-accent);
+    opacity: 0.04;
+    mask-image: url('/images/cca-seal.svg');
+    -webkit-mask-image: url('/images/cca-seal.svg');
+    mask-size: contain;
+    -webkit-mask-size: contain;
+    mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
+    pointer-events: none;
+  }
+
+  .students-hero__accent {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--gradient-prismatic);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .students-hero__accent {
+      animation: prismatic-shift 6s linear infinite;
+    }
+  }
+
+  .students-hero__content {
+    padding-top: var(--space-8);
+  }
+
+  .students-hero__count {
+    display: block;
+    font-family: var(--font-display);
+    font-size: clamp(5rem, 14vw, 12rem);
+    font-style: italic;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .students-hero__title {
+    font-family: var(--font-heading);
+    font-size: clamp(1.75rem, 4vw, 3rem);
+    font-weight: 700;
+    line-height: 1.1;
+    margin: 0;
+    color: var(--color-text);
+  }
+
+  .students-hero__subtitle {
+    font-family: var(--font-body);
+    font-size: var(--text-lg);
+    color: var(--color-muted);
+    max-width: 50ch;
+    margin-top: var(--space-4);
+    line-height: 1.5;
+  }
+</style>

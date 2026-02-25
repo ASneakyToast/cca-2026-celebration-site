@@ -1,7 +1,9 @@
 ---
 /**
- * DecorativeCell — CSS-only decorative shapes for the bento grid.
- * Purely visual, hidden from assistive technology and below 1024px.
+ * DecorativeCell — 3D tubular squiggly line decorations for the bento grid.
+ * Each shape variant renders a different squiggle path with an inner-shadow
+ * SVG filter that creates a puffy/inflated 3D tube look. Desktop only.
+ * Path control points are animated via SMIL <animate> for organic morphing.
  */
 interface Props {
   shape: 'circle' | 'blob' | 'diamond';
@@ -9,10 +11,107 @@ interface Props {
 }
 
 const { shape, class: className } = Astro.props;
+
+const uid = Math.random().toString(36).slice(2, 8);
+
+// Each variant defines: base path + 2-3 morph keyframes (same command structure)
+const variants = {
+  circle: {
+    color: '#00BFB3',
+    highlight: '#74F3C5',
+    shadow: '#01342B',
+    viewBox: '0 0 280 220',
+    dur: '12s',
+    keyframes: [
+      'M 20 140 C 60 30, 130 10, 160 80 S 220 200, 260 110',
+      'M 30 120 C 80 60, 110 40, 170 110 S 200 170, 250 80',
+      'M 10 160 C 40 10, 150 30, 150 60 S 240 220, 270 130',
+      'M 20 140 C 60 30, 130 10, 160 80 S 220 200, 260 110',
+    ],
+  },
+  blob: {
+    color: '#563D82',
+    highlight: '#C4B8E6',
+    shadow: '#1A0A2E',
+    viewBox: '0 0 280 220',
+    dur: '15s',
+    keyframes: [
+      'M 10 60 C 70 180, 140 10, 200 130 S 260 190, 270 70',
+      'M 20 90 C 50 150, 160 40, 190 100 S 240 160, 260 100',
+      'M 5 40 C 90 200, 120 20, 210 150 S 270 210, 275 50',
+      'M 10 60 C 70 180, 140 10, 200 130 S 260 190, 270 70',
+    ],
+  },
+  diamond: {
+    color: '#FFC845',
+    highlight: '#FFF3B0',
+    shadow: '#4A2800',
+    viewBox: '0 0 280 220',
+    dur: '10s',
+    keyframes: [
+      'M 30 180 C 80 40, 180 200, 240 60',
+      'M 20 150 C 100 70, 160 170, 250 90',
+      'M 40 200 C 60 20, 200 210, 230 40',
+      'M 30 180 C 80 40, 180 200, 240 60',
+    ],
+  },
+};
+
+const v = variants[shape];
 ---
 
 <div class:list={['deco-cell', `deco-cell--${shape}`, className]} aria-hidden="true">
-  <div class="deco-cell__shape"></div>
+  <svg
+    class="deco-cell__svg"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox={v.viewBox}
+    preserveAspectRatio="xMidYMid meet"
+    fill="none"
+  >
+    <defs>
+      <filter id={`tube-${uid}`} x="-50%" y="-50%" width="200%" height="200%">
+        {/* Highlight — upper-left inner glow */}
+        <feFlood flood-color={v.highlight} flood-opacity="0.7" result="hlColor" />
+        <feComposite in="hlColor" in2="SourceAlpha" operator="in" result="hlClip" />
+        <feOffset dx="-10" dy="-12" result="hlOffset" />
+        <feGaussianBlur in="hlOffset" stdDeviation="12" result="hlBlur" />
+        <feComposite in="hlBlur" in2="SourceAlpha" operator="in" result="highlight" />
+
+        {/* Shadow — lower-right inner shadow, intensified */}
+        <feFlood flood-color={v.shadow} flood-opacity="0.6" result="shColor" />
+        <feComposite in="shColor" in2="SourceAlpha" operator="in" result="shClip" />
+        <feOffset dx="12" dy="14" result="shOffset" />
+        <feGaussianBlur in="shOffset" stdDeviation="14" result="shBlur" />
+        <feComposite in="shBlur" in2="SourceAlpha" operator="in" result="shadow" />
+
+        {/* Merge: base shape + highlight + shadow */}
+        <feMerge>
+          <feMergeNode in="SourceGraphic" />
+          <feMergeNode in="highlight" />
+          <feMergeNode in="shadow" />
+        </feMerge>
+      </filter>
+    </defs>
+
+    <path
+      class="deco-cell__tube"
+      d={v.keyframes[0]}
+      stroke={v.color}
+      stroke-width="42"
+      stroke-linecap="round"
+      filter={`url(#tube-${uid})`}
+    >
+      <animate
+        attributeName="d"
+        values={v.keyframes.join('; ')}
+        dur={v.dur}
+        repeatCount="indefinite"
+        calcMode="spline"
+        keySplines="0.45 0.05 0.55 0.95; 0.45 0.05 0.55 0.95; 0.45 0.05 0.55 0.95"
+        keyTimes="0; 0.33; 0.66; 1"
+      />
+    </path>
+  </svg>
 </div>
 
 <style>
@@ -20,75 +119,43 @@ const { shape, class: className } = Astro.props;
     display: none;
     place-items: center;
     pointer-events: none;
-    overflow: hidden;
   }
 
   @media (min-width: 1024px) {
     .deco-cell {
       display: grid;
+      overflow: visible;
     }
   }
 
-  .deco-cell__shape {
-    width: 70%;
-    aspect-ratio: 1;
+  .deco-cell__svg {
+    width: 85%;
+    height: 85%;
+    overflow: visible;
   }
 
-  /* Circle */
-  .deco-cell--circle .deco-cell__shape {
-    border-radius: 50%;
-    background: var(--color-celebration-primary);
-    opacity: 0.15;
-  }
-
-  /* Blob */
-  .deco-cell--blob .deco-cell__shape {
-    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
-    background: var(--gradient-prismatic);
-    opacity: 0.18;
-  }
-
-  /* Diamond */
-  .deco-cell--diamond .deco-cell__shape {
-    width: 55%;
-    border-radius: 4px;
-    background: var(--gradient-gold);
-    opacity: 0.2;
-    transform: rotate(45deg);
-  }
-
-  /* Subtle animations (motion-safe only) */
-  @media (prefers-reduced-motion: no-preference) {
-    .deco-cell--circle .deco-cell__shape {
-      animation: deco-breathe 4s ease-in-out infinite;
+  /* Respect reduced motion — pause SMIL animation */
+  @media (prefers-reduced-motion: reduce) {
+    .deco-cell__tube animate {
+      /* SMIL animations don't respond to CSS, so we use JS below */
     }
-
-    .deco-cell--blob .deco-cell__shape {
-      animation: deco-rotate 20s linear infinite;
-    }
-
-    .deco-cell--diamond .deco-cell__shape {
-      animation: deco-breathe 5s ease-in-out infinite;
-    }
-  }
-
-  @keyframes deco-breathe {
-    0%, 100% { transform: scale(1); opacity: 0.15; }
-    50% { transform: scale(1.08); opacity: 0.22; }
-  }
-
-  @keyframes deco-rotate {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-
-  /* Override breathe for diamond since it has a base rotation */
-  .deco-cell--diamond .deco-cell__shape {
-    animation-name: deco-diamond-breathe;
-  }
-
-  @keyframes deco-diamond-breathe {
-    0%, 100% { transform: rotate(45deg) scale(1); opacity: 0.2; }
-    50% { transform: rotate(45deg) scale(1.1); opacity: 0.28; }
   }
 </style>
+
+<script>
+  // Pause SMIL animations when user prefers reduced motion
+  const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+  function toggleSMIL(reduced: boolean) {
+    document.querySelectorAll('.deco-cell__tube animate').forEach(el => {
+      const svg = el.closest('svg');
+      if (!svg) return;
+      if (reduced) {
+        (svg as SVGSVGElement).pauseAnimations();
+      } else {
+        (svg as SVGSVGElement).unpauseAnimations();
+      }
+    });
+  }
+  toggleSMIL(mq.matches);
+  mq.addEventListener('change', e => toggleSMIL(e.matches));
+</script>

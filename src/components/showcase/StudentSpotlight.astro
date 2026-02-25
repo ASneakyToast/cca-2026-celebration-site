@@ -1,0 +1,129 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { fullName } from "../../lib/utils/format";
+import Button from "../ui/Button.astro";
+
+interface Props {
+  student: CollectionEntry<"students">;
+  programName: string;
+}
+
+const { student, programName } = Astro.props;
+const name = fullName(student);
+const { slug, photo, degreeType, bio, artistStatement } = student.data;
+const excerpt = artistStatement || bio;
+---
+
+<section class="spotlight reveal" id="spotlight">
+  <div class="container">
+    <span class="section-label">Featured Student</span>
+    <div class="spotlight__layout">
+      <div class="spotlight__text">
+        <h2 class="spotlight__name">{name}</h2>
+        <p class="spotlight__program">
+          <span class="spotlight__degree">{degreeType}</span>
+          <span class="spotlight__separator" aria-hidden="true">&middot;</span>
+          <span>{programName}</span>
+        </p>
+        {excerpt && (
+          <blockquote class="spotlight__quote">
+            <p>{excerpt.length > 200 ? excerpt.slice(0, 200).trimEnd() + '…' : excerpt}</p>
+          </blockquote>
+        )}
+        <Button href={`/showcase/students/${slug}/`} variant="outline">View Profile</Button>
+      </div>
+      <div class="spotlight__portrait">
+        <div class="spotlight__frame">
+          <img src={photo.src} alt={photo.alt} loading="lazy" />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .spotlight {
+    padding-block: var(--space-20);
+  }
+
+  .spotlight__layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-10);
+    align-items: center;
+    margin-top: var(--space-8);
+  }
+
+  @media (min-width: 768px) {
+    .spotlight__layout {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-16);
+    }
+  }
+
+  .spotlight__name {
+    font-family: var(--font-heading);
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    margin: 0 0 var(--space-2);
+  }
+
+  .spotlight__program {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+    margin-bottom: var(--space-6);
+  }
+
+  .spotlight__degree {
+    color: var(--color-accent);
+    font-weight: 600;
+  }
+
+  .spotlight__separator {
+    margin-inline: var(--space-2);
+  }
+
+  .spotlight__quote {
+    border-left: 3px solid var(--color-accent);
+    padding-left: var(--space-4);
+    margin: 0 0 var(--space-6);
+  }
+
+  .spotlight__quote p {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: var(--text-base);
+    color: var(--color-muted);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .spotlight__portrait {
+    display: flex;
+    justify-content: center;
+  }
+
+  .spotlight__frame {
+    border-radius: var(--radius-card);
+    padding: 3px;
+    background: var(--gradient-prismatic);
+    background-size: 200% 200%;
+    width: 100%;
+    max-width: 400px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .spotlight__frame {
+      animation: prismatic-shift 6s linear infinite;
+    }
+  }
+
+  .spotlight__frame img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: calc(var(--radius-card) - 2px);
+  }
+</style>

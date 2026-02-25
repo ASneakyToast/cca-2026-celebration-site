@@ -273,6 +273,20 @@ const recap = defineCollection({
   }),
 });
 
+const videoInterviews = defineCollection({
+  loader: glob({ pattern: "*.json", base: "src/content/video-interviews" }),
+  schema: z.object({
+    student: reference("students"),
+    title: z.string(),
+    videoUrl: z.string(),
+    platform: z.enum(["youtube", "vimeo"]),
+    thumbnail: z.string().optional(),
+    pullQuote: z.string().optional(),
+    duration: z.string().optional(),
+    order: z.number(),
+  }),
+});
+
 export const collections = {
   programs,
   students,
@@ -281,4 +295,5 @@ export const collections = {
   people,
   "commencement-info": commencementInfo,
   recap,
+  "video-interviews": videoInterviews,
 };

@@ -1,100 +1,133 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import Breadcrumb from '../../components/ui/Breadcrumb.astro';
-import WorkCard from '../../components/works/WorkCard.astro';
-import StudentGrid from '../../components/students/StudentGrid.astro';
+import ShowcaseHero from '../../components/showcase/ShowcaseHero.astro';
+import VideoInterviewSection from '../../components/showcase/VideoInterviewSection.astro';
+import NewsroomGrid from '../../components/showcase/NewsroomGrid.astro';
 import FilterChips from '../../components/ui/FilterChips.astro';
+import StudentGrid from '../../components/students/StudentGrid.astro';
+import EmailSignup from '../../components/sections/EmailSignup.astro';
 import Button from '../../components/ui/Button.astro';
 import { fullName } from '../../lib/utils/format';
 
-const works = (await getCollection('works')).sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
+// Fetch all collections
 const students = await getCollection('students');
 const programs = await getCollection('programs');
+const videoInterviews = await getCollection('video-interviews');
+
+// Build maps
 const programMap = new Map(programs.map(p => [p.id, p.data.name]));
 const studentMap = new Map(students.map(s => [s.id, fullName(s)]));
 
-const featuredWorks = works.filter(w => w.data.featured).slice(0, 6);
+// Aggregate + deduplicate newsroom stories by URL
+const storyMap = new Map<string, {
+  title: string;
+  url: string;
+  date?: string;
+  summary?: string;
+  image?: { src: string; alt: string };
+  studentNames: string[];
+}>();
 
+for (const student of students) {
+  const stories = student.data.newsroomStories ?? [];
+  const name = fullName(student);
+  for (const story of stories) {
+    const existing = storyMap.get(story.url);
+    if (existing) {
+      if (!existing.studentNames.includes(name)) {
+        existing.studentNames.push(name);
+      }
+    } else {
+      storyMap.set(story.url, {
+        title: story.listingTitle ?? story.title,
+        url: story.url,
+        date: story.date,
+        summary: story.summary,
+        image: story.image,
+        studentNames: [name],
+      });
+    }
+  }
+}
+
+const allStories = [...storyMap.values()].sort((a, b) => {
+  if (!a.date) return 1;
+  if (!b.date) return -1;
+  return new Date(b.date).getTime() - new Date(a.date).getTime();
+});
+
+// Program filter chips
 const programChips = programs.map(p => ({
   label: p.data.name,
   href: `/showcase/students/program/${p.data.slug}/`,
 }));
+
+// Fallback images for hero (event/work images since student photos are placeholders)
+const fallbackImages = [
+  { src: 'https://storage.googleapis.com/ccaedu-prod/media/images/large_digital_jpg-CCA_EOY-Show_SP25-115-jrl2.original.jpg', alt: 'Student work on display' },
+  { src: 'https://storage.googleapis.com/ccaedu-prod/media/images/commencement-masters24-2025-body-001.original.jpg', alt: 'Graduates celebrating' },
+  { src: 'https://storage.googleapis.com/ccaedu-prod/media/original_images/headshot_ARR.png', alt: 'CCA Student' },
+  { src: 'https://storage.googleapis.com/ccaedu-prod/media/original_images/small_digital_jpg-MFA_Fine_Arts_Open_Studio_Details_FA22-058.jpg', alt: 'Fine Arts studio' },
+];
 ---
 
-<BaseLayout title="Student Showcase" description="Explore creative works and meet the talented artists, designers, and makers of CCA's Class of 2026.">
-  <div class="container">
-    <Breadcrumb items={[
-      { label: 'Home', href: '/' },
-      { label: 'Student Showcase' },
-    ]} />
+<BaseLayout title="Student Showcase" description="Explore creative works and meet the talented artists, designers, and makers of CCA's Class of 2026." themeKey="showcase">
 
-    <section class="showcase-intro reveal">
-      <h1>Student Showcase</h1>
-      <p>Explore creative works and meet the talented artists, designers, and makers of CCA's Class of 2026.</p>
-    </section>
+  {/* 1. Hero — Portrait mosaic */}
+  <ShowcaseHero students={students} fallbackImages={fallbackImages} />
 
-    {featuredWorks.length > 0 && (
-      <section class="featured-works-section reveal">
-        <h2>Featured Works</h2>
-        <div class="works-grid">
-          {featuredWorks.map(work => {
-            const names = work.data.students?.map(ref => studentMap.get(ref.id)).filter(Boolean) as string[] ?? [];
-            return <WorkCard work={work} studentNames={names} />;
-          })}
-        </div>
-        <div class="section-cta">
-          <Button href="/showcase/works/" variant="outline">View All Works</Button>
-        </div>
-      </section>
-    )}
+  {/* 2. Video Interviews */}
+  {videoInterviews.length > 0 && (
+    <VideoInterviewSection interviews={videoInterviews} studentMap={studentMap} />
+  )}
 
-    <section class="programs-section reveal">
-      <h2>Browse by Program</h2>
+  {/* 3. In the News */}
+  {allStories.length > 0 && (
+    <NewsroomGrid stories={allStories} />
+  )}
+
+  {/* 6. Browse by Program */}
+  <section class="programs-section reveal" id="programs">
+    <div class="container">
+      <span class="section-label">Explore</span>
+      <h2 class="section-heading">Browse by Program</h2>
       <FilterChips items={programChips} />
-    </section>
+    </div>
+  </section>
 
-    <section class="students-section reveal">
-      <h2>Students</h2>
-      <StudentGrid students={students} programMap={programMap} />
+  {/* 7. Students Grid */}
+  <section class="students-section reveal" id="students">
+    <div class="container">
+      <span class="section-label">Class of 2026</span>
+      <h2 class="section-heading">Meet the Students</h2>
+      <StudentGrid students={students.slice(0, 8)} programMap={programMap} />
       <div class="section-cta">
         <Button href="/showcase/students/" variant="outline">View All Students</Button>
       </div>
-    </section>
-  </div>
+    </div>
+  </section>
+
+  {/* 8. Email Signup */}
+  <EmailSignup
+    heading="Stay Connected"
+    description="Sign up for updates about the Student Showcase, exhibition openings, and more from CCA's Class of 2026."
+  />
+
 </BaseLayout>
 
+<script src="../../scripts/cursor-track.ts"></script>
+
 <style>
-  .showcase-intro {
-    padding-block: var(--space-10) var(--space-6);
-  }
-
-  .showcase-intro h1 {
-    margin-bottom: var(--space-4);
-  }
-
-  .showcase-intro p {
-    font-size: var(--text-lg);
-    color: var(--color-muted);
-    max-width: 60ch;
-  }
-
-  .featured-works-section,
+  /* Section rhythm */
   .programs-section,
   .students-section {
-    padding-block: var(--space-6);
+    padding-block: var(--space-20);
   }
 
-  .featured-works-section h2,
-  .programs-section h2,
-  .students-section h2 {
-    margin-bottom: var(--space-6);
-  }
-
-  .works-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: var(--space-6);
+  .section-heading {
+    font-family: var(--font-heading);
+    margin-bottom: var(--space-10);
   }
 
   .section-cta {
@@ -105,5 +138,10 @@ const programChips = programs.map(p => ({
 
   .students-section {
     padding-bottom: var(--space-16);
+  }
+
+  /* Section dividers */
+  .programs-section {
+    border-top: 1px solid var(--color-border);
   }
 </style>

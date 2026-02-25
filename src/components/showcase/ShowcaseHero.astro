@@ -1,0 +1,284 @@
+---
+import type { CollectionEntry } from "astro:content";
+import Button from "../ui/Button.astro";
+
+interface Props {
+  students: CollectionEntry<"students">[];
+  fallbackImages?: Array<{ src: string; alt: string }>;
+}
+
+const { students, fallbackImages = [] } = Astro.props;
+
+// Pick up to 4 portrait images — prefer student photos, fall back to provided images
+const portraits: Array<{ src: string; alt: string }> = [];
+for (const s of students) {
+  if (portraits.length >= 4) break;
+  if (s.data.photo.src !== "/images/students/placeholder.jpg") {
+    portraits.push(s.data.photo);
+  }
+}
+// Fill remaining slots with fallback images
+for (const img of fallbackImages) {
+  if (portraits.length >= 4) break;
+  portraits.push(img);
+}
+---
+
+<section class="showcase-hero" data-cursor-scope>
+  <div class="showcase-hero__seal" aria-hidden="true"></div>
+
+  <div class="showcase-hero__collage" aria-hidden="true">
+    {portraits[0] && (
+      <img
+        class="showcase-hero__fragment showcase-hero__fragment--1"
+        data-cursor-track
+        data-cursor-strength="0.02"
+        data-cursor-max="24"
+        data-cursor-lerp="0.05"
+        src={portraits[0].src}
+        alt=""
+        loading="eager"
+        width="640"
+        height="480"
+      />
+    )}
+    {portraits[1] && (
+      <img
+        class="showcase-hero__fragment showcase-hero__fragment--2"
+        data-cursor-track
+        data-cursor-strength="0.028"
+        data-cursor-max="20"
+        data-cursor-lerp="0.07"
+        src={portraits[1].src}
+        alt=""
+        loading="eager"
+        width="480"
+        height="640"
+      />
+    )}
+    {portraits[2] && (
+      <img
+        class="showcase-hero__fragment showcase-hero__fragment--3"
+        data-cursor-track
+        data-cursor-strength="0.035"
+        data-cursor-max="30"
+        data-cursor-lerp="0.09"
+        src={portraits[2].src}
+        alt=""
+        loading="eager"
+        width="480"
+        height="360"
+      />
+    )}
+    {portraits[3] && (
+      <img
+        class="showcase-hero__fragment showcase-hero__fragment--4"
+        data-cursor-track
+        data-cursor-strength="0.04"
+        data-cursor-max="28"
+        data-cursor-lerp="0.1"
+        src={portraits[3].src}
+        alt=""
+        loading="eager"
+        width="360"
+        height="480"
+      />
+    )}
+  </div>
+
+  <div class="showcase-hero__content">
+    <span class="showcase-hero__eyebrow stagger-1">CCA Class of 2026</span>
+    <h1 class="showcase-hero__title shimmer-text stagger-2">Student Showcase</h1>
+    <p class="showcase-hero__subtitle stagger-3">Explore creative works and meet the talented artists, designers, writers, and architects of CCA's graduating class.</p>
+    <div class="showcase-hero__ctas stagger-4">
+      <Button href="#featured-works" variant="primary">Explore Works</Button>
+      <Button href="/showcase/students/" variant="outline">Meet the Students</Button>
+    </div>
+  </div>
+
+  <div class="showcase-hero__scroll" aria-hidden="true">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="6 9 12 15 18 9"></polyline>
+    </svg>
+  </div>
+</section>
+
+<style>
+  .showcase-hero {
+    position: relative;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .showcase-hero__content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-inline: var(--space-4);
+    will-change: transform, opacity;
+  }
+
+  .showcase-hero__eyebrow {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--color-muted);
+    margin-bottom: var(--space-4);
+  }
+
+  .showcase-hero__title {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 10vw, 8rem);
+    font-style: italic;
+    font-weight: 700;
+    line-height: 1;
+    margin: 0;
+  }
+
+  .showcase-hero__subtitle {
+    font-family: var(--font-body);
+    font-size: var(--text-lg);
+    color: var(--color-muted);
+    max-width: 42ch;
+    margin-top: var(--space-4);
+    line-height: 1.5;
+  }
+
+  .showcase-hero__ctas {
+    display: flex;
+    gap: var(--space-4);
+    margin-top: var(--space-8);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  /* Seal watermark */
+  .showcase-hero__seal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: clamp(280px, 60vw, 600px);
+    aspect-ratio: 1;
+    background: var(--color-accent);
+    opacity: 0.05;
+    mask-image: url('/images/cca-seal.svg');
+    -webkit-mask-image: url('/images/cca-seal.svg');
+    mask-size: contain;
+    -webkit-mask-size: contain;
+    mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .showcase-hero__seal {
+      animation: seal-hero-breathe 12s ease-in-out infinite;
+    }
+  }
+
+  /* Photo fragments collage */
+  .showcase-hero__collage {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .showcase-hero__fragment {
+    position: absolute;
+    border-radius: 6px;
+    opacity: 0;
+    animation: fragment-enter 0.6s var(--ease-out-expo) forwards;
+    box-shadow: 0 8px 32px rgb(0 0 0 / 0.2);
+  }
+
+  .showcase-hero__fragment--1 {
+    top: 8%;
+    right: 4%;
+    width: 22vw;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    rotate: 3deg;
+    animation-delay: 0.15s;
+  }
+
+  .showcase-hero__fragment--2 {
+    bottom: 10%;
+    left: 3%;
+    width: 18vw;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    rotate: -4deg;
+    animation-delay: 0.3s;
+  }
+
+  .showcase-hero__fragment--3 {
+    top: 14%;
+    left: 6%;
+    width: 16vw;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    rotate: -2deg;
+    animation-delay: 0.45s;
+  }
+
+  .showcase-hero__fragment--4 {
+    bottom: 12%;
+    right: 6%;
+    width: 14vw;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    rotate: 5deg;
+    animation-delay: 0.55s;
+  }
+
+  @media (max-width: 767px) {
+    .showcase-hero__collage {
+      opacity: 0.4;
+    }
+
+    .showcase-hero__fragment--1 {
+      width: 35vw;
+      right: -5%;
+    }
+
+    .showcase-hero__fragment--2 {
+      width: 28vw;
+      left: -3%;
+    }
+
+    .showcase-hero__fragment--3,
+    .showcase-hero__fragment--4 {
+      display: none;
+    }
+  }
+
+  /* Scroll indicator */
+  .showcase-hero__scroll {
+    position: absolute;
+    bottom: var(--space-8);
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--color-muted);
+    animation: scroll-bounce 2s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .showcase-hero__scroll {
+      animation: none;
+      opacity: 0.6;
+    }
+  }
+</style>

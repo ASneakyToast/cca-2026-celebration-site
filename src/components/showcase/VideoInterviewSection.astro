@@ -1,0 +1,386 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  interviews: CollectionEntry<"video-interviews">[];
+  studentMap: Map<string, string>;
+}
+
+const { interviews, studentMap } = Astro.props;
+const sortedInterviews = [...interviews].sort((a, b) => a.data.order - b.data.order);
+const featured = sortedInterviews[0];
+const rest = sortedInterviews.slice(1);
+---
+
+{sortedInterviews.length > 0 && (
+  <section class="video-section reveal" id="student-voices">
+    <div class="container">
+      <span class="section-label">Student Voices</span>
+      <h2 class="video-section__heading">Hear Their Stories</h2>
+
+      <div class="video-section__layout" data-video-section>
+        <div class="video-section__featured">
+          <div class="video-facade" data-video-facade data-video-url={featured.data.videoUrl} data-video-active="true">
+            <div class="video-facade__thumb">
+              {featured.data.thumbnail ? (
+                <img src={featured.data.thumbnail} alt={featured.data.title} loading="lazy" />
+              ) : (
+                <div class="video-facade__placeholder"></div>
+              )}
+              <button class="video-facade__play" aria-label={`Play video: ${featured.data.title}`}>
+                <svg width="64" height="64" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                  <circle cx="32" cy="32" r="31" stroke="white" stroke-width="2" fill="rgba(0,0,0,0.4)" />
+                  <polygon points="26,20 26,44 46,32" fill="white" />
+                </svg>
+              </button>
+            </div>
+            <div class="video-facade__iframe-container" hidden></div>
+          </div>
+          <div class="video-featured__info">
+            <h3 class="video-featured__title" data-featured-title>{featured.data.title}</h3>
+            <p class="video-featured__student" data-featured-student>{studentMap.get(featured.data.student.id)}</p>
+            {featured.data.duration && <span class="video-featured__duration" data-featured-duration>{featured.data.duration}</span>}
+          </div>
+          {featured.data.pullQuote && (
+            <blockquote class="video-featured__quote" data-featured-quote>
+              <p>&ldquo;{featured.data.pullQuote}&rdquo;</p>
+            </blockquote>
+          )}
+        </div>
+
+        {rest.length > 0 && (
+          <div class="video-section__sidebar">
+            {rest.map((interview) => (
+              <button
+                class="video-thumb-card"
+                data-video-thumb
+                data-video-url={interview.data.videoUrl}
+                data-title={interview.data.title}
+                data-student={studentMap.get(interview.data.student.id)}
+                data-duration={interview.data.duration}
+                data-quote={interview.data.pullQuote}
+                data-thumbnail={interview.data.thumbnail}
+              >
+                <div class="video-thumb-card__img">
+                  {interview.data.thumbnail ? (
+                    <img src={interview.data.thumbnail} alt={interview.data.title} loading="lazy" />
+                  ) : (
+                    <div class="video-thumb-card__placeholder"></div>
+                  )}
+                  <span class="video-thumb-card__play" aria-hidden="true">
+                    <svg width="32" height="32" viewBox="0 0 64 64" fill="none">
+                      <circle cx="32" cy="32" r="31" stroke="white" stroke-width="2" fill="rgba(0,0,0,0.4)" />
+                      <polygon points="26,20 26,44 46,32" fill="white" />
+                    </svg>
+                  </span>
+                </div>
+                <div class="video-thumb-card__info">
+                  <span class="video-thumb-card__title">{interview.data.title}</span>
+                  <span class="video-thumb-card__student">{studentMap.get(interview.data.student.id)}</span>
+                  {interview.data.duration && <span class="video-thumb-card__duration">{interview.data.duration}</span>}
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  </section>
+)}
+
+<script>
+  function initVideoSection() {
+    const section = document.querySelector('[data-video-section]');
+    if (!section) return;
+
+    const facade = section.querySelector('[data-video-facade]') as HTMLElement | null;
+    const thumbs = section.querySelectorAll<HTMLButtonElement>('[data-video-thumb]');
+    const titleEl = section.querySelector('[data-featured-title]');
+    const studentEl = section.querySelector('[data-featured-student]');
+    const durationEl = section.querySelector('[data-featured-duration]');
+    const quoteEl = section.querySelector('[data-featured-quote]');
+
+    // Play video on facade click
+    function loadVideo(container: HTMLElement) {
+      const url = container.dataset.videoUrl;
+      if (!url) return;
+      const iframeWrap = container.querySelector('.video-facade__iframe-container') as HTMLElement;
+      const thumb = container.querySelector('.video-facade__thumb') as HTMLElement;
+      if (!iframeWrap || !thumb) return;
+
+      iframeWrap.innerHTML = `<iframe src="${url}?autoplay=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen title="Video interview"></iframe>`;
+      thumb.hidden = true;
+      iframeWrap.hidden = false;
+    }
+
+    facade?.querySelector('.video-facade__play')?.addEventListener('click', () => {
+      if (facade) loadVideo(facade);
+    });
+
+    // Swap featured video when thumbnail is clicked
+    thumbs.forEach((thumb) => {
+      thumb.addEventListener('click', () => {
+        if (!facade) return;
+
+        // Reset facade to thumbnail state
+        const iframeWrap = facade.querySelector('.video-facade__iframe-container') as HTMLElement;
+        const thumbEl = facade.querySelector('.video-facade__thumb') as HTMLElement;
+        if (iframeWrap) { iframeWrap.innerHTML = ''; iframeWrap.hidden = true; }
+        if (thumbEl) thumbEl.hidden = false;
+
+        // Update facade data
+        facade.dataset.videoUrl = thumb.dataset.videoUrl ?? '';
+
+        // Update thumbnail image
+        const facadeImg = facade.querySelector('.video-facade__thumb img') as HTMLImageElement;
+        const facadePlaceholder = facade.querySelector('.video-facade__placeholder');
+        if (thumb.dataset.thumbnail) {
+          if (facadeImg) {
+            facadeImg.src = thumb.dataset.thumbnail;
+            facadeImg.alt = thumb.dataset.title ?? '';
+          } else if (facadePlaceholder) {
+            const img = document.createElement('img');
+            img.src = thumb.dataset.thumbnail;
+            img.alt = thumb.dataset.title ?? '';
+            img.loading = 'lazy';
+            facadePlaceholder.replaceWith(img);
+          }
+        }
+
+        // Update info
+        if (titleEl) titleEl.textContent = thumb.dataset.title ?? '';
+        if (studentEl) studentEl.textContent = thumb.dataset.student ?? '';
+        if (durationEl) durationEl.textContent = thumb.dataset.duration ?? '';
+        if (quoteEl) {
+          if (thumb.dataset.quote) {
+            quoteEl.querySelector('p')!.textContent = `\u201C${thumb.dataset.quote}\u201D`;
+            (quoteEl as HTMLElement).hidden = false;
+          } else {
+            (quoteEl as HTMLElement).hidden = true;
+          }
+        }
+      });
+    });
+  }
+
+  initVideoSection();
+  document.addEventListener('astro:page-load', initVideoSection);
+</script>
+
+<style>
+  .video-section {
+    padding-block: var(--space-20);
+  }
+
+  .video-section__heading {
+    font-family: var(--font-heading);
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-10);
+  }
+
+  .video-section__layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 768px) {
+    .video-section__layout {
+      grid-template-columns: 2fr 1fr;
+      gap: var(--space-8);
+    }
+  }
+
+  /* Featured video facade */
+  .video-facade {
+    position: relative;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    background: var(--color-surface);
+  }
+
+  .video-facade__thumb {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    cursor: pointer;
+  }
+
+  .video-facade__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .video-facade__placeholder {
+    width: 100%;
+    height: 100%;
+    background: var(--color-border);
+  }
+
+  .video-facade__play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s var(--ease-out-expo);
+    z-index: 1;
+  }
+
+  .video-facade__play:hover {
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+
+  .video-facade__iframe-container {
+    aspect-ratio: 16 / 9;
+  }
+
+  .video-facade__iframe-container :global(iframe) {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  .video-featured__info {
+    padding: var(--space-4) var(--space-2) var(--space-2);
+  }
+
+  .video-featured__title {
+    font-family: var(--font-body);
+    font-size: var(--text-lg);
+    font-weight: 700;
+    margin: 0 0 var(--space-1);
+  }
+
+  .video-featured__student {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-accent);
+  }
+
+  .video-featured__duration {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-muted);
+    margin-left: var(--space-3);
+  }
+
+  .video-featured__quote {
+    padding: var(--space-4) var(--space-2);
+    margin: 0;
+    border-left: 3px solid var(--color-accent);
+    margin-left: var(--space-2);
+  }
+
+  .video-featured__quote p {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: var(--text-base);
+    color: var(--color-muted);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* Sidebar thumbnails */
+  .video-section__sidebar {
+    display: flex;
+    flex-direction: row;
+    gap: var(--space-4);
+    overflow-x: auto;
+    padding-bottom: var(--space-2);
+    -webkit-overflow-scrolling: touch;
+  }
+
+  @media (min-width: 768px) {
+    .video-section__sidebar {
+      flex-direction: column;
+      overflow-x: visible;
+      padding-bottom: 0;
+    }
+  }
+
+  .video-thumb-card {
+    flex-shrink: 0;
+    display: flex;
+    gap: var(--space-3);
+    padding: var(--space-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    background: var(--color-surface);
+    cursor: pointer;
+    text-align: left;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    width: 260px;
+    font-family: inherit;
+    color: inherit;
+  }
+
+  @media (min-width: 768px) {
+    .video-thumb-card {
+      width: auto;
+    }
+  }
+
+  .video-thumb-card:hover {
+    border-color: var(--color-accent);
+    box-shadow: var(--shadow-card-hover);
+  }
+
+  .video-thumb-card__img {
+    position: relative;
+    flex-shrink: 0;
+    width: 100px;
+    aspect-ratio: 16 / 9;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .video-thumb-card__img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .video-thumb-card__placeholder {
+    width: 100%;
+    height: 100%;
+    background: var(--color-border);
+  }
+
+  .video-thumb-card__play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .video-thumb-card__info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    min-width: 0;
+  }
+
+  .video-thumb-card__title {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .video-thumb-card__student {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-accent);
+  }
+
+  .video-thumb-card__duration {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-muted);
+  }
+</style>

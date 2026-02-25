@@ -1,9 +1,10 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
+import StudentsHero from '../../../components/showcase/StudentsHero.astro';
 import StudentGrid from '../../../components/students/StudentGrid.astro';
 import FilterChips from '../../../components/ui/FilterChips.astro';
-import Breadcrumb from '../../../components/ui/Breadcrumb.astro';
+import EmailSignup from '../../../components/sections/EmailSignup.astro';
 
 const students = await getCollection('students');
 const programs = await getCollection('programs');
@@ -18,42 +19,41 @@ const programChips = [
 ];
 ---
 
-<BaseLayout title="Students">
-  <div class="container">
-    <Breadcrumb items={[
-      { label: 'Home', href: '/' },
-      { label: 'Student Showcase', href: '/showcase/' },
-      { label: 'Students' },
-    ]} />
+<BaseLayout title="Students — Student Showcase" description="Meet the talented artists, designers, writers, and architects of CCA's Class of 2026." themeKey="showcase">
 
-    <section class="students-intro reveal">
-      <h1>Students</h1>
-      <p>Meet the talented artists, designers, and makers of CCA's Class of 2026.</p>
-    </section>
+  {/* 1. Stats-focused hero */}
+  <StudentsHero studentCount={students.length} />
 
-    <FilterChips items={programChips} />
+  {/* 2. Filter + Student Grid */}
+  <section class="students-listing">
+    <div class="container">
+      <div class="students-listing__filters reveal">
+        <FilterChips items={programChips} />
+      </div>
+      <div class="students-listing__grid reveal">
+        <StudentGrid students={students} programMap={programMap} />
+      </div>
+    </div>
+  </section>
 
-    <section class="students-grid-section reveal">
-      <StudentGrid students={students} programMap={programMap} />
-    </section>
-  </div>
+  {/* 3. Email Signup */}
+  <EmailSignup
+    heading="Stay Connected"
+    description="Sign up for updates about the Student Showcase, exhibition openings, and more from CCA's Class of 2026."
+  />
+
 </BaseLayout>
 
 <style>
-  .students-intro {
-    padding-block: var(--space-10) var(--space-6);
+  .students-listing {
+    padding-block: var(--space-10) var(--space-20);
   }
 
-  .students-intro h1 {
-    margin-bottom: var(--space-4);
+  .students-listing__filters {
+    margin-bottom: var(--space-8);
   }
 
-  .students-intro p {
-    font-size: var(--text-lg);
-    color: var(--color-muted);
-  }
-
-  .students-grid-section {
-    padding-block: var(--space-6) var(--space-12);
+  .students-listing__grid {
+    min-height: 200px;
   }
 </style>
