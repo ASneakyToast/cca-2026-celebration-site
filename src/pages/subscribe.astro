@@ -171,6 +171,22 @@ import EmailSignup from '../components/sections/EmailSignup.astro';
     padding: 0;
     box-shadow: none;
     text-align: inherit;
+    cursor: default;
+    transform: none;
+  }
+
+  .subscribe-main :global(.signup-card-wrapper:hover .signup-card) {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .subscribe-main :global(.floating-img) {
+    display: none;
+  }
+
+  .subscribe-main :global(.signup-card-wrapper) {
+    max-width: none;
+    cursor: default;
   }
 
   .subscribe-main :global(.signup-card::before) {

@@ -18,9 +18,10 @@ const {
 } = Astro.props;
 ---
 
-<section class="signup-section reveal" aria-labelledby={heading ? "signup-heading" : undefined}>
+<section class="signup-section reveal" aria-labelledby={heading ? "signup-heading" : undefined} data-cursor-scope>
   <div class="container">
-    <div class="signup-card">
+    <div class="signup-card-wrapper">
+      <div class="signup-card">
       {heading && <h2 id="signup-heading" class="signup-heading">{heading}</h2>}
       {description && <p class="signup-description">{description}</p>}
 
@@ -57,13 +58,55 @@ const {
         <p>Something went wrong. Please try again.</p>
       </div>
     </div>
+    </div>
   </div>
+  <!-- Doodles after container so they paint on top and receive pointer events -->
+  <img
+    class="floating-img floating-img-behind hero__doodle"
+    data-cursor-track
+    data-cursor-strength="0.04"
+    data-cursor-max="30"
+    data-cursor-lerp="0.08"
+    src="https://storage.googleapis.com/ccaedu-prod/media/images/Doodle-spiral.original.svg"
+    alt=""
+    aria-hidden="true"
+  />
+  <img
+    class="floating-img floating-img-front hero__doodle"
+    data-cursor-track
+    data-cursor-strength="0.05"
+    data-cursor-max="35"
+    data-cursor-lerp="0.1"
+    src="https://storage.googleapis.com/ccaedu-prod/media/images/Doodle-flower-teal.original.svg"
+    alt=""
+    aria-hidden="true"
+  />
 </section>
 
 <script>
   const form = document.querySelector('.signup-form') as HTMLFormElement | null;
   const successEl = document.querySelector('.signup-success') as HTMLElement | null;
   const errorEl = document.querySelector('.signup-error') as HTMLElement | null;
+  // Find the component's own section (not an outer wrapper that shares the class name)
+  const signupSection = document.querySelector('.signup-card-wrapper')?.closest('.signup-section') as HTMLElement | null;
+
+  // Hovering doodles → toggle hover state on section for card lift + drift
+  const doodles = signupSection?.querySelectorAll('.floating-img');
+  doodles?.forEach((img) => {
+    img.addEventListener('mouseenter', () => signupSection?.classList.add('is-hovered'));
+    img.addEventListener('mouseleave', () => signupSection?.classList.remove('is-hovered'));
+  });
+
+  // Click anywhere on the card → focus the email input
+  const card = signupSection?.querySelector('.signup-card') as HTMLElement | null;
+  const emailInput = signupSection?.querySelector<HTMLInputElement>('#signup-email');
+
+  card?.addEventListener('click', (e) => {
+    // Don't steal focus from interactive elements the user actually clicked
+    const target = e.target as HTMLElement;
+    if (target.closest('input, button, a, label')) return;
+    emailInput?.focus();
+  });
 
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -105,6 +148,7 @@ const {
 
 <style>
   .signup-section {
+    position: relative;
     padding-block: var(--space-16);
   }
 
@@ -118,7 +162,122 @@ const {
     padding: var(--space-8);
     text-align: center;
     box-shadow: var(--shadow-card-rest);
-    overflow: hidden;
+    overflow: visible;
+    transition: transform 0.4s var(--ease-out-expo),
+                box-shadow 0.4s var(--ease-out-expo);
+  }
+
+  .signup-card:has(input:focus) {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-card-hover);
+  }
+
+  .signup-card-wrapper:hover .signup-card,
+  .signup-section.is-hovered .signup-card {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-card-hover);
+  }
+
+  /* Speed up prismatic border on hover */
+  @media (prefers-reduced-motion: no-preference) {
+    .signup-card-wrapper:hover .signup-card::before,
+    .signup-section.is-hovered .signup-card::before {
+      animation-duration: 2s;
+    }
+  }
+
+  /* Glow on signup fields when card is hovered */
+  .signup-card-wrapper:hover .signup-fields,
+  .signup-section.is-hovered .signup-fields {
+    box-shadow: 0 0 20px rgba(44, 181, 160, 0.1);
+  }
+
+  .signup-card-wrapper:hover .signup-fields input[type="email"],
+  .signup-section.is-hovered .signup-fields input[type="email"] {
+    border-color: var(--color-accent);
+  }
+
+  /* Card wrapper */
+  .signup-card-wrapper {
+    position: relative;
+    max-width: 600px;
+    margin-inline: auto;
+  }
+
+  /* Floating doodles — positioned relative to .signup-section */
+  .floating-img {
+    position: absolute;
+    opacity: 1;
+    cursor: pointer;
+    z-index: 2;
+    transition: transform 0.4s var(--ease-out-expo);
+  }
+
+  .floating-img-behind {
+    width: clamp(48px, 6vw, 90px);
+    bottom: var(--space-16);
+    left: calc(50% - 420px);
+    transform: rotate(-6deg);
+  }
+
+  .floating-img-front {
+    width: clamp(36px, 4.5vw, 64px);
+    top: var(--space-16);
+    right: calc(50% - 400px);
+    transform: rotate(4deg);
+  }
+
+  /* On hover, drift images outward */
+  .signup-section.is-hovered .floating-img-behind {
+    transform: rotate(-6deg) translate(-8px, 8px);
+  }
+
+  .signup-section.is-hovered .floating-img-front {
+    transform: rotate(4deg) translate(8px, -8px);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .floating-img-behind {
+      animation: float-behind 8s ease-in-out infinite;
+    }
+
+    .floating-img-front {
+      animation: float-front 9s ease-in-out infinite;
+      animation-delay: 1s;
+    }
+  }
+
+  @keyframes float-behind {
+    0%, 100% { transform: rotate(-6deg) translateY(0); }
+    50% { transform: rotate(-6deg) translateY(-6px); }
+  }
+
+  @keyframes float-front {
+    0%, 100% { transform: rotate(4deg) translateY(0); }
+    50% { transform: rotate(4deg) translateY(-6px); }
+  }
+
+  /* Pause float animation on hover so the element is stable/clickable */
+  .floating-img:hover {
+    animation-play-state: paused;
+  }
+
+  /* Hide floating images on small screens */
+  @media (max-width: 768px) {
+    .floating-img {
+      display: none;
+    }
+  }
+
+  /* Reduced motion: keep hover lift/shadow, disable float animations and drift */
+  @media (prefers-reduced-motion: reduce) {
+    .signup-section.is-hovered .floating-img-behind {
+      transform: rotate(-6deg);
+    }
+
+    .signup-section.is-hovered .floating-img-front {
+      transform: rotate(4deg);
+    }
   }
 
   /* Decorative seal watermark behind card */
@@ -128,7 +287,8 @@ const {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 120%;
+    width: 100%;
+    max-height: 100%;
     aspect-ratio: 1;
     background: var(--color-accent);
     opacity: 0.03;
@@ -163,6 +323,15 @@ const {
     .signup-card::before {
       animation: prismatic-shift 6s linear infinite;
     }
+  }
+
+  .signup-heading,
+  .signup-description,
+  .signup-form,
+  .signup-success,
+  .signup-error {
+    position: relative;
+    z-index: 1;
   }
 
   .signup-heading {

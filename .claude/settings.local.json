@@ -14,7 +14,21 @@
       "Bash(/Users/joellithgow/Code/Work/2026-celebration-site/src/components/ui/Button.astro << 'ENDOFFILE'\n---\ninterface Props {\n  href?: string;\n  variant?: \"primary\" | \"secondary\" | \"outline\";\n  [key: string]: any;\n}\n\nconst { href, variant = \"primary\", ...rest } = Astro.props;\nconst Tag = href ? \"a\" : \"button\";\n---\n\n<Tag href={href} class:list={[\"btn\", `btn-${variant}`]} {...rest}>\n  <slot />\n</Tag>\n\n<style>\n  .btn {\n    display: inline-block;\n    padding: var\\(--space-3\\) var\\(--space-6\\);\n    font-size: var\\(--text-sm\\);\n    font-weight: 600;\n    text-decoration: none;\n    text-align: center;\n    border: 2px solid transparent;\n    cursor: pointer;\n    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;\n  }\n\n  .btn-primary {\n    background: var\\(--color-accent\\);\n    color: var\\(--color-bg\\);\n    border-color: var\\(--color-accent\\);\n  }\n\n  .btn-primary:hover {\n    opacity: 0.85;\n  }\n\n  .btn-secondary {\n    background: var\\(--color-surface\\);\n    color: var\\(--color-text\\);\n    border-color: var\\(--color-border\\);\n  }\n\n  .btn-secondary:hover {\n    border-color: var\\(--color-accent\\);\n    color: var\\(--color-accent\\);\n  }\n\n  .btn-outline {\n    background: transparent;\n    color: var\\(--color-accent\\);\n    border-color: var\\(--color-accent\\);\n  }\n\n  .btn-outline:hover {\n    background: var\\(--color-accent\\);\n    color: var\\(--color-bg\\);\n  }\n</style>\nENDOFFILE)",
       "Bash(xargs:*)",
       "Bash(tr:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nAdd base layout and global components\n\nCreate BaseLayout with head/meta setup, Header with school branding,\nNavigation component, and Footer.\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nAdd UI components and utility helpers\n\nCreate reusable Button and Breadcrumb components, plus collection and\nformatting utility functions.\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nAdd content collections and data\n\nDefine content schemas for events, programs, students, and works.\nPopulate with initial data for all collection types.\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "WebFetch(domain:after-intelligence.cca.edu)",
+      "WebFetch(domain:portal.cca.edu)",
+      "WebFetch(domain:www.cca.edu)",
+      "WebSearch",
+      "Bash(python3:*)",
+      "Bash(git commit:*)",
+      "Bash(npx astro build:*)",
+      "mcp__astro-docs__search_astro_docs",
+      "Bash(tail:*)",
+      "Bash(python:*)"
     ]
   }
 }
