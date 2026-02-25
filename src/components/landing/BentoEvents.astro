@@ -18,13 +18,12 @@ const bySlug = Object.fromEntries(events.map(e => [e.data.slug, e]));
 
 // Grid layout definition: slug → { size, gridArea }
 const layout: { slug: string; size: "large" | "tall" | "wide" | "compact"; area: string }[] = [
-  { slug: "commencement-undergraduate", size: "large",   area: "ug-comm" },
-  { slug: "commencement-graduate",      size: "tall",    area: "g-comm"  },
-  { slug: "showcase",                   size: "compact", area: "show"    },
-  { slug: "thesis-undergraduate",       size: "wide",    area: "ug-thesis" },
-  { slug: "thesis-graduate",            size: "tall",    area: "g-thesis" },
-  { slug: "multicultural-celebration",  size: "compact", area: "multi"   },
-  { slug: "lavender-celebration",       size: "compact", area: "lav"     },
+  { slug: "showcase",                          size: "large",   area: "show" },
+  { slug: "thesis-graduate",                   size: "tall",    area: "mfa" },
+  { slug: "thesis-undergraduate",              size: "compact", area: "ug-thesis" },
+  { slug: "animation-senior-showcase",         size: "wide",    area: "anim" },
+  { slug: "game-arts-showcase",                size: "wide",    area: "game" },
+  { slug: "architecture-studio-conversations", size: "compact", area: "arch" },
 ];
 ---
 
@@ -51,13 +50,12 @@ const layout: { slug: string; size: "large" | "tall" | "wide" | "compact"; area:
     gap: var(--grid-gutter);
     grid-template-columns: 1fr;
     grid-template-areas:
-      "ug-comm"
-      "g-comm"
       "show"
+      "mfa"
       "ug-thesis"
-      "g-thesis"
-      "multi"
-      "lav";
+      "anim"
+      "game"
+      "arch";
   }
 
   .bento-grid__cell {
@@ -79,11 +77,11 @@ const layout: { slug: string; size: "large" | "tall" | "wide" | "compact"; area:
     .bento-grid {
       grid-template-columns: repeat(2, 1fr);
       grid-template-areas:
-        "ug-comm  ug-comm"
-        "g-comm   show"
-        "ug-thesis ug-thesis"
-        "g-thesis multi"
-        "lav      lav";
+        "show       show"
+        "mfa        ug-thesis"
+        "mfa        arch"
+        "anim       anim"
+        "game       game";
     }
   }
 
@@ -93,10 +91,10 @@ const layout: { slug: string; size: "large" | "tall" | "wide" | "compact"; area:
       grid-template-columns: repeat(4, 1fr);
       grid-auto-rows: minmax(180px, auto);
       grid-template-areas:
-        "ug-comm  ug-comm  deco-circle g-comm"
-        "ug-comm  ug-comm  show        g-comm"
-        "deco-blob ug-thesis ug-thesis  g-thesis"
-        "multi    lav      deco-diamond g-thesis";
+        "show         show         deco-circle  mfa"
+        "show         show         ug-thesis    mfa"
+        "anim         anim         arch         deco-blob"
+        "game         game         deco-diamond .";
     }
 
     .bento-grid__deco {

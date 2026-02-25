@@ -13,7 +13,7 @@ interface Props {
 }
 
 const { event, size, class: className } = Astro.props;
-const { title, shortTitle, slug, date, endDate, location, description, type, degreeLevel, themeKey } = event.data;
+const { title, shortTitle, slug, date, endDate, location, description, type, degreeLevel, themeKey, externalUrl, image } = event.data;
 
 function getEventUrl(type: string, degreeLevel: string, slug: string): string {
   if (type === "celebration") return `/commencement/${slug}/`;
@@ -27,7 +27,8 @@ function getEventUrl(type: string, degreeLevel: string, slug: string): string {
   return `${base}${degreeLevel}/`;
 }
 
-const href = getEventUrl(type, degreeLevel, slug);
+const isExternal = !!externalUrl;
+const href = externalUrl ?? getEventUrl(type, degreeLevel, slug);
 const dateDisplay = endDate ? formatDateRange(date, endDate) : formatDate(date);
 
 const badgeLabels: Record<string, string> = {
@@ -35,11 +36,20 @@ const badgeLabels: Record<string, string> = {
   showcase: "SHOWCASE",
   "thesis-exhibition": "THESIS",
   celebration: "CELEBRATION",
+  "studio-review": "STUDIO REVIEW",
+  screening: "SCREENING",
+  "game-showcase": "GAME SHOWCASE",
 };
 const badgeLabel = badgeLabels[type] ?? type.toUpperCase();
+const hasImage = !!image;
 ---
 
-<a href={href} class:list={['bento-card', `bento-card--${size}`, 'reveal', className]} data-theme={size === 'large' ? themeKey : undefined}>
+<a href={href} class:list={['bento-card', `bento-card--${size}`, hasImage && 'bento-card--has-image', 'reveal', className]} data-theme={size === 'large' ? themeKey : undefined} {...isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {}}>
+  {hasImage && (
+    <div class="bento-card__img-wrap">
+      <img src={image.src} alt={image.alt} class="bento-card__img" loading="lazy" />
+    </div>
+  )}
   <article>
     <span class="bento-badge">{badgeLabel}</span>
 
@@ -237,5 +247,76 @@ const badgeLabel = badgeLabels[type] ?? type.toUpperCase();
   .bento-desc {
     font-size: var(--text-sm);
     color: var(--color-muted);
+  }
+
+  /* ---- Image variant — split layout ---- */
+  .bento-card--has-image {
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .bento-card--has-image::before {
+    display: none;
+  }
+
+  .bento-card__img-wrap {
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .bento-card__img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--duration-base) var(--ease-out-expo);
+  }
+
+  .bento-card--has-image:hover .bento-card__img {
+    transform: scale(1.04);
+  }
+
+  .bento-card--has-image article {
+    padding: var(--space-4);
+  }
+
+  /* Tall + image: image on top, content below */
+  .bento-card--tall.bento-card--has-image {
+    flex-direction: column;
+  }
+
+  .bento-card--tall.bento-card--has-image .bento-card__img-wrap {
+    height: 50%;
+  }
+
+  /* Wide + image: image on left, content on right */
+  .bento-card--wide.bento-card--has-image {
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  .bento-card--wide.bento-card--has-image .bento-card__img-wrap {
+    width: 40%;
+  }
+
+  .bento-card--wide.bento-card--has-image .bento-card__img {
+    position: absolute;
+    inset: 0;
+  }
+
+  .bento-card--wide.bento-card--has-image .bento-card__img-wrap {
+    position: relative;
+  }
+
+  .bento-card--wide.bento-card--has-image article {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: var(--space-5);
+  }
+
+  .bento-card--wide.bento-card--has-image .bento-title {
+    margin-bottom: var(--space-2);
   }
 </style>
