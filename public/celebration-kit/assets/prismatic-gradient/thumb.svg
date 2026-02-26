@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
+  <defs>
+    <linearGradient id="pg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#005776"/>
+      <stop offset="50%" stop-color="#563D82"/>
+      <stop offset="100%" stop-color="#E57200"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#pg)"/>
+  <text x="200" y="34" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="700" fill="rgba(255,255,255,0.9)" letter-spacing="6">CCA</text>
+  <rect x="82" y="72" width="236" height="236" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+  <text x="200" y="340" text-anchor="middle" font-family="sans-serif" font-size="20" font-weight="700" fill="#FFFFFF">Your Name</text>
+  <text x="200" y="365" text-anchor="middle" font-family="monospace" font-size="10" fill="rgba(255,255,255,0.8)" letter-spacing="2">BA ARCHITECTURE</text>
+  <text x="200" y="385" text-anchor="middle" font-family="serif" font-size="11" font-style="italic" fill="rgba(255,255,255,0.65)">Class of 2026</text>
+</svg>

@@ -1,0 +1,104 @@
+{
+  "id": "commencement-navy",
+  "name": "Commencement Navy & Gold",
+  "thumbnail": "/celebration-kit/assets/commencement-navy/thumb.svg",
+  "canvasWidth": 1080,
+  "supportedRatios": ["1:1", "4:5", "9:16"],
+
+  "backgrounds": {
+    "1:1": { "type": "color", "value": "#0C2340" },
+    "4:5": { "type": "color", "value": "#0C2340" },
+    "9:16": { "type": "gradient", "stops": [["#0C2340", 0], ["#122D4D", 0.6], ["#0C2340", 1]], "angle": 180 }
+  },
+
+  "photo": {
+    "x": 540, "y": 460, "width": 680, "height": 680,
+    "shape": "circle",
+    "borderColor": "#E8A830", "borderWidth": 8,
+    "objectFit": "cover"
+  },
+
+  "textFields": [
+    {
+      "id": "name",
+      "label": "Your Name",
+      "placeholder": "Jane Doe",
+      "maxLength": 40,
+      "x": 540, "y": 880,
+      "maxWidth": 900,
+      "fontFamily": "display",
+      "fontSize": 56,
+      "fontWeight": 700,
+      "fontStyle": "italic",
+      "color": "#FFFFFF",
+      "align": "center",
+      "lineHeight": 1.2
+    },
+    {
+      "id": "program",
+      "label": "Program",
+      "placeholder": "BFA Illustration",
+      "maxLength": 60,
+      "x": 540, "y": 948,
+      "maxWidth": 900,
+      "fontFamily": "body",
+      "fontSize": 32,
+      "fontWeight": 400,
+      "color": "#E8A830",
+      "align": "center",
+      "lineHeight": 1.3
+    }
+  ],
+
+  "overlays": [
+    {
+      "id": "cca-wordmark",
+      "type": "text",
+      "text": "CCA CLASS OF 2026",
+      "x": 540, "y": 100,
+      "fontFamily": "mono",
+      "fontSize": 28,
+      "fontWeight": 500,
+      "color": "#3DD6C9",
+      "align": "center",
+      "letterSpacing": 6
+    },
+    {
+      "id": "border-top",
+      "type": "rect",
+      "x": 40, "y": 40, "width": 1000, "height": 2,
+      "color": "#E8A830", "opacity": 0.4
+    },
+    {
+      "id": "border-bottom",
+      "type": "rect",
+      "x": 40, "y": 1038, "width": 1000, "height": 2,
+      "color": "#E8A830", "opacity": 0.4
+    }
+  ],
+
+  "ratioOverrides": {
+    "4:5": {
+      "photo": { "y": 520 },
+      "textFields": {
+        "name": { "y": 960 },
+        "program": { "y": 1028 }
+      },
+      "overlays": {
+        "border-bottom": { "y": 1308 }
+      }
+    },
+    "9:16": {
+      "photo": { "y": 700 },
+      "textFields": {
+        "name": { "y": 1160 },
+        "program": { "y": 1228 }
+      },
+      "overlays": {
+        "cca-wordmark": { "y": 160 },
+        "border-top": { "y": 80 },
+        "border-bottom": { "y": 1878 }
+      }
+    }
+  }
+}

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
+  <rect width="400" height="400" fill="#0C2340"/>
+  <line x1="15" y1="15" x2="385" y2="15" stroke="#E8A830" stroke-opacity="0.4" stroke-width="1"/>
+  <line x1="15" y1="385" x2="385" y2="385" stroke="#E8A830" stroke-opacity="0.4" stroke-width="1"/>
+  <text x="200" y="40" text-anchor="middle" font-family="monospace" font-size="10" fill="#3DD6C9" letter-spacing="3">CCA CLASS OF 2026</text>
+  <circle cx="200" cy="170" r="110" fill="#122D4D" stroke="#E8A830" stroke-width="3"/>
+  <text x="200" y="320" text-anchor="middle" font-family="serif" font-size="22" font-style="italic" font-weight="700" fill="#FFFFFF">Your Name</text>
+  <text x="200" y="350" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#E8A830">BFA Illustration</text>
+</svg>

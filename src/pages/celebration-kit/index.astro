@@ -1,0 +1,498 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="DIY Celebration Kit"
+  description="Create custom shareable celebration graphics for CCA's Class of 2026. Upload your photo, customize text, and download social-ready PNGs."
+  themeKey="celebration"
+>
+  {/* ── Hero ── */}
+  <section class="ck-hero">
+    <div class="ck-hero__inner">
+      <span class="ck-hero__label">Class of 2026</span>
+      <h1 class="ck-hero__title shimmer-text">Celebration Kit</h1>
+      <p class="ck-hero__desc">Create your own shareable celebration graphic. Pick a template, add your photo, customize, and download.</p>
+    </div>
+  </section>
+
+  {/* ── App ── */}
+  <section id="ck-app" class="ck-app">
+    <div class="ck-layout">
+      {/* ── Preview column ── */}
+      <div class="ck-preview">
+        <div id="ck-canvas-wrap" class="ck-canvas-wrap">
+          <canvas id="ck-canvas" class="ck-canvas"></canvas>
+        </div>
+      </div>
+
+      {/* ── Controls column ── */}
+      <div id="ck-controls" class="ck-controls" hidden>
+        {/* Template picker */}
+        <div class="ck-section">
+          <h2 class="ck-section__title">Choose Template</h2>
+          <div id="ck-template-grid" class="ck-template-grid" role="radiogroup" aria-label="Template selection">
+            {/* Populated by JS */}
+          </div>
+        </div>
+
+        {/* Photo */}
+        <div class="ck-section">
+          <h2 class="ck-section__title">Your Photo</h2>
+          <div class="ck-photo-actions">
+            <button type="button" id="ck-upload-btn" class="ck-btn ck-btn--primary">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+              Upload Photo
+            </button>
+            <button type="button" id="ck-selfie-btn" class="ck-btn ck-btn--secondary" hidden>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                <circle cx="12" cy="13" r="4"/>
+              </svg>
+              Take Selfie
+            </button>
+            <button type="button" id="ck-remove-photo" class="ck-btn ck-btn--ghost" hidden>Remove Photo</button>
+          </div>
+          <input type="file" id="ck-file-input" accept="image/*" class="sr-only" />
+        </div>
+
+        {/* Text fields */}
+        <div class="ck-section">
+          <h2 class="ck-section__title">Customize Text</h2>
+          <div id="ck-text-fields" class="ck-text-fields">
+            {/* Populated by JS */}
+          </div>
+        </div>
+
+        {/* Ratio + download */}
+        <div class="ck-section">
+          <h2 class="ck-section__title">Export Size</h2>
+          <div class="ck-ratio-group" role="radiogroup" aria-label="Aspect ratio">
+            <button type="button" class="ck-ratio-btn is-active" data-ratio="1:1">
+              <span class="ck-ratio-btn__icon ck-ratio-btn__icon--1x1"></span>
+              Square
+            </button>
+            <button type="button" class="ck-ratio-btn" data-ratio="4:5">
+              <span class="ck-ratio-btn__icon ck-ratio-btn__icon--4x5"></span>
+              Portrait
+            </button>
+            <button type="button" class="ck-ratio-btn" data-ratio="9:16">
+              <span class="ck-ratio-btn__icon ck-ratio-btn__icon--9x16"></span>
+              Story
+            </button>
+          </div>
+          <button type="button" id="ck-download-btn" class="ck-btn ck-btn--download">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            Download PNG
+          </button>
+        </div>
+      </div>
+    </div>
+
+    {/* ── Webcam Modal ── */}
+    <div id="ck-webcam-modal" class="ck-webcam-modal" hidden aria-hidden="true" role="dialog" aria-label="Take a selfie">
+      <div class="ck-webcam-modal__inner">
+        <video id="ck-webcam-video" class="ck-webcam-video" autoplay playsinline muted></video>
+        <div class="ck-webcam-actions">
+          <button type="button" id="ck-webcam-flip" class="ck-btn ck-btn--secondary">Flip</button>
+          <button type="button" id="ck-webcam-capture" class="ck-btn ck-btn--primary">Capture</button>
+          <button type="button" id="ck-webcam-close" class="ck-btn ck-btn--ghost">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script src="../../scripts/celebration-kit/index.ts"></script>
+
+<style>
+  /* ── Hero ── */
+  .ck-hero {
+    padding: var(--space-20) var(--space-4) var(--space-10);
+    text-align: center;
+  }
+
+  .ck-hero__inner {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .ck-hero__label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--color-muted);
+    margin-bottom: var(--space-3);
+  }
+
+  .ck-hero__title {
+    font-family: var(--font-display);
+    font-size: var(--text-4xl);
+    font-style: italic;
+    font-weight: 700;
+    line-height: 1.1;
+    margin: 0 0 var(--space-4);
+  }
+
+  .ck-hero__desc {
+    font-size: var(--text-base);
+    color: var(--color-muted);
+    line-height: 1.6;
+    max-width: 50ch;
+    margin: 0 auto;
+  }
+
+  /* ── App layout ── */
+  .ck-app {
+    padding: 0 var(--space-4) var(--space-20);
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+
+  .ck-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+    align-items: start;
+  }
+
+  @media (min-width: 900px) {
+    .ck-layout {
+      grid-template-columns: 1fr 380px;
+      gap: var(--space-10);
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .ck-layout {
+      grid-template-columns: 1fr 420px;
+    }
+  }
+
+  /* ── Preview ── */
+  .ck-preview {
+    position: sticky;
+    top: calc(var(--space-20) + 60px);
+    display: flex;
+    justify-content: center;
+  }
+
+  @media (max-width: 899px) {
+    .ck-preview {
+      position: static;
+    }
+  }
+
+  .ck-canvas-wrap {
+    width: 100%;
+    max-width: 540px;
+    aspect-ratio: 1;
+    background: var(--color-surface);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    box-shadow: var(--shadow-card-hover);
+    transition: aspect-ratio 0.4s var(--ease-out-expo);
+  }
+
+  .ck-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  /* ── Controls ── */
+  .ck-controls {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+  }
+
+  .ck-section__title {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-muted);
+    margin: 0 0 var(--space-3);
+  }
+
+  /* ── Template grid ── */
+  .ck-template-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-3);
+  }
+
+  .ck-template-grid :global(.ck-thumb) {
+    all: unset;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2);
+    border-radius: var(--radius-card);
+    border: 2px solid transparent;
+    transition: border-color 0.2s var(--ease-out-expo),
+                box-shadow 0.2s var(--ease-out-expo);
+  }
+
+  .ck-template-grid :global(.ck-thumb:hover) {
+    border-color: var(--color-border);
+  }
+
+  .ck-template-grid :global(.ck-thumb.is-active) {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px var(--color-accent-tint);
+  }
+
+  .ck-template-grid :global(.ck-thumb img) {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+  }
+
+  .ck-template-grid :global(.ck-thumb__name) {
+    font-size: var(--text-xs);
+    color: var(--color-muted);
+    text-align: center;
+    line-height: 1.3;
+  }
+
+  /* ── Photo actions ── */
+  .ck-photo-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  /* ── Buttons ── */
+  .ck-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-sm);
+    border: none;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.15s var(--ease-out-expo);
+  }
+
+  .ck-btn:active {
+    transform: scale(0.97);
+  }
+
+  .ck-btn--primary {
+    background: var(--color-accent);
+    color: var(--color-bg);
+  }
+
+  .ck-btn--primary:hover {
+    filter: brightness(1.1);
+  }
+
+  .ck-btn--secondary {
+    background: var(--color-surface);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+  }
+
+  .ck-btn--secondary:hover {
+    background: var(--color-border);
+  }
+
+  .ck-btn--ghost {
+    background: none;
+    color: var(--color-muted);
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .ck-btn--ghost:hover {
+    color: var(--color-text);
+  }
+
+  .ck-btn--download {
+    width: 100%;
+    justify-content: center;
+    margin-top: var(--space-4);
+    padding: var(--space-3) var(--space-6);
+    font-size: var(--text-base);
+    background: var(--theme-gradient);
+    color: #fff;
+    border-radius: var(--radius-card);
+  }
+
+  .ck-btn--download:hover {
+    filter: brightness(1.1);
+  }
+
+  .ck-btn--download:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    filter: none;
+  }
+
+  /* ── Text fields ── */
+  .ck-text-fields {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .ck-text-fields :global(.ck-field) {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .ck-text-fields :global(.ck-field__label) {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-muted);
+  }
+
+  .ck-text-fields :global(.ck-field__input) {
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-bg);
+    color: var(--color-text);
+    transition: border-color 0.15s ease;
+  }
+
+  .ck-text-fields :global(.ck-field__input:focus) {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px var(--color-accent-tint);
+  }
+
+  .ck-text-fields :global(.ck-field__input::placeholder) {
+    color: var(--color-muted);
+    opacity: 0.6;
+  }
+
+  /* ── Ratio toggle ── */
+  .ck-ratio-group {
+    display: flex;
+    gap: var(--space-2);
+  }
+
+  .ck-ratio-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-3) var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-muted);
+    background: var(--color-surface);
+    border: 2px solid transparent;
+    border-radius: var(--radius-card);
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+
+  .ck-ratio-btn:hover {
+    border-color: var(--color-border);
+  }
+
+  .ck-ratio-btn.is-active {
+    border-color: var(--color-accent);
+    color: var(--color-text);
+  }
+
+  .ck-ratio-btn__icon {
+    display: block;
+    border: 1.5px solid currentColor;
+    border-radius: 2px;
+  }
+
+  .ck-ratio-btn__icon--1x1 {
+    width: 24px;
+    height: 24px;
+  }
+
+  .ck-ratio-btn__icon--4x5 {
+    width: 20px;
+    height: 25px;
+  }
+
+  .ck-ratio-btn__icon--9x16 {
+    width: 16px;
+    height: 28px;
+  }
+
+  /* ── Webcam modal ── */
+  .ck-webcam-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+  }
+
+  .ck-webcam-modal[hidden] {
+    display: none;
+  }
+
+  .ck-webcam-modal__inner {
+    width: 90%;
+    max-width: 500px;
+    background: var(--color-bg);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+  }
+
+  .ck-webcam-video {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    background: #000;
+  }
+
+  .ck-webcam-actions {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-3);
+    padding: var(--space-4);
+  }
+
+  /* ── Utility ── */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+</style>
