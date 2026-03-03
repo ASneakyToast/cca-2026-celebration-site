@@ -84,6 +84,17 @@
   50% { stroke-opacity: 0.6; }
 }
 
+/* Prismatic flare rotations */
+@keyframes flare-rotate-cw {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes flare-rotate-ccw {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+
 /* Fragment entrance for showcase collage */
 @keyframes fragment-enter {
   from {

@@ -4,6 +4,7 @@ import Header from '../components/global/Header.astro';
 import Footer from '../components/global/Footer.astro';
 import ConstellationGrid from '../components/effects/ConstellationGrid.astro';
 import ConfettiCanvas from '../components/effects/ConfettiCanvas.astro';
+import PrismaticFlare from '../components/effects/PrismaticFlare.astro';
 import '../styles/fonts.css';
 import '../styles/global.css';
 import '../styles/themes.css';
@@ -52,6 +53,7 @@ const metaDescription = description ?? defaultDescription;
   </head>
   <body data-theme={themeKey}>
     <ConstellationGrid />
+    <PrismaticFlare />
     <ConfettiCanvas />
     <a class="skip-link" href="#main">Skip to main content</a>
     <Header minimal={minimalHeader} transition:animate="none" />

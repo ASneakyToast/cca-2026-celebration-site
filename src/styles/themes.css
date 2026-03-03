@@ -75,12 +75,22 @@
   --shadow-card-rest: 0 1px 3px rgba(0, 0, 0, 0.04);
   --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.08);
 
-  /* Celebration accent spectrum */
-  --color-celebration-primary: #00BFB3;
-  --color-celebration-secondary: #563D82;
-  --color-celebration-warm: #FFC845;
-  --color-celebration-energy: #E57200;
-  --color-celebration-deep: #005776;
+  /* CCA brand palette */
+  --color-teal: #00BFB3;
+  --color-yellow: #FFC845;
+  --color-lime: #B7BF10;
+  --color-pink: #F1BDC8;
+  --color-orange: #E57200;
+  --color-purple: #563D82;
+  --color-navy: #005776;
+  --color-sand: #F7F3E9;
+
+  /* Celebration accent spectrum (aliases) */
+  --color-celebration-primary: var(--color-teal);
+  --color-celebration-secondary: var(--color-purple);
+  --color-celebration-warm: var(--color-yellow);
+  --color-celebration-energy: var(--color-orange);
+  --color-celebration-deep: var(--color-navy);
 
   /* Gradient tokens */
   --gradient-prismatic: linear-gradient(
@@ -106,6 +116,7 @@
   --grid-dot-color: var(--color-text);
   --grid-line-color: var(--color-accent);
   --grid-opacity: 0.06;
+  --flare-opacity: 0.4;
 
   /* Motion design tokens */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
@@ -149,6 +160,7 @@
   --shadow-card-rest: 0 1px 3px rgba(0, 0, 0, 0.2);
   --shadow-card-hover: 0 8px 30px rgba(0, 0, 0, 0.3);
   --grid-opacity: 0.10;
+  --flare-opacity: 0.5;
 }
 
 /* --------------------------------------------------------------------------
@@ -237,6 +249,7 @@
   --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.3);
   --theme-gradient: linear-gradient(135deg, #563D82, #1A0A2E);
   --grid-opacity: 0.10;
+  --flare-opacity: 0.5;
 }
 
 /* --------------------------------------------------------------------------
