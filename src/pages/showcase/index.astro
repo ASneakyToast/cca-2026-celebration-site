@@ -3,20 +3,13 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ShowcaseHero from '../../components/showcase/ShowcaseHero.astro';
 import VideoInterviewSection from '../../components/showcase/VideoInterviewSection.astro';
+import PastGallery from '../../components/sections/PastGallery.astro';
 import NewsroomGrid from '../../components/showcase/NewsroomGrid.astro';
-import FilterChips from '../../components/ui/FilterChips.astro';
-import StudentGrid from '../../components/students/StudentGrid.astro';
-import EmailSignup from '../../components/sections/EmailSignup.astro';
-import Button from '../../components/ui/Button.astro';
 import { fullName } from '../../lib/utils/format';
 
 // Fetch all collections
 const students = await getCollection('students');
-const programs = await getCollection('programs');
 const videoInterviews = await getCollection('video-interviews');
-
-// Build maps
-const programMap = new Map(programs.map(p => [p.id, p.data.name]));
 const studentMap = new Map(students.map(s => [s.id, fullName(s)]));
 
 // Aggregate + deduplicate newsroom stories by URL
@@ -57,12 +50,6 @@ const allStories = [...storyMap.values()].sort((a, b) => {
   return new Date(b.date).getTime() - new Date(a.date).getTime();
 });
 
-// Program filter chips
-const programChips = programs.map(p => ({
-  label: p.data.name,
-  href: `/showcase/students/program/${p.data.slug}/`,
-}));
-
 // Fallback images for hero (event/work images since student photos are placeholders)
 const fallbackImages = [
   { src: 'https://storage.googleapis.com/ccaedu-prod/media/images/large_digital_jpg-CCA_EOY-Show_SP25-115-jrl2.original.jpg', alt: 'Student work on display' },
@@ -82,66 +69,274 @@ const fallbackImages = [
     <VideoInterviewSection interviews={videoInterviews} studentMap={studentMap} />
   )}
 
-  {/* 3. In the News */}
+  {/* 3. Thesis Work Gallery */}
+  <PastGallery
+    label="Thesis Work"
+    title="Selected Works"
+    link={{ href: '/showcase/works/', text: 'View all works' }}
+    images={[
+      { src: 'https://storage.googleapis.com/ccaedu-prod/media/images/large_digital_jpg-CCA_EOY-Show_SP25-115-jrl2.original.jpg', alt: 'Student artwork on display', caption: 'Untitled (Reclamation Series)', credit: 'Jordan Rivera, MFA Fine Arts' },
+      { src: 'https://storage.googleapis.com/ccaedu-prod/media/images/commencement-masters24-2025-body-001.original.jpg', alt: 'Installation view', caption: 'Symbiosis', credit: 'Mei-Lin Chen, BFA Sculpture' },
+      { src: 'https://storage.googleapis.com/ccaedu-prod/media/original_images/small_digital_jpg-MFA_Fine_Arts_Open_Studio_Details_FA22-058.jpg', alt: 'Fine Arts studio work', caption: 'Dwelling / Undwelling', credit: 'Priya Sharma, M.Arch' },
+      { src: 'https://storage.googleapis.com/ccaedu-prod/media/images/large_digital_jpg-CCA_EOY-Show_SP25-115-jrl2.original.jpg', alt: 'Student exhibition', caption: 'Soft Infrastructure', credit: 'Alex Nakamura, MFA Design' },
+      { src: 'https://storage.googleapis.com/ccaedu-prod/media/images/commencement-masters24-2025-body-001.original.jpg', alt: 'Graduate thesis work', caption: 'Fugue State', credit: 'Sam Okafor, BFA Painting & Drawing' },
+      { src: 'https://storage.googleapis.com/ccaedu-prod/media/original_images/small_digital_jpg-MFA_Fine_Arts_Open_Studio_Details_FA22-058.jpg', alt: 'Mixed media artwork', caption: 'Archive of Touch', credit: 'Elena Voss, MFA Writing' },
+      { src: 'https://storage.googleapis.com/ccaedu-prod/media/images/large_digital_jpg-CCA_EOY-Show_SP25-115-jrl2.original.jpg', alt: 'Gallery installation', caption: 'Post / Signal', credit: 'Tomás Iglesias, BFA Photography' },
+      { src: 'https://storage.googleapis.com/ccaedu-prod/media/images/commencement-masters24-2025-body-001.original.jpg', alt: 'Student film still', caption: 'Where the Water Was', credit: 'Ayo Mensah, MFA Film' },
+    ]}
+  />
+
+  {/* 4. In the News */}
   {allStories.length > 0 && (
     <NewsroomGrid stories={allStories} />
   )}
 
-  {/* 6. Browse by Program */}
-  <section class="programs-section reveal" id="programs">
+  {/* Meet the Students CTA */}
+  <section class="students-cta reveal" data-cursor-scope>
     <div class="container">
-      <span class="section-label">Explore</span>
-      <h2 class="section-heading">Browse by Program</h2>
-      <FilterChips items={programChips} />
-    </div>
-  </section>
-
-  {/* 7. Students Grid */}
-  <section class="students-section reveal" id="students">
-    <div class="container">
-      <span class="section-label">Class of 2026</span>
-      <h2 class="section-heading">Meet the Students</h2>
-      <StudentGrid students={students.slice(0, 8)} programMap={programMap} />
-      <div class="section-cta">
-        <Button href="/showcase/students/" variant="outline">View All Students</Button>
+      <div class="students-cta__card-wrapper">
+        <a href="/showcase/students/" class="students-cta__card">
+          <span class="students-cta__eyebrow">Class of 2026</span>
+          <h2 class="students-cta__heading">Meet the Students</h2>
+          <p class="students-cta__count">{students.length} artists, designers, writers &amp; architects</p>
+          <span class="students-cta__arrow" aria-hidden="true">&rarr;</span>
+        </a>
       </div>
     </div>
+    <img
+      class="floating-img floating-img-behind hero__doodle"
+      data-cursor-track
+      data-cursor-strength="0.04"
+      data-cursor-max="30"
+      data-cursor-lerp="0.08"
+      src="https://storage.googleapis.com/ccaedu-prod/media/images/Doodle-spiral.original.svg"
+      alt=""
+      aria-hidden="true"
+    />
+    <img
+      class="floating-img floating-img-front hero__doodle"
+      data-cursor-track
+      data-cursor-strength="0.05"
+      data-cursor-max="35"
+      data-cursor-lerp="0.1"
+      src="https://storage.googleapis.com/ccaedu-prod/media/images/Doodle-flower-teal.original.svg"
+      alt=""
+      aria-hidden="true"
+    />
   </section>
-
-  {/* 8. Email Signup */}
-  <EmailSignup
-    heading="Stay Connected"
-    description="Sign up for updates about the Student Showcase, exhibition openings, and more from CCA's Class of 2026."
-  />
 
 </BaseLayout>
 
 <script src="../../scripts/cursor-track.ts"></script>
+<script src="../../scripts/doodle-antics.ts"></script>
+
+<script>
+  const ctaSection = document.querySelector('.students-cta') as HTMLElement | null;
+  const doodles = ctaSection?.querySelectorAll('.floating-img');
+  doodles?.forEach((img) => {
+    img.addEventListener('mouseenter', () => ctaSection?.classList.add('is-hovered'));
+    img.addEventListener('mouseleave', () => ctaSection?.classList.remove('is-hovered'));
+  });
+</script>
 
 <style>
-  /* Section rhythm */
-  .programs-section,
-  .students-section {
-    padding-block: var(--space-20);
+  .students-cta {
+    position: relative;
+    padding-block: var(--space-16);
   }
 
-  .section-heading {
-    font-family: var(--font-heading);
-    margin-bottom: var(--space-10);
+  .students-cta__card-wrapper {
+    position: relative;
+    max-width: 600px;
+    margin-inline: auto;
   }
 
-  .section-cta {
+  .students-cta__card {
     display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    text-decoration: none;
+    color: var(--color-text);
+    position: relative;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    padding: var(--space-10) var(--space-8);
+    box-shadow: var(--shadow-card-rest);
+    overflow: visible;
+    transition: transform 0.4s var(--ease-out-expo),
+                box-shadow 0.4s var(--ease-out-expo);
+  }
+
+  .students-cta__card:hover,
+  .students-cta.is-hovered .students-cta__card {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-card-hover);
+  }
+
+  /* Prismatic gradient top border */
+  .students-cta__card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--gradient-prismatic);
+    border-radius: var(--radius-card) var(--radius-card) 0 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .students-cta__card::before {
+      animation: prismatic-shift 6s linear infinite;
+    }
+
+    .students-cta__card:hover::before,
+    .students-cta.is-hovered .students-cta__card::before {
+      animation-duration: 2s;
+    }
+  }
+
+  /* Seal watermark */
+  .students-cta__card::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    max-height: 100%;
+    aspect-ratio: 1;
+    background: var(--color-accent);
+    opacity: 0.03;
+    mask-image: url('/images/cca-seal.svg');
+    -webkit-mask-image: url('/images/cca-seal.svg');
+    mask-size: contain;
+    -webkit-mask-size: contain;
+    mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .students-cta__card > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .students-cta__eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-accent);
+    margin-bottom: var(--space-3);
+  }
+
+  .students-cta__heading {
+    font-family: var(--font-heading);
+    font-size: var(--text-2xl);
+    margin-bottom: var(--space-2);
+  }
+
+  .students-cta__count {
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+    margin-bottom: var(--space-6);
+    max-width: 50ch;
+  }
+
+  .students-cta__arrow {
+    display: inline-flex;
+    align-items: center;
     justify-content: center;
-    margin-top: var(--space-10);
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    border: 2px solid var(--color-border);
+    font-size: var(--text-base);
+    color: var(--color-accent);
+    transition: transform var(--duration-base) var(--ease-out-expo),
+                border-color var(--duration-base) var(--ease-out-expo);
   }
 
-  .students-section {
-    padding-bottom: var(--space-16);
+  .students-cta__card:hover .students-cta__arrow,
+  .students-cta.is-hovered .students-cta__arrow {
+    transform: translateX(4px);
+    border-color: var(--color-accent);
   }
 
-  /* Section dividers */
-  .programs-section {
-    border-top: 1px solid var(--color-border);
+  /* Floating doodles */
+  .floating-img {
+    position: absolute;
+    opacity: 1;
+    cursor: pointer;
+    z-index: 2;
+    transition: transform 0.4s var(--ease-out-expo);
+  }
+
+  .floating-img-behind {
+    width: clamp(48px, 6vw, 90px);
+    bottom: var(--space-16);
+    left: calc(50% - 420px);
+    transform: rotate(-6deg);
+  }
+
+  .floating-img-front {
+    width: clamp(36px, 4.5vw, 64px);
+    top: var(--space-16);
+    right: calc(50% - 400px);
+    transform: rotate(4deg);
+  }
+
+  .students-cta.is-hovered .floating-img-behind {
+    transform: rotate(-6deg) translate(-8px, 8px);
+  }
+
+  .students-cta.is-hovered .floating-img-front {
+    transform: rotate(4deg) translate(8px, -8px);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .floating-img-behind {
+      animation: float-behind 8s ease-in-out infinite;
+    }
+
+    .floating-img-front {
+      animation: float-front 9s ease-in-out infinite;
+      animation-delay: 1s;
+    }
+  }
+
+  @keyframes float-behind {
+    0%, 100% { transform: rotate(-6deg) translateY(0); }
+    50% { transform: rotate(-6deg) translateY(-6px); }
+  }
+
+  @keyframes float-front {
+    0%, 100% { transform: rotate(4deg) translateY(0); }
+    50% { transform: rotate(4deg) translateY(-6px); }
+  }
+
+  .floating-img:hover {
+    animation-play-state: paused;
+  }
+
+  @media (max-width: 768px) {
+    .floating-img {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .students-cta.is-hovered .floating-img-behind {
+      transform: rotate(-6deg);
+    }
+
+    .students-cta.is-hovered .floating-img-front {
+      transform: rotate(4deg);
+    }
   }
 </style>
