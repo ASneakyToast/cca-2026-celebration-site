@@ -99,12 +99,12 @@ export interface CandidateGroup {
   }>;
 }
 
-export async function getCandidatesGroupedByDivision(eventId: string): Promise<CandidateGroup[]> {
-  const students = await getStudentsByCeremony(eventId);
+async function groupStudentsByDivision(
+  students: Awaited<ReturnType<typeof getCollection<'students'>>>,
+): Promise<CandidateGroup[]> {
   const programs = await getCollection('programs');
   const programMap = new Map(programs.map(p => [p.id, p.data]));
 
-  // Build a map: division -> program -> students
   const divisionMap = new Map<string, Map<string, typeof students>>();
 
   for (const student of students) {
@@ -124,7 +124,6 @@ export async function getCandidatesGroupedByDivision(eventId: string): Promise<C
     programStudents.get(programKey)!.push(student);
   }
 
-  // Sort and structure
   const result: CandidateGroup[] = [];
 
   const sortedDivisions = [...divisionMap.keys()].sort(
@@ -159,4 +158,14 @@ export async function getCandidatesGroupedByDivision(eventId: string): Promise<C
   }
 
   return result;
+}
+
+export async function getAllStudentsGroupedByDivision(): Promise<CandidateGroup[]> {
+  const students = await getCollection('students');
+  return groupStudentsByDivision(students);
+}
+
+export async function getCandidatesGroupedByDivision(eventId: string): Promise<CandidateGroup[]> {
+  const students = await getStudentsByCeremony(eventId);
+  return groupStudentsByDivision(students);
 }

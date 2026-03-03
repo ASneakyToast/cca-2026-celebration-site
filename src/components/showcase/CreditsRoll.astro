@@ -1,0 +1,711 @@
+---
+import type { CandidateGroup } from '../../lib/utils/collections';
+
+interface Props {
+  groups: CandidateGroup[];
+  totalCount: number;
+}
+
+const { groups, totalCount } = Astro.props;
+---
+
+<aside class="credits-controls" aria-label="Scroll controls">
+  <button class="credits-controls__btn credits-controls__btn--up" aria-label="Scroll up — hover to scroll">
+    <svg class="credits-controls__icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M12 5l-8 10h16L12 5z" fill="currentColor" />
+    </svg>
+    <span class="credits-controls__label">Scroll up</span>
+  </button>
+
+  <div class="credits-search" role="search">
+    <button class="credits-search__toggle" type="button" aria-label="Search students" aria-expanded="false">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="11" cy="11" r="8"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+    </button>
+    <input
+      type="search"
+      class="credits-search__input"
+      placeholder="Find a student..."
+      aria-label="Search students"
+    />
+    <span class="credits-search__count" aria-live="polite"></span>
+  </div>
+
+  <button class="credits-controls__btn credits-controls__btn--down" aria-label="Scroll down — hover to scroll">
+    <svg class="credits-controls__icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M12 19l-8-10h16l-8 10z" fill="currentColor" />
+    </svg>
+    <span class="credits-controls__label">Scroll down</span>
+  </button>
+</aside>
+
+<section class="credits-section">
+  <div class="credits-title-card">
+    <div class="credits-title-card__spotlight" aria-hidden="true"></div>
+    <div class="credits-title-card__seal-bg" aria-hidden="true"></div>
+    <div class="credits-title-card__content">
+      <span class="credits-title-card__eyebrow stagger-1">CCA Class of 2026</span>
+      <p class="credits-title-card__year shimmer-text stagger-2">2026</p>
+      <h1 class="credits-title-card__heading stagger-3">Graduating<br />Students</h1>
+      <p class="credits-title-card__count stagger-4">{totalCount} Graduates</p>
+      <div class="credits-title-card__rule stagger-5" aria-hidden="true"></div>
+    </div>
+    <div class="credits-title-card__scroll" aria-hidden="true">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    </div>
+  </div>
+
+  {groups.map((group, i) => (
+    <div class="credits-division">
+      {i > 0 && <div class="credits-division__separator" aria-hidden="true"><span /></div>}
+      <h2 class="credits-division__heading">{group.divisionLabel}</h2>
+
+      {group.programs.map((program) => (
+        <div class="credits-program">
+          <h3 class="credits-program__heading">
+            {program.programName}
+            <span class="credits-program__badge">{program.degreeType}</span>
+          </h3>
+          <ul class="credits-program__list">
+            {program.students.map((student) => (
+              <li>
+                <a
+                  class="credits-name"
+                  href={`/showcase/students/${student.slug}/`}
+                  data-name={`${student.firstName} ${student.lastName}`.toLowerCase()}
+                >
+                  {student.firstName} {student.lastName}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  ))}
+
+  <div class="credits-end-card">
+    <div class="credits-end-card__spotlight" aria-hidden="true"></div>
+    <div class="credits-end-card__content">
+      <div class="credits-end-card__rule" aria-hidden="true"></div>
+      <div class="credits-end-card__seal" aria-hidden="true"></div>
+      <p class="credits-end-card__text shimmer-text">Congratulations</p>
+      <p class="credits-end-card__year">Class of 2026</p>
+    </div>
+  </div>
+</section>
+
+<script src="../../scripts/credits-roll.ts"></script>
+
+<style>
+  /* --- Section: normal document flow --- */
+  .credits-section {
+    text-align: center;
+  }
+
+  /* --- Title Card (Hero) --- */
+  .credits-title-card {
+    position: relative;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .credits-title-card__spotlight {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      ellipse at 50% 40%,
+      color-mix(in srgb, var(--color-accent) 6%, transparent),
+      transparent 70%
+    );
+    pointer-events: none;
+  }
+
+  .credits-title-card__seal-bg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: clamp(280px, 60vw, 600px);
+    aspect-ratio: 1;
+    background: var(--color-accent);
+    opacity: 0.04;
+    mask-image: url('/images/cca-seal.svg');
+    -webkit-mask-image: url('/images/cca-seal.svg');
+    mask-size: contain;
+    -webkit-mask-size: contain;
+    mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .credits-title-card__content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-inline: var(--space-4);
+  }
+
+  .credits-title-card__eyebrow {
+    display: block;
+    font-family: var(--font-mono), monospace;
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--color-muted);
+    margin-bottom: var(--space-6);
+  }
+
+  .credits-title-card__year {
+    font-family: var(--font-display), serif;
+    font-size: clamp(5rem, 14vw, 10rem);
+    font-style: italic;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: var(--space-3);
+  }
+
+  .credits-title-card__heading {
+    font-family: var(--font-heading), sans-serif;
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--color-text);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 0;
+  }
+
+  .credits-title-card__count {
+    font-family: var(--font-mono), monospace;
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-top: var(--space-6);
+    margin-inline: auto;
+  }
+
+  .credits-title-card__rule {
+    width: 120px;
+    height: 3px;
+    margin: var(--space-10) auto 0;
+    background: var(--gradient-prismatic);
+    border-radius: 2px;
+    animation: prismatic-shift 6s linear infinite;
+  }
+
+  .credits-title-card__scroll {
+    position: absolute;
+    bottom: var(--space-8);
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--color-muted);
+    animation: scroll-bounce 2s ease-in-out infinite;
+  }
+
+  /* --- Division --- */
+  .credits-division {
+    margin-bottom: var(--space-16);
+    padding-inline: var(--space-6);
+  }
+
+  .credits-division__separator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: var(--space-12);
+  }
+
+  .credits-division__separator span {
+    display: block;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    opacity: 0.4;
+    box-shadow:
+      -16px 0 0 var(--color-accent),
+      16px 0 0 var(--color-accent);
+  }
+
+  .credits-division__heading {
+    font-family: var(--font-display), serif;
+    font-size: var(--text-2xl);
+    font-style: italic;
+    color: var(--color-text);
+    margin-bottom: var(--space-8);
+  }
+
+  .credits-division__heading::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 2px;
+    margin: var(--space-4) auto 0;
+    background: var(--gradient-prismatic);
+    border-radius: 2px;
+    animation: prismatic-shift 6s linear infinite;
+  }
+
+  /* --- Program --- */
+  .credits-program {
+    margin-bottom: var(--space-10);
+  }
+
+  .credits-program__heading {
+    font-family: var(--font-mono), monospace;
+    font-size: var(--text-xs);
+    font-weight: 500;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: var(--space-4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+  }
+
+  .credits-program__badge {
+    font-size: var(--text-xs);
+    font-weight: 400;
+    padding: 0.15em 0.6em;
+    border: 1px solid var(--color-border);
+    border-radius: 100px;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .credits-program__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .credits-program__list li {
+    line-height: 1;
+  }
+
+  /* --- Name Links --- */
+  .credits-name {
+    display: inline-block;
+    font-family: var(--font-body), sans-serif;
+    font-size: var(--text-lg);
+    color: var(--color-text);
+    text-decoration: none;
+    padding: var(--space-1) var(--space-3);
+    border-radius: 4px;
+    background-image: linear-gradient(var(--color-accent), var(--color-accent));
+    background-size: 0% 1px;
+    background-position: center bottom 2px;
+    background-repeat: no-repeat;
+    transition:
+      color var(--duration-fast) var(--ease-out-expo),
+      background-size var(--duration-base) var(--ease-out-expo),
+      opacity var(--duration-base) ease;
+  }
+
+  .credits-name:hover {
+    color: var(--color-accent);
+    background-size: 70% 1px;
+  }
+
+  /* --- Search states --- */
+  :global(.is-searching) .credits-name {
+    opacity: 0.15;
+    transition: opacity var(--duration-base) ease;
+  }
+
+  :global(.is-searching) .credits-name.is-match {
+    opacity: 1;
+    color: var(--color-accent);
+    background-size: 70% 1px;
+  }
+
+  /* --- End Card (Footer Celebration) --- */
+  .credits-end-card {
+    position: relative;
+    min-height: 60vh;
+    min-height: 60dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .credits-end-card__spotlight {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      ellipse at 50% 60%,
+      color-mix(in srgb, var(--color-accent) 5%, transparent),
+      transparent 70%
+    );
+    pointer-events: none;
+  }
+
+  .credits-end-card__content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-inline: var(--space-4);
+  }
+
+  .credits-end-card__rule {
+    width: 120px;
+    height: 3px;
+    margin: 0 auto var(--space-12);
+    background: var(--gradient-prismatic);
+    border-radius: 2px;
+    animation: prismatic-shift 6s linear infinite;
+  }
+
+  .credits-end-card__seal {
+    width: clamp(100px, 18vw, 160px);
+    aspect-ratio: 1;
+    margin: 0 auto var(--space-8);
+    background: var(--color-accent);
+    mask-image: url('/images/cca-seal.svg');
+    -webkit-mask-image: url('/images/cca-seal.svg');
+    mask-size: contain;
+    -webkit-mask-size: contain;
+    mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
+  }
+
+  .credits-end-card__text {
+    font-family: var(--font-display), serif;
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    font-style: italic;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: var(--space-4);
+  }
+
+  .credits-end-card__year {
+    display: block;
+    width: fit-content;
+    margin-inline: auto;
+    font-family: var(--font-mono), monospace;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    background: var(--gradient-prismatic);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: prismatic-shift 6s linear infinite;
+  }
+
+  /* --- Scroll Controls (fixed left edge) --- */
+  .credits-controls {
+    position: fixed;
+    left: var(--space-4);
+    top: 0;
+    height: 100vh;
+    height: 100dvh;
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: var(--space-3);
+    pointer-events: none;
+  }
+
+  .credits-controls__btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    pointer-events: auto;
+    border: 1px solid var(--color-border);
+    border-radius: 100px;
+    background: rgba(var(--color-bg-rgb), 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: var(--color-muted);
+    cursor: pointer;
+    padding: var(--space-4) var(--space-3);
+    min-width: 44px;
+    transition:
+      opacity var(--duration-base) var(--ease-out-expo),
+      color var(--duration-base) var(--ease-out-expo),
+      border-color var(--duration-base) var(--ease-out-expo),
+      background var(--duration-base) var(--ease-out-expo),
+      box-shadow var(--duration-base) var(--ease-out-expo);
+  }
+
+  .credits-controls__icon {
+    flex-shrink: 0;
+    transition: transform var(--duration-base) var(--ease-out-expo);
+  }
+
+  .credits-controls__label {
+    font-family: var(--font-mono), monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    writing-mode: vertical-lr;
+    white-space: nowrap;
+  }
+
+  .credits-controls__btn--up .credits-controls__label {
+    transform: rotate(180deg);
+  }
+
+  .credits-controls__btn:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+    background: rgba(var(--color-bg-rgb), 0.95);
+    box-shadow:
+      0 0 0 3px var(--color-accent-tint),
+      0 4px 16px var(--color-accent-shadow);
+  }
+
+  .credits-controls__btn:hover .credits-controls__icon {
+    transform: scale(1.15);
+  }
+
+  .credits-controls__btn:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  .credits-controls__btn.is-hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* --- Search (inside controls aside) --- */
+  .credits-search {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0;
+    pointer-events: auto;
+    position: relative;
+  }
+
+  .credits-search__toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    background: rgba(var(--color-bg-rgb), 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: var(--color-muted);
+    cursor: pointer;
+    padding: 0;
+    width: 52px;
+    height: 52px;
+    transition:
+      color var(--duration-base) var(--ease-out-expo),
+      border-color var(--duration-base) var(--ease-out-expo),
+      background var(--duration-base) var(--ease-out-expo),
+      box-shadow var(--duration-base) var(--ease-out-expo);
+  }
+
+  .credits-search__toggle:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+    background: rgba(var(--color-bg-rgb), 0.95);
+    box-shadow:
+      0 0 0 3px var(--color-accent-tint),
+      0 4px 16px var(--color-accent-shadow);
+  }
+
+  .credits-search__toggle:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  .credits-search__input {
+    width: 0;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 100px;
+    background: rgba(var(--color-bg-rgb), 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: var(--color-text);
+    font-family: var(--font-mono), monospace;
+    font-size: var(--text-xs);
+    letter-spacing: 0.04em;
+    opacity: 0;
+    overflow: hidden;
+    transition:
+      width var(--duration-base) var(--ease-out-expo),
+      padding var(--duration-base) var(--ease-out-expo),
+      opacity var(--duration-base) var(--ease-out-expo),
+      border-color var(--duration-base) var(--ease-out-expo),
+      box-shadow var(--duration-fast) ease;
+  }
+
+  .credits-search.is-open .credits-search__input {
+    width: 160px;
+    padding: var(--space-2) var(--space-3);
+    margin-left: var(--space-2);
+    opacity: 1;
+    border-color: var(--color-border);
+  }
+
+  .credits-search__input::placeholder {
+    color: var(--color-muted);
+    opacity: 0.7;
+  }
+
+  .credits-search__input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px var(--color-accent-tint);
+  }
+
+  .credits-search__count {
+    position: absolute;
+    left: calc(100% + var(--space-2));
+    top: 50%;
+    transform: translateY(-50%);
+    white-space: nowrap;
+    font-family: var(--font-mono), monospace;
+    font-size: var(--text-xs);
+    color: var(--color-muted);
+    letter-spacing: 0.04em;
+    opacity: 0;
+    transition: opacity var(--duration-base) var(--ease-out-expo);
+  }
+
+  .credits-search.is-open .credits-search__count {
+    opacity: 1;
+  }
+
+  /* --- Animations --- */
+  @keyframes arrow-bob-up {
+    0%, 100% { transform: scale(1.15) translateY(0); }
+    50% { transform: scale(1.15) translateY(-3px); }
+  }
+
+  @keyframes arrow-bob-down {
+    0%, 100% { transform: scale(1.15) translateY(0); }
+    50% { transform: scale(1.15) translateY(3px); }
+  }
+
+  .credits-controls__btn--up:hover .credits-controls__icon {
+    animation: arrow-bob-up 0.8s ease-in-out infinite;
+  }
+
+  .credits-controls__btn--down:hover .credits-controls__icon {
+    animation: arrow-bob-down 0.8s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .credits-title-card__seal-bg {
+      animation: seal-hero-breathe 12s ease-in-out infinite;
+    }
+
+    .credits-end-card__seal {
+      animation: seal-breathe 12s ease-in-out infinite;
+    }
+  }
+
+  /* --- Reduced Motion --- */
+  @media (prefers-reduced-motion: reduce) {
+    .credits-controls {
+      display: none;
+    }
+
+    .credits-search {
+      position: fixed;
+      bottom: var(--space-6);
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 50;
+      flex-direction: row;
+    }
+
+    .credits-search__toggle {
+      display: none;
+    }
+
+    .credits-search__input {
+      width: 200px;
+      padding: var(--space-2) var(--space-4);
+      opacity: 1;
+      border-color: var(--color-border);
+    }
+
+    .credits-search__count {
+      opacity: 1;
+    }
+
+    .credits-controls__btn--up:hover .credits-controls__icon,
+    .credits-controls__btn--down:hover .credits-controls__icon {
+      animation: none;
+    }
+
+    .credits-title-card__rule,
+    .credits-division__heading::after,
+    .credits-end-card__rule,
+    .credits-end-card__year {
+      animation: none;
+    }
+
+    .credits-title-card__scroll {
+      animation: none;
+      opacity: 0.6;
+    }
+  }
+
+  /* --- Mobile --- */
+  @media (max-width: 640px) {
+    .credits-controls {
+      display: none;
+    }
+
+    .credits-search {
+      position: fixed;
+      bottom: var(--space-6);
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 50;
+      flex-direction: row;
+    }
+
+    .credits-search__toggle {
+      display: none;
+    }
+
+    .credits-search__input {
+      width: 200px;
+      padding: var(--space-2) var(--space-4);
+      opacity: 1;
+      border-color: var(--color-border);
+    }
+
+    .credits-search__count {
+      opacity: 1;
+    }
+  }
+</style>

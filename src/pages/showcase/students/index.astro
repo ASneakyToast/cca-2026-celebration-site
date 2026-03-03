@@ -1,59 +1,16 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-import StudentsHero from '../../../components/showcase/StudentsHero.astro';
-import StudentGrid from '../../../components/students/StudentGrid.astro';
-import FilterChips from '../../../components/ui/FilterChips.astro';
-import EmailSignup from '../../../components/sections/EmailSignup.astro';
+import CreditsRoll from '../../../components/showcase/CreditsRoll.astro';
+
+import { getAllStudentsGroupedByDivision } from '../../../lib/utils/collections';
 
 const students = await getCollection('students');
-const programs = await getCollection('programs');
-const programMap = new Map(programs.map(p => [p.id, p.data.name]));
-
-const programChips = [
-  { label: 'All', href: '/showcase/students/', active: true },
-  ...programs.map(p => ({
-    label: p.data.name,
-    href: `/showcase/students/program/${p.data.slug}/`,
-  })),
-];
+const groups = await getAllStudentsGroupedByDivision();
 ---
 
 <BaseLayout title="Students — Student Showcase" description="Meet the talented artists, designers, writers, and architects of CCA's Class of 2026." themeKey="showcase">
 
-  {/* 1. Stats-focused hero */}
-  <StudentsHero studentCount={students.length} />
-
-  {/* 2. Filter + Student Grid */}
-  <section class="students-listing">
-    <div class="container">
-      <div class="students-listing__filters reveal">
-        <FilterChips items={programChips} />
-      </div>
-      <div class="students-listing__grid reveal">
-        <StudentGrid students={students} programMap={programMap} />
-      </div>
-    </div>
-  </section>
-
-  {/* 3. Email Signup */}
-  <EmailSignup
-    heading="Stay Connected"
-    description="Sign up for updates about the Student Showcase, exhibition openings, and more from CCA's Class of 2026."
-  />
+  <CreditsRoll groups={groups} totalCount={students.length} />
 
 </BaseLayout>
-
-<style>
-  .students-listing {
-    padding-block: var(--space-10) var(--space-20);
-  }
-
-  .students-listing__filters {
-    margin-bottom: var(--space-8);
-  }
-
-  .students-listing__grid {
-    min-height: 200px;
-  }
-</style>
