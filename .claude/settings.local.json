@@ -28,7 +28,12 @@
       "Bash(npx astro build:*)",
       "mcp__astro-docs__search_astro_docs",
       "Bash(tail:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash($INKSCAPE:*)",
+      "Bash(/Applications/Inkscape.app/Contents/MacOS/inkscape:*)",
+      "Bash(bunx svgo:*)",
+      "Bash(grep:*)",
+      "Bash(bun run:*)"
     ]
   }
 }

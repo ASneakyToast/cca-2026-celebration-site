@@ -84,6 +84,7 @@
   --color-purple: #563D82;
   --color-navy: #005776;
   --color-sand: #F7F3E9;
+  --color-dark-teal: #002f40;
 
   /* Celebration accent spectrum (aliases) */
   --color-celebration-primary: var(--color-teal);
