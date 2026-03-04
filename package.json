@@ -12,5 +12,8 @@
     "astro": "^5.17.1",
     "astro-sheet-loader": "^1.0.5",
     "sharp": "^0.34.5"
+  },
+  "devDependencies": {
+    "svgo": "^4.0.0"
   }
 }
