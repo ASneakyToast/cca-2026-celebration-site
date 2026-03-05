@@ -1,0 +1,432 @@
+---
+import DemoEffectLayout from "../../layouts/DemoEffectLayout.astro";
+
+const halftones = [
+  "halftone-full-01", "halftone-full-02", "halftone-full-03", "halftone-full-04",
+  "halftone-16x9-01", "halftone-16x9-02", "halftone-16x9-03", "halftone-16x9-04",
+  "halftone-1x1-01", "halftone-1x1-02", "halftone-1x1-03", "halftone-1x1-04", "halftone-1x1-05",
+];
+---
+
+<DemoEffectLayout title="Halftone Mask Demo">
+  <div class="halftone-bg" aria-hidden="true">
+    <div class="halftone-layer halftone-layer--1"></div>
+    <div class="halftone-layer halftone-layer--2"></div>
+  </div>
+
+  <div class="demo-overlay">
+    <a href="/demo/" class="back-link">&larr; Demo Pages</a>
+    <h1 class="demo-title">Color Shift Mask</h1>
+    <p class="demo-technique">CSS mask-image over animated gradient</p>
+  </div>
+
+  <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle controls" aria-expanded="false">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+      <circle cx="6" cy="4" r="1.5"/><line x1="6" y1="5.5" x2="6" y2="18"/>
+      <circle cx="14" cy="10" r="1.5"/><line x1="14" y1="2" x2="14" y2="8.5"/><line x1="14" y1="11.5" x2="14" y2="18"/>
+      <circle cx="10" cy="15" r="1.5"/><line x1="10" y1="2" x2="10" y2="13.5"/><line x1="10" y1="16.5" x2="10" y2="18"/>
+    </svg>
+  </button>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h2>Controls</h2>
+      <button class="sidebar-close" id="sidebar-close" aria-label="Close controls">&times;</button>
+    </div>
+    <p class="sidebar-description">
+      Halftone SVG dots act as windows into a shifting prismatic gradient.
+      The SVG is static — only the CSS gradient animates.
+    </p>
+    <div class="controls">
+      <div class="control-group">
+        <label for="gradient-speed">Gradient Speed: <output id="gradient-speed-val">20s</output></label>
+        <input type="range" id="gradient-speed" min="2" max="60" value="20" step="1" />
+      </div>
+      <div class="control-group">
+        <label for="layer2-opacity">Layer 2 Opacity: <output id="layer2-opacity-val">0.2</output></label>
+        <input type="range" id="layer2-opacity" min="0" max="1" value="0.2" step="0.01" />
+      </div>
+      <div class="control-group">
+        <label for="mask-scale">Mask Scale: <output id="mask-scale-val">100%</output></label>
+        <input type="range" id="mask-scale" min="50" max="200" value="100" step="5" />
+      </div>
+      <div class="control-group">
+        <label for="halftone-picker">Halftone Pattern</label>
+        <select id="halftone-picker">
+          {halftones.map((name, i) => (
+            <option value={name} selected={name === "halftone-full-03"}>
+              {name}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div class="control-group">
+        <label for="gradient-preset">Gradient Palette</label>
+        <select id="gradient-preset">
+          <option value="brand" selected>CCA Brand</option>
+          <option value="warm">Warm (Orange → Pink)</option>
+          <option value="cool">Cool (Teal → Navy)</option>
+          <option value="sunset">Sunset</option>
+          <option value="monochrome">Monochrome Teal</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <label>Gradient Colors</label>
+        <div class="swatch-picker" id="gradient-swatches">
+          <button class="swatch active" data-color="var(--color-teal)" style="background:#00BFB3" title="Teal"></button>
+          <button class="swatch" data-color="var(--color-lime)" style="background:#B7BF10" title="Lime"></button>
+          <button class="swatch" data-color="var(--color-yellow)" style="background:#FFC845" title="Yellow"></button>
+          <button class="swatch" data-color="var(--color-pink)" style="background:#F1BDC8" title="Pink"></button>
+          <button class="swatch" data-color="var(--color-orange)" style="background:#E57200" title="Orange"></button>
+          <button class="swatch" data-color="var(--color-purple)" style="background:#563D82" title="Purple"></button>
+          <button class="swatch" data-color="var(--color-navy)" style="background:#005776" title="Navy"></button>
+          <button class="swatch" data-color="var(--color-dark-teal)" style="background:#002f40" title="Dark Teal"></button>
+        </div>
+        <p class="swatch-hint">Palette presets override these colors</p>
+      </div>
+    </div>
+  </aside>
+</DemoEffectLayout>
+
+<style>
+  .halftone-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .halftone-layer {
+    position: absolute;
+    inset: 0;
+    background: var(--gradient,
+      linear-gradient(135deg,
+        var(--color-teal),
+        var(--color-lime),
+        var(--color-yellow),
+        var(--color-pink),
+        var(--color-orange),
+        var(--color-purple),
+        var(--color-teal)
+      )
+    );
+    background-size: 400% 400%;
+    mask-mode: alpha;
+    -webkit-mask-mode: alpha;
+    mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
+    mask-position: center;
+    -webkit-mask-position: center;
+    mask-size: cover;
+    -webkit-mask-size: cover;
+  }
+
+  .halftone-layer--1 {
+    mask-image: url("/images/scanned-graphics/halftones/halftone-full-03.svg");
+    -webkit-mask-image: url("/images/scanned-graphics/halftones/halftone-full-03.svg");
+    mask-size: var(--mask-scale, cover);
+    -webkit-mask-size: var(--mask-scale, cover);
+    animation: gradient-drift-1 var(--gradient-speed, 20s) ease infinite;
+  }
+
+  .halftone-layer--2 {
+    mask-image: url("/images/scanned-graphics/halftones/halftone-full-02.svg");
+    -webkit-mask-image: url("/images/scanned-graphics/halftones/halftone-full-02.svg");
+    mask-size: var(--mask-scale, cover);
+    -webkit-mask-size: var(--mask-scale, cover);
+    opacity: var(--layer2-opacity, 0.2);
+    animation: gradient-drift-2 calc(var(--gradient-speed, 20s) * 1.4) ease infinite reverse;
+  }
+
+  @keyframes gradient-drift-1 {
+    0% { background-position: 0% 50%; }
+    25% { background-position: 100% 0%; }
+    50% { background-position: 100% 100%; }
+    75% { background-position: 0% 100%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  @keyframes gradient-drift-2 {
+    0% { background-position: 100% 0%; }
+    33% { background-position: 0% 100%; }
+    66% { background-position: 50% 0%; }
+    100% { background-position: 100% 0%; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .halftone-layer {
+      animation: none;
+      background-position: 0% 50%;
+    }
+  }
+
+  /* Overlay info */
+  .demo-overlay {
+    position: fixed;
+    top: 5rem;
+    left: var(--space-6);
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  .back-link {
+    display: inline-block;
+    color: var(--color-muted);
+    text-decoration: none;
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-2);
+    pointer-events: auto;
+    background: hsla(var(--color-bg-rgb, 0 0% 99%), 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: var(--space-1) var(--space-2);
+    border-radius: 0.25rem;
+  }
+
+  .demo-title {
+    font-family: var(--font-heading);
+    font-size: var(--text-2xl);
+    margin-bottom: var(--space-1);
+    text-shadow: 0 1px 4px hsla(0, 0%, 0%, 0.3);
+  }
+
+  .demo-technique {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-shadow: 0 1px 4px hsla(0, 0%, 0%, 0.3);
+  }
+
+  /* Sidebar toggle */
+  .sidebar-toggle {
+    position: fixed;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 20;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: hsla(var(--color-bg-rgb, 0 0% 99%), 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--color-border);
+    border-right: none;
+    border-radius: 0.5rem 0 0 0.5rem;
+    cursor: pointer;
+    color: var(--color-text);
+    transition: background 0.2s ease;
+  }
+
+  .sidebar-toggle:hover {
+    background: hsla(var(--color-bg-rgb, 0 0% 99%), 0.9);
+  }
+
+  .sidebar-toggle[aria-expanded="true"] {
+    display: none;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 280px;
+    height: 100vh;
+    z-index: 30;
+    background: hsla(var(--color-bg-rgb, 0 0% 99%), 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-left: 1px solid var(--color-border);
+    padding: var(--space-6);
+    overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sidebar {
+      transition: none;
+    }
+  }
+
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-4);
+  }
+
+  .sidebar-header h2 {
+    font-family: var(--font-heading);
+    font-size: var(--text-lg);
+  }
+
+  .sidebar-close {
+    background: none;
+    border: none;
+    font-size: var(--text-xl);
+    cursor: pointer;
+    color: var(--color-muted);
+    padding: var(--space-1);
+    line-height: 1;
+  }
+
+  .sidebar-description {
+    color: var(--color-muted);
+    font-size: var(--text-sm);
+    line-height: 1.6;
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .control-group {
+    margin-bottom: var(--space-3);
+  }
+
+  .control-group label {
+    display: block;
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-1);
+  }
+
+  .control-group output {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-accent);
+  }
+
+  .control-group input[type="range"] {
+    width: 100%;
+    cursor: pointer;
+  }
+
+  .control-group select {
+    width: 100%;
+    padding: var(--space-2);
+    border: 1px solid var(--color-border);
+    border-radius: 0.375rem;
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-size: var(--text-sm);
+  }
+
+  .swatch-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+  }
+
+  .swatch {
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 0.375rem;
+    border: 2px solid transparent;
+    cursor: pointer;
+    padding: 0;
+    position: relative;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+  }
+
+  .swatch:hover {
+    transform: scale(1.15);
+  }
+
+  .swatch.active {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 1px var(--color-accent);
+  }
+
+  .swatch-hint {
+    font-size: 0.625rem;
+    color: var(--color-muted);
+    margin-top: var(--space-1);
+    font-style: italic;
+  }
+</style>
+
+<script>
+  // Sidebar toggle
+  const toggle = document.getElementById('sidebar-toggle')!;
+  const sidebar = document.getElementById('sidebar')!;
+  const closeBtn = document.getElementById('sidebar-close')!;
+
+  toggle.addEventListener('click', () => {
+    sidebar.classList.add('open');
+    toggle.setAttribute('aria-expanded', 'true');
+  });
+
+  closeBtn.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    toggle.setAttribute('aria-expanded', 'false');
+  });
+
+  // Effect controls
+  const bg = document.querySelector('.halftone-bg') as HTMLElement;
+  const layer1 = document.querySelector('.halftone-layer--1') as HTMLElement;
+  const layer2 = document.querySelector('.halftone-layer--2') as HTMLElement;
+  const allLayers = [layer1, layer2];
+
+  const speedInput = document.getElementById('gradient-speed') as HTMLInputElement;
+  const speedVal = document.getElementById('gradient-speed-val') as HTMLOutputElement;
+
+  const opacityInput = document.getElementById('layer2-opacity') as HTMLInputElement;
+  const opacityVal = document.getElementById('layer2-opacity-val') as HTMLOutputElement;
+
+  const scaleInput = document.getElementById('mask-scale') as HTMLInputElement;
+  const scaleVal = document.getElementById('mask-scale-val') as HTMLOutputElement;
+
+  const picker = document.getElementById('halftone-picker') as HTMLSelectElement;
+  const presetSelect = document.getElementById('gradient-preset') as HTMLSelectElement;
+
+  speedInput.addEventListener('input', () => {
+    const v = speedInput.value;
+    speedVal.textContent = `${v}s`;
+    bg.style.setProperty('--gradient-speed', `${v}s`);
+  });
+
+  opacityInput.addEventListener('input', () => {
+    const v = opacityInput.value;
+    opacityVal.textContent = v;
+    bg.style.setProperty('--layer2-opacity', v);
+  });
+
+  scaleInput.addEventListener('input', () => {
+    const v = scaleInput.value;
+    scaleVal.textContent = `${v}%`;
+    bg.style.setProperty('--mask-scale', `${v}%`);
+  });
+
+  picker.addEventListener('change', () => {
+    const url = `/images/scanned-graphics/halftones/${picker.value}.svg`;
+    layer1.style.maskImage = `url("${url}")`;
+    layer1.style.setProperty('-webkit-mask-image', `url("${url}")`);
+  });
+
+  // Gradient presets
+  const gradients: Record<string, string> = {
+    brand: 'linear-gradient(135deg, var(--color-teal), var(--color-lime), var(--color-yellow), var(--color-pink), var(--color-orange), var(--color-purple), var(--color-teal))',
+    warm: 'linear-gradient(135deg, var(--color-orange), var(--color-yellow), var(--color-pink), var(--color-orange))',
+    cool: 'linear-gradient(135deg, var(--color-teal), var(--color-navy), var(--color-purple), var(--color-dark-teal), var(--color-teal))',
+    sunset: 'linear-gradient(135deg, var(--color-navy), var(--color-purple), var(--color-pink), var(--color-orange), var(--color-yellow))',
+    monochrome: 'linear-gradient(135deg, var(--color-dark-teal), var(--color-teal), var(--color-lime), var(--color-teal), var(--color-dark-teal))',
+  };
+
+  presetSelect.addEventListener('change', () => {
+    const grad = gradients[presetSelect.value];
+    if (grad) {
+      allLayers.forEach(l => l.style.setProperty('background', grad));
+      allLayers.forEach(l => l.style.setProperty('background-size', '400% 400%'));
+    }
+  });
+</script>

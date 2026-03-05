@@ -1,0 +1,497 @@
+---
+import DemoEffectLayout from "../../layouts/DemoEffectLayout.astro";
+import fs from "node:fs";
+
+const halftones = [
+  "halftone-full-01", "halftone-full-02", "halftone-full-03", "halftone-full-04",
+  "halftone-16x9-01", "halftone-16x9-02", "halftone-16x9-03", "halftone-16x9-04",
+  "halftone-1x1-01", "halftone-1x1-02", "halftone-1x1-03", "halftone-1x1-04", "halftone-1x1-05",
+];
+
+const svgPath = "public/images/scanned-graphics/halftones/halftone-full-03.svg";
+const rawSvg = fs.readFileSync(svgPath, "utf-8");
+---
+
+<DemoEffectLayout title="Halftone Displacement Demo">
+  <div class="halftone-bg" id="halftone-bg" aria-hidden="true">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="0"
+      height="0"
+      style="position:absolute"
+    >
+      <defs>
+        <filter id="halftone-warp" x="-20%" y="-20%" width="140%" height="140%">
+          <feTurbulence
+            id="turbulence"
+            type="turbulence"
+            baseFrequency="0.008"
+            numOctaves="3"
+            seed="2"
+            result="noise"
+          />
+          <feDisplacementMap
+            id="displacement"
+            in="SourceGraphic"
+            in2="noise"
+            scale="40"
+            xChannelSelector="R"
+            yChannelSelector="G"
+          />
+          <feColorMatrix
+            id="color-matrix"
+            type="matrix"
+            values="0 0 0 0 0
+                    0 0 0 0 0.75
+                    0 0 0 0 0.7
+                    0 0 0 1 0"
+          />
+        </filter>
+      </defs>
+    </svg>
+    <div class="halftone-svg" id="halftone-svg" set:html={rawSvg} />
+  </div>
+
+  <div class="demo-overlay">
+    <a href="/demo/" class="back-link">&larr; Demo Pages</a>
+    <h1 class="demo-title">Liquid Displacement</h1>
+    <p class="demo-technique">SVG feTurbulence + feDisplacementMap</p>
+  </div>
+
+  <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle controls" aria-expanded="false">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+      <circle cx="6" cy="4" r="1.5"/><line x1="6" y1="5.5" x2="6" y2="18"/>
+      <circle cx="14" cy="10" r="1.5"/><line x1="14" y1="2" x2="14" y2="8.5"/><line x1="14" y1="11.5" x2="14" y2="18"/>
+      <circle cx="10" cy="15" r="1.5"/><line x1="10" y1="2" x2="10" y2="13.5"/><line x1="10" y1="16.5" x2="10" y2="18"/>
+    </svg>
+  </button>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h2>Controls</h2>
+      <button class="sidebar-close" id="sidebar-close" aria-label="Close controls">&times;</button>
+    </div>
+    <p class="sidebar-description">
+      An SVG turbulence filter creates organic wavy distortion on the halftone pattern.
+      The noise frequency oscillates over time via requestAnimationFrame for a liquid effect.
+    </p>
+    <div class="controls">
+      <div class="control-group">
+        <label for="disp-scale">Displacement Scale: <output id="disp-scale-val">40</output></label>
+        <input type="range" id="disp-scale" min="0" max="120" value="40" step="1" />
+      </div>
+      <div class="control-group">
+        <label for="disp-freq">Frequency: <output id="disp-freq-val">0.008</output></label>
+        <input type="range" id="disp-freq" min="0.001" max="0.02" value="0.008" step="0.001" />
+      </div>
+      <div class="control-group">
+        <label for="disp-speed">Speed: <output id="disp-speed-val">0.002</output></label>
+        <input type="range" id="disp-speed" min="0" max="0.01" value="0.002" step="0.0005" />
+      </div>
+      <div class="control-group">
+        <label for="disp-opacity">Opacity: <output id="disp-opacity-val">0.15</output></label>
+        <input type="range" id="disp-opacity" min="0" max="1" value="0.15" step="0.01" />
+      </div>
+      <div class="control-group">
+        <label for="disp-pattern">Halftone Pattern</label>
+        <select id="disp-pattern">
+          {halftones.map(name => (
+            <option value={name} selected={name === "halftone-full-03"}>{name}</option>
+          ))}
+        </select>
+      </div>
+      <div class="control-group">
+        <label>Tint Color</label>
+        <div class="swatch-picker" id="tint-swatches">
+          <button class="swatch active" data-r="0" data-g="0.75" data-b="0.7" style="background:#00BFB3" title="Teal (default)"></button>
+          <button class="swatch" data-r="0.34" data-g="0.24" data-b="0.51" style="background:#563D82" title="Purple"></button>
+          <button class="swatch" data-r="0.9" data-g="0.45" data-b="0" style="background:#E57200" title="Orange"></button>
+          <button class="swatch" data-r="1" data-g="0.78" data-b="0.27" style="background:#FFC845" title="Yellow"></button>
+          <button class="swatch" data-r="0.72" data-g="0.75" data-b="0.06" style="background:#B7BF10" title="Lime"></button>
+          <button class="swatch" data-r="0.95" data-g="0.74" data-b="0.78" style="background:#F1BDC8" title="Pink"></button>
+          <button class="swatch" data-r="0" data-g="0.34" data-b="0.46" style="background:#005776" title="Navy"></button>
+          <button class="swatch" data-r="0.14" data-g="0.14" data-b="0.14" style="background:#231f20" title="Black"></button>
+          <button class="swatch swatch--custom" title="Custom">
+            <span>+</span>
+            <input type="color" value="#00BFB3" tabindex="-1" />
+          </button>
+        </div>
+      </div>
+    </div>
+  </aside>
+</DemoEffectLayout>
+
+<style>
+  .halftone-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .halftone-svg {
+    width: 100%;
+    height: 100%;
+    opacity: var(--disp-opacity, 0.15);
+    filter: url(#halftone-warp);
+  }
+
+  .halftone-svg :global(svg) {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  /* Overlay info */
+  .demo-overlay {
+    position: fixed;
+    top: 5rem;
+    left: var(--space-6);
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  .back-link {
+    display: inline-block;
+    color: var(--color-muted);
+    text-decoration: none;
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-2);
+    pointer-events: auto;
+    background: hsla(var(--color-bg-rgb, 0 0% 99%), 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: var(--space-1) var(--space-2);
+    border-radius: 0.25rem;
+  }
+
+  .demo-title {
+    font-family: var(--font-heading);
+    font-size: var(--text-2xl);
+    margin-bottom: var(--space-1);
+    text-shadow: 0 1px 4px hsla(0, 0%, 0%, 0.3);
+  }
+
+  .demo-technique {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-shadow: 0 1px 4px hsla(0, 0%, 0%, 0.3);
+  }
+
+  /* Sidebar toggle */
+  .sidebar-toggle {
+    position: fixed;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 20;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: hsla(var(--color-bg-rgb, 0 0% 99%), 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--color-border);
+    border-right: none;
+    border-radius: 0.5rem 0 0 0.5rem;
+    cursor: pointer;
+    color: var(--color-text);
+    transition: background 0.2s ease;
+  }
+
+  .sidebar-toggle:hover {
+    background: hsla(var(--color-bg-rgb, 0 0% 99%), 0.9);
+  }
+
+  .sidebar-toggle[aria-expanded="true"] {
+    display: none;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 280px;
+    height: 100vh;
+    z-index: 30;
+    background: hsla(var(--color-bg-rgb, 0 0% 99%), 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-left: 1px solid var(--color-border);
+    padding: var(--space-6);
+    overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sidebar {
+      transition: none;
+    }
+  }
+
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-4);
+  }
+
+  .sidebar-header h2 {
+    font-family: var(--font-heading);
+    font-size: var(--text-lg);
+  }
+
+  .sidebar-close {
+    background: none;
+    border: none;
+    font-size: var(--text-xl);
+    cursor: pointer;
+    color: var(--color-muted);
+    padding: var(--space-1);
+    line-height: 1;
+  }
+
+  .sidebar-description {
+    color: var(--color-muted);
+    font-size: var(--text-sm);
+    line-height: 1.6;
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .control-group {
+    margin-bottom: var(--space-3);
+  }
+
+  .control-group label {
+    display: block;
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-1);
+  }
+
+  .control-group output {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-accent);
+  }
+
+  .control-group input[type="range"] {
+    width: 100%;
+    cursor: pointer;
+  }
+
+  .control-group select {
+    width: 100%;
+    padding: var(--space-2);
+    border: 1px solid var(--color-border);
+    border-radius: 0.375rem;
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-size: var(--text-sm);
+  }
+
+  .swatch-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+  }
+
+  .swatch {
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 0.375rem;
+    border: 2px solid transparent;
+    cursor: pointer;
+    padding: 0;
+    position: relative;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+  }
+
+  .swatch:hover {
+    transform: scale(1.15);
+  }
+
+  .swatch.active {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 1px var(--color-accent);
+  }
+
+  .swatch--custom {
+    background: conic-gradient(from 0deg, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00) !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .swatch--custom span {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    pointer-events: none;
+  }
+
+  .swatch--custom input[type="color"] {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    padding: 0;
+    border: none;
+  }
+</style>
+
+<script>
+  // Sidebar toggle
+  const toggle = document.getElementById('sidebar-toggle')!;
+  const sidebar = document.getElementById('sidebar')!;
+  const closeBtn = document.getElementById('sidebar-close')!;
+
+  toggle.addEventListener('click', () => {
+    sidebar.classList.add('open');
+    toggle.setAttribute('aria-expanded', 'true');
+  });
+
+  closeBtn.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    toggle.setAttribute('aria-expanded', 'false');
+  });
+
+  // Effect controls
+  const turbulence = document.getElementById('turbulence')!;
+  const displacement = document.getElementById('displacement')!;
+  const colorMatrix = document.getElementById('color-matrix')!;
+  const container = document.querySelector('.halftone-svg') as HTMLElement;
+  const svgContainer = document.getElementById('halftone-svg') as HTMLElement;
+
+  let scale = 40;
+  let baseFreq = 0.008;
+  let speed = 0.002;
+  let opacity = 0.15;
+  let time = 0;
+  let animId: number;
+
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  function animate() {
+    time += speed;
+    const freq = baseFreq + Math.sin(time) * baseFreq * 0.5;
+    turbulence.setAttribute('baseFrequency', `${freq} ${freq}`);
+    displacement.setAttribute('scale', String(scale));
+    animId = requestAnimationFrame(animate);
+  }
+
+  function startAnimation() {
+    if (!prefersReducedMotion.matches) {
+      cancelAnimationFrame(animId);
+      animate();
+    }
+  }
+
+  function stopAnimation() {
+    cancelAnimationFrame(animId);
+    turbulence.setAttribute('baseFrequency', `${baseFreq} ${baseFreq}`);
+  }
+
+  prefersReducedMotion.addEventListener('change', () => {
+    if (prefersReducedMotion.matches) stopAnimation();
+    else startAnimation();
+  });
+
+  startAnimation();
+
+  // Controls
+  const scaleInput = document.getElementById('disp-scale') as HTMLInputElement;
+  const scaleVal = document.getElementById('disp-scale-val') as HTMLOutputElement;
+  scaleInput.addEventListener('input', () => {
+    scale = parseInt(scaleInput.value);
+    scaleVal.textContent = String(scale);
+  });
+
+  const freqInput = document.getElementById('disp-freq') as HTMLInputElement;
+  const freqVal = document.getElementById('disp-freq-val') as HTMLOutputElement;
+  freqInput.addEventListener('input', () => {
+    baseFreq = parseFloat(freqInput.value);
+    freqVal.textContent = String(baseFreq);
+  });
+
+  const speedInput = document.getElementById('disp-speed') as HTMLInputElement;
+  const speedVal = document.getElementById('disp-speed-val') as HTMLOutputElement;
+  speedInput.addEventListener('input', () => {
+    speed = parseFloat(speedInput.value);
+    speedVal.textContent = String(speed);
+  });
+
+  const opacityInput = document.getElementById('disp-opacity') as HTMLInputElement;
+  const opacityVal = document.getElementById('disp-opacity-val') as HTMLOutputElement;
+  opacityInput.addEventListener('input', () => {
+    opacity = parseFloat(opacityInput.value);
+    opacityVal.textContent = String(opacity);
+    container.style.setProperty('--disp-opacity', String(opacity));
+  });
+
+  // Pattern switcher
+  const patternSelect = document.getElementById('disp-pattern') as HTMLSelectElement;
+  patternSelect.addEventListener('change', () => {
+    const url = `/images/scanned-graphics/halftones/${patternSelect.value}.svg`;
+    fetch(url)
+      .then(r => r.text())
+      .then(svg => { svgContainer.innerHTML = svg; });
+  });
+
+  // Tint color via feColorMatrix
+  function setTintColor(r: number, g: number, b: number) {
+    colorMatrix.setAttribute('values',
+      `0 0 0 0 ${r}  0 0 0 0 ${g}  0 0 0 0 ${b}  0 0 0 1 0`
+    );
+  }
+
+  function hexToRgb01(hex: string): [number, number, number] {
+    const n = parseInt(hex.replace('#', ''), 16);
+    return [(n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255];
+  }
+
+  const swatchPicker = document.getElementById('tint-swatches')!;
+
+  swatchPicker.querySelectorAll('.swatch:not(.swatch--custom)').forEach(swatch => {
+    swatch.addEventListener('click', () => {
+      swatchPicker.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+      swatch.classList.add('active');
+      const el = swatch as HTMLElement;
+      setTintColor(
+        parseFloat(el.dataset.r!),
+        parseFloat(el.dataset.g!),
+        parseFloat(el.dataset.b!)
+      );
+      const customBtn = swatchPicker.querySelector('.swatch--custom') as HTMLElement;
+      customBtn.style.background = '';
+    });
+  });
+
+  const customBtn = swatchPicker.querySelector('.swatch--custom') as HTMLElement;
+  const colorInput = customBtn.querySelector('input[type="color"]') as HTMLInputElement;
+
+  colorInput.addEventListener('input', () => {
+    swatchPicker.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+    customBtn.classList.add('active');
+    customBtn.style.background = colorInput.value;
+    const [r, g, b] = hexToRgb01(colorInput.value);
+    setTintColor(r, g, b);
+  });
+</script>

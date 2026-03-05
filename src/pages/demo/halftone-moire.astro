@@ -1,0 +1,616 @@
+---
+import DemoEffectLayout from "../../layouts/DemoEffectLayout.astro";
+
+const halftones = [
+  "halftone-full-01", "halftone-full-02", "halftone-full-03", "halftone-full-04",
+  "halftone-16x9-01", "halftone-16x9-02", "halftone-16x9-03", "halftone-16x9-04",
+  "halftone-1x1-01", "halftone-1x1-02", "halftone-1x1-03", "halftone-1x1-04", "halftone-1x1-05",
+];
+
+const defaultPatterns = ["halftone-full-01", "halftone-full-02", "halftone-full-03", "halftone-full-04"];
+---
+
+<DemoEffectLayout title="Halftone Moiré Demo">
+  <div class="halftone-bg" aria-hidden="true">
+    <div class="moire-layer moire-layer--1"></div>
+    <div class="moire-layer moire-layer--2"></div>
+    <div class="moire-layer moire-layer--3"></div>
+    <div class="moire-layer moire-layer--4"></div>
+  </div>
+
+  <div class="demo-overlay">
+    <a href="/demo/" class="back-link">&larr; Demo Pages</a>
+    <h1 class="demo-title">Moiré Drift</h1>
+    <p class="demo-technique">Overlapping halftone layers with CSS transforms</p>
+  </div>
+
+  <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle controls" aria-expanded="false">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+      <circle cx="6" cy="4" r="1.5"/><line x1="6" y1="5.5" x2="6" y2="18"/>
+      <circle cx="14" cy="10" r="1.5"/><line x1="14" y1="2" x2="14" y2="8.5"/><line x1="14" y1="11.5" x2="14" y2="18"/>
+      <circle cx="10" cy="15" r="1.5"/><line x1="10" y1="2" x2="10" y2="13.5"/><line x1="10" y1="16.5" x2="10" y2="18"/>
+    </svg>
+  </button>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h2>Controls</h2>
+      <button class="sidebar-close" id="sidebar-close" aria-label="Close controls">&times;</button>
+    </div>
+    <p class="sidebar-description">
+      Stacking halftone patterns with slow translate and rotate animations creates
+      shifting moiré interference patterns. Pure CSS — no JavaScript required for the effect.
+    </p>
+    <div class="controls">
+      <div class="control-group">
+        <label for="layer-count">Layer Count: <output id="layer-count-val">4</output></label>
+        <input type="range" id="layer-count" min="1" max="4" value="4" step="1" />
+      </div>
+      <div class="control-group">
+        <label for="drift-speed">Drift Speed: <output id="drift-speed-val">1x</output></label>
+        <input type="range" id="drift-speed" min="0" max="2" value="1" step="0.1" />
+      </div>
+      <div class="control-group">
+        <label for="blend-mode">Blend Mode</label>
+        <select id="blend-mode">
+          <option value="normal">normal</option>
+          <option value="multiply" selected>multiply</option>
+          <option value="screen">screen</option>
+          <option value="overlay">overlay</option>
+          <option value="difference">difference</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <label for="moire-opacity">Opacity: <output id="moire-opacity-val">0.12</output></label>
+        <input type="range" id="moire-opacity" min="0" max="1" value="0.12" step="0.01" />
+      </div>
+      <div class="control-group">
+        <label for="moire-size">Size: <output id="moire-size-val">140%</output></label>
+        <input type="range" id="moire-size" min="100" max="300" value="140" step="5" />
+      </div>
+      <div class="control-group">
+        <label for="pattern-1">Layer 1 — Cyan</label>
+        <select id="pattern-1" class="pattern-select" data-layer="1">
+          {halftones.map(name => (
+            <option value={name} selected={name === defaultPatterns[0]}>{name}</option>
+          ))}
+        </select>
+      </div>
+      <div class="control-group">
+        <div class="swatch-picker" data-layer="1">
+          <button class="swatch active" data-color="#00AEEF" style="background:#00AEEF" title="Cyan (CMYK)"></button>
+          <button class="swatch" data-color="#231f20" style="background:#231f20" title="Black"></button>
+          <button class="swatch" data-color="var(--color-teal)" data-hex="#00BFB3" style="background:#00BFB3" title="Teal"></button>
+          <button class="swatch" data-color="var(--color-purple)" data-hex="#563D82" style="background:#563D82" title="Purple"></button>
+          <button class="swatch" data-color="var(--color-orange)" data-hex="#E57200" style="background:#E57200" title="Orange"></button>
+          <button class="swatch" data-color="var(--color-yellow)" data-hex="#FFC845" style="background:#FFC845" title="Yellow"></button>
+          <button class="swatch" data-color="var(--color-lime)" data-hex="#B7BF10" style="background:#B7BF10" title="Lime"></button>
+          <button class="swatch" data-color="var(--color-pink)" data-hex="#F1BDC8" style="background:#F1BDC8" title="Pink"></button>
+          <button class="swatch" data-color="var(--color-navy)" data-hex="#005776" style="background:#005776" title="Navy"></button>
+          <button class="swatch" data-color="var(--color-dark-teal)" data-hex="#002f40" style="background:#002f40" title="Dark Teal"></button>
+          <button class="swatch swatch--custom" data-layer="1" title="Custom">
+            <span>+</span>
+            <input type="color" value="#00AEEF" tabindex="-1" />
+          </button>
+        </div>
+      </div>
+      <div class="control-group">
+        <label for="pattern-2">Layer 2 — Magenta</label>
+        <select id="pattern-2" class="pattern-select" data-layer="2">
+          {halftones.map(name => (
+            <option value={name} selected={name === defaultPatterns[1]}>{name}</option>
+          ))}
+        </select>
+      </div>
+      <div class="control-group">
+        <div class="swatch-picker" data-layer="2">
+          <button class="swatch active" data-color="#EC008C" style="background:#EC008C" title="Magenta (CMYK)"></button>
+          <button class="swatch" data-color="#231f20" style="background:#231f20" title="Black"></button>
+          <button class="swatch" data-color="var(--color-teal)" data-hex="#00BFB3" style="background:#00BFB3" title="Teal"></button>
+          <button class="swatch" data-color="var(--color-purple)" data-hex="#563D82" style="background:#563D82" title="Purple"></button>
+          <button class="swatch" data-color="var(--color-orange)" data-hex="#E57200" style="background:#E57200" title="Orange"></button>
+          <button class="swatch" data-color="var(--color-yellow)" data-hex="#FFC845" style="background:#FFC845" title="Yellow"></button>
+          <button class="swatch" data-color="var(--color-lime)" data-hex="#B7BF10" style="background:#B7BF10" title="Lime"></button>
+          <button class="swatch" data-color="var(--color-pink)" data-hex="#F1BDC8" style="background:#F1BDC8" title="Pink"></button>
+          <button class="swatch" data-color="var(--color-navy)" data-hex="#005776" style="background:#005776" title="Navy"></button>
+          <button class="swatch" data-color="var(--color-dark-teal)" data-hex="#002f40" style="background:#002f40" title="Dark Teal"></button>
+          <button class="swatch swatch--custom" data-layer="2" title="Custom">
+            <span>+</span>
+            <input type="color" value="#EC008C" tabindex="-1" />
+          </button>
+        </div>
+      </div>
+      <div class="control-group">
+        <label for="pattern-3">Layer 3 — Yellow</label>
+        <select id="pattern-3" class="pattern-select" data-layer="3">
+          {halftones.map(name => (
+            <option value={name} selected={name === defaultPatterns[2]}>{name}</option>
+          ))}
+        </select>
+      </div>
+      <div class="control-group">
+        <div class="swatch-picker" data-layer="3">
+          <button class="swatch active" data-color="#FFF200" style="background:#FFF200" title="Yellow (CMYK)"></button>
+          <button class="swatch" data-color="#231f20" style="background:#231f20" title="Black"></button>
+          <button class="swatch" data-color="var(--color-teal)" data-hex="#00BFB3" style="background:#00BFB3" title="Teal"></button>
+          <button class="swatch" data-color="var(--color-purple)" data-hex="#563D82" style="background:#563D82" title="Purple"></button>
+          <button class="swatch" data-color="var(--color-orange)" data-hex="#E57200" style="background:#E57200" title="Orange"></button>
+          <button class="swatch" data-color="var(--color-yellow)" data-hex="#FFC845" style="background:#FFC845" title="Yellow"></button>
+          <button class="swatch" data-color="var(--color-lime)" data-hex="#B7BF10" style="background:#B7BF10" title="Lime"></button>
+          <button class="swatch" data-color="var(--color-pink)" data-hex="#F1BDC8" style="background:#F1BDC8" title="Pink"></button>
+          <button class="swatch" data-color="var(--color-navy)" data-hex="#005776" style="background:#005776" title="Navy"></button>
+          <button class="swatch" data-color="var(--color-dark-teal)" data-hex="#002f40" style="background:#002f40" title="Dark Teal"></button>
+          <button class="swatch swatch--custom" data-layer="3" title="Custom">
+            <span>+</span>
+            <input type="color" value="#FFF200" tabindex="-1" />
+          </button>
+        </div>
+      </div>
+      <div class="control-group">
+        <label for="pattern-4">Layer 4 — Key (Black)</label>
+        <select id="pattern-4" class="pattern-select" data-layer="4">
+          {halftones.map(name => (
+            <option value={name} selected={name === defaultPatterns[3]}>{name}</option>
+          ))}
+        </select>
+      </div>
+      <div class="control-group">
+        <div class="swatch-picker" data-layer="4">
+          <button class="swatch active" data-color="#231f20" style="background:#231f20" title="Key/Black (CMYK)"></button>
+          <button class="swatch" data-color="#00AEEF" style="background:#00AEEF" title="Cyan"></button>
+          <button class="swatch" data-color="var(--color-teal)" data-hex="#00BFB3" style="background:#00BFB3" title="Teal"></button>
+          <button class="swatch" data-color="var(--color-purple)" data-hex="#563D82" style="background:#563D82" title="Purple"></button>
+          <button class="swatch" data-color="var(--color-orange)" data-hex="#E57200" style="background:#E57200" title="Orange"></button>
+          <button class="swatch" data-color="var(--color-yellow)" data-hex="#FFC845" style="background:#FFC845" title="Yellow"></button>
+          <button class="swatch" data-color="var(--color-lime)" data-hex="#B7BF10" style="background:#B7BF10" title="Lime"></button>
+          <button class="swatch" data-color="var(--color-pink)" data-hex="#F1BDC8" style="background:#F1BDC8" title="Pink"></button>
+          <button class="swatch" data-color="var(--color-navy)" data-hex="#005776" style="background:#005776" title="Navy"></button>
+          <button class="swatch" data-color="var(--color-dark-teal)" data-hex="#002f40" style="background:#002f40" title="Dark Teal"></button>
+          <button class="swatch swatch--custom" data-layer="4" title="Custom">
+            <span>+</span>
+            <input type="color" value="#231f20" tabindex="-1" />
+          </button>
+        </div>
+      </div>
+    </div>
+  </aside>
+</DemoEffectLayout>
+
+<style>
+  .halftone-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .moire-layer {
+    position: absolute;
+    inset: calc((100% - var(--moire-size, 140%)) / 2);
+    width: var(--moire-size, 140%);
+    height: var(--moire-size, 140%);
+    mix-blend-mode: var(--blend-mode, multiply);
+    mask-size: cover;
+    -webkit-mask-size: cover;
+    mask-position: center;
+    -webkit-mask-position: center;
+    mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
+  }
+
+  .moire-layer--1 {
+    background-color: var(--layer-color-1, #00AEEF);
+    mask-image: url("/images/scanned-graphics/halftones/halftone-full-01.svg");
+    -webkit-mask-image: url("/images/scanned-graphics/halftones/halftone-full-01.svg");
+    opacity: var(--moire-opacity, 0.12);
+    animation: moire-drift-1 var(--drift-duration, 45s) linear infinite;
+    transform-origin: 40% 60%;
+  }
+
+  .moire-layer--2 {
+    background-color: var(--layer-color-2, #EC008C);
+    mask-image: url("/images/scanned-graphics/halftones/halftone-full-02.svg");
+    -webkit-mask-image: url("/images/scanned-graphics/halftones/halftone-full-02.svg");
+    opacity: calc(var(--moire-opacity, 0.12) * 0.8);
+    animation: moire-drift-2 var(--drift-duration-2, 60s) linear infinite;
+    transform-origin: 60% 40%;
+  }
+
+  .moire-layer--3 {
+    background-color: var(--layer-color-3, #FFF200);
+    mask-image: url("/images/scanned-graphics/halftones/halftone-full-03.svg");
+    -webkit-mask-image: url("/images/scanned-graphics/halftones/halftone-full-03.svg");
+    opacity: calc(var(--moire-opacity, 0.12) * 0.6);
+    animation: moire-drift-3 var(--drift-duration-3, 75s) linear infinite;
+    transform-origin: 50% 50%;
+  }
+
+  .moire-layer--4 {
+    background-color: var(--layer-color-4, #231f20);
+    mask-image: url("/images/scanned-graphics/halftones/halftone-full-04.svg");
+    -webkit-mask-image: url("/images/scanned-graphics/halftones/halftone-full-04.svg");
+    opacity: calc(var(--moire-opacity, 0.12) * 0.5);
+    animation: moire-drift-4 var(--drift-duration-4, 90s) linear infinite;
+    transform-origin: 45% 55%;
+  }
+
+  @keyframes moire-drift-1 {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    50% { transform: translate(3%, -2%) rotate(1.5deg); }
+    100% { transform: translate(0, 0) rotate(0deg); }
+  }
+
+  @keyframes moire-drift-2 {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    33% { transform: translate(-2%, 3%) rotate(-1deg); }
+    66% { transform: translate(2%, -1%) rotate(0.5deg); }
+    100% { transform: translate(0, 0) rotate(0deg); }
+  }
+
+  @keyframes moire-drift-3 {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    25% { transform: translate(1%, 2%) rotate(-0.8deg); }
+    50% { transform: translate(-2%, -1%) rotate(1.2deg); }
+    75% { transform: translate(3%, 0%) rotate(-0.5deg); }
+    100% { transform: translate(0, 0) rotate(0deg); }
+  }
+
+  @keyframes moire-drift-4 {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    20% { transform: translate(-1%, 3%) rotate(0.7deg); }
+    40% { transform: translate(2%, -2%) rotate(-1.1deg); }
+    60% { transform: translate(-3%, 1%) rotate(0.4deg); }
+    80% { transform: translate(1%, -1%) rotate(-0.6deg); }
+    100% { transform: translate(0, 0) rotate(0deg); }
+  }
+
+  .moire-layer--2[hidden],
+  .moire-layer--3[hidden],
+  .moire-layer--4[hidden] {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .moire-layer {
+      animation: none;
+    }
+  }
+
+  /* Overlay info */
+  .demo-overlay {
+    position: fixed;
+    top: 5rem;
+    left: var(--space-6);
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  .back-link {
+    display: inline-block;
+    color: var(--color-muted);
+    text-decoration: none;
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-2);
+    pointer-events: auto;
+    background: hsla(var(--color-bg-rgb, 0 0% 99%), 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: var(--space-1) var(--space-2);
+    border-radius: 0.25rem;
+  }
+
+  .demo-title {
+    font-family: var(--font-heading);
+    font-size: var(--text-2xl);
+    margin-bottom: var(--space-1);
+    text-shadow: 0 1px 4px hsla(0, 0%, 0%, 0.3);
+  }
+
+  .demo-technique {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-shadow: 0 1px 4px hsla(0, 0%, 0%, 0.3);
+  }
+
+  /* Sidebar toggle */
+  .sidebar-toggle {
+    position: fixed;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 20;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: hsla(var(--color-bg-rgb, 0 0% 99%), 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--color-border);
+    border-right: none;
+    border-radius: 0.5rem 0 0 0.5rem;
+    cursor: pointer;
+    color: var(--color-text);
+    transition: background 0.2s ease;
+  }
+
+  .sidebar-toggle:hover {
+    background: hsla(var(--color-bg-rgb, 0 0% 99%), 0.9);
+  }
+
+  .sidebar-toggle[aria-expanded="true"] {
+    display: none;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 280px;
+    height: 100vh;
+    z-index: 30;
+    background: hsla(var(--color-bg-rgb, 0 0% 99%), 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-left: 1px solid var(--color-border);
+    padding: var(--space-6);
+    overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sidebar {
+      transition: none;
+    }
+  }
+
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-4);
+  }
+
+  .sidebar-header h2 {
+    font-family: var(--font-heading);
+    font-size: var(--text-lg);
+  }
+
+  .sidebar-close {
+    background: none;
+    border: none;
+    font-size: var(--text-xl);
+    cursor: pointer;
+    color: var(--color-muted);
+    padding: var(--space-1);
+    line-height: 1;
+  }
+
+  .sidebar-description {
+    color: var(--color-muted);
+    font-size: var(--text-sm);
+    line-height: 1.6;
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .control-group {
+    margin-bottom: var(--space-3);
+  }
+
+  .control-group label {
+    display: block;
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-1);
+  }
+
+  .control-group output {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-accent);
+  }
+
+  .control-group input[type="range"] {
+    width: 100%;
+    cursor: pointer;
+  }
+
+  .swatch-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+  }
+
+  .swatch {
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 0.375rem;
+    border: 2px solid transparent;
+    cursor: pointer;
+    padding: 0;
+    position: relative;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+  }
+
+  .swatch:hover {
+    transform: scale(1.15);
+  }
+
+  .swatch.active {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 1px var(--color-accent);
+  }
+
+  .swatch--custom {
+    background: conic-gradient(
+      from 0deg,
+      #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00
+    ) !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .swatch--custom span {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    pointer-events: none;
+  }
+
+  .swatch--custom input[type="color"] {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    padding: 0;
+    border: none;
+  }
+
+  .control-group select {
+    width: 100%;
+    padding: var(--space-2);
+    border: 1px solid var(--color-border);
+    border-radius: 0.375rem;
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-size: var(--text-sm);
+  }
+</style>
+
+<script>
+  // Sidebar toggle
+  const toggle = document.getElementById('sidebar-toggle')!;
+  const sidebar = document.getElementById('sidebar')!;
+  const closeBtn = document.getElementById('sidebar-close')!;
+
+  toggle.addEventListener('click', () => {
+    sidebar.classList.add('open');
+    toggle.setAttribute('aria-expanded', 'true');
+  });
+
+  closeBtn.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    toggle.setAttribute('aria-expanded', 'false');
+  });
+
+  // Effect controls
+  const bg = document.querySelector('.halftone-bg') as HTMLElement;
+  const layers = document.querySelectorAll('.moire-layer');
+
+  const countInput = document.getElementById('layer-count') as HTMLInputElement;
+  const countVal = document.getElementById('layer-count-val') as HTMLOutputElement;
+
+  const speedInput = document.getElementById('drift-speed') as HTMLInputElement;
+  const speedVal = document.getElementById('drift-speed-val') as HTMLOutputElement;
+
+  const blendSelect = document.getElementById('blend-mode') as HTMLSelectElement;
+
+  const opacityInput = document.getElementById('moire-opacity') as HTMLInputElement;
+  const opacityVal = document.getElementById('moire-opacity-val') as HTMLOutputElement;
+
+  const baseDurations = [45, 60, 75, 90];
+
+  countInput.addEventListener('input', () => {
+    const count = parseInt(countInput.value);
+    countVal.textContent = String(count);
+    layers.forEach((layer, i) => {
+      if (i < count) {
+        layer.removeAttribute('hidden');
+      } else {
+        layer.setAttribute('hidden', '');
+      }
+    });
+  });
+
+  speedInput.addEventListener('input', () => {
+    const multiplier = parseFloat(speedInput.value);
+    speedVal.textContent = `${multiplier}x`;
+    const durationKeys = ['--drift-duration', '--drift-duration-2', '--drift-duration-3', '--drift-duration-4'];
+    baseDurations.forEach((base, i) => {
+      const duration = multiplier > 0 ? base / multiplier : 9999;
+      bg.style.setProperty(durationKeys[i], `${duration}s`);
+    });
+  });
+
+  blendSelect.addEventListener('change', () => {
+    bg.style.setProperty('--blend-mode', blendSelect.value);
+  });
+
+  opacityInput.addEventListener('input', () => {
+    const v = opacityInput.value;
+    opacityVal.textContent = v;
+    bg.style.setProperty('--moire-opacity', v);
+  });
+
+  const sizeInput = document.getElementById('moire-size') as HTMLInputElement;
+  const sizeVal = document.getElementById('moire-size-val') as HTMLOutputElement;
+
+  sizeInput.addEventListener('input', () => {
+    const v = sizeInput.value;
+    sizeVal.textContent = `${v}%`;
+    bg.style.setProperty('--moire-size', `${v}%`);
+  });
+
+  // Pattern selects
+  document.querySelectorAll('.pattern-select').forEach(select => {
+    select.addEventListener('change', () => {
+      const sel = select as HTMLSelectElement;
+      const layer = sel.dataset.layer;
+      const url = `/images/scanned-graphics/halftones/${sel.value}.svg`;
+      const el = document.querySelector(`.moire-layer--${layer}`) as HTMLElement;
+      el.style.maskImage = `url("${url}")`;
+      el.style.setProperty('-webkit-mask-image', `url("${url}")`);
+    });
+  });
+
+  // Swatch color pickers
+  document.querySelectorAll('.swatch-picker').forEach(picker => {
+    const layer = picker.getAttribute('data-layer');
+    const cssVar = `--layer-color-${layer}`;
+
+    // Token swatch clicks
+    picker.querySelectorAll('.swatch:not(.swatch--custom)').forEach(swatch => {
+      swatch.addEventListener('click', () => {
+        picker.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+        swatch.classList.add('active');
+        const color = (swatch as HTMLElement).dataset.color!;
+        bg.style.setProperty(cssVar, color);
+      });
+    });
+
+    // Custom color picker
+    const customBtn = picker.querySelector('.swatch--custom') as HTMLElement;
+    const colorInput = customBtn.querySelector('input[type="color"]') as HTMLInputElement;
+
+    colorInput.addEventListener('input', () => {
+      picker.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+      customBtn.classList.add('active');
+      customBtn.style.background = colorInput.value;
+      bg.style.setProperty(cssVar, colorInput.value);
+    });
+
+    // Reset custom button appearance when a token swatch is selected
+    picker.querySelectorAll('.swatch:not(.swatch--custom)').forEach(swatch => {
+      swatch.addEventListener('click', () => {
+        customBtn.style.background = '';
+      });
+    });
+  });
+</script>

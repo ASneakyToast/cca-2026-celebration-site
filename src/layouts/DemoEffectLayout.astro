@@ -1,0 +1,60 @@
+---
+import { ViewTransitions } from 'astro:transitions';
+import Header from '../components/global/Header.astro';
+import '../styles/fonts.css';
+import '../styles/global.css';
+import '../styles/themes.css';
+import '../styles/grid.css';
+import '../styles/animations.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+const pageTitle = `${title} | CCA 2026`;
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? 'https://2026.cca.edu');
+const defaultDescription = "Celebrate the achievements of CCA's Class of 2026 at commencement ceremonies, exhibitions, and showcases.";
+const metaDescription = description ?? defaultDescription;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={metaDescription} />
+    <link rel="canonical" href={canonicalUrl.href} />
+
+    <link rel="preload" href="/fonts/lineto-brown-regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/ChimeraDisplay-Regular.woff2" as="font" type="font/woff2" crossorigin />
+    <ViewTransitions />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to main content</a>
+    <Header minimal={true} transition:animate="none" />
+    <slot />
+
+    <script src="../scripts/header-scroll.ts"></script>
+  </body>
+</html>
+
+<style>
+  .skip-link {
+    position: absolute;
+    top: -100%;
+    left: var(--space-4);
+    padding: var(--space-2) var(--space-4);
+    background: var(--color-accent);
+    color: var(--color-bg);
+    z-index: 100;
+    text-decoration: none;
+    font-weight: 700;
+  }
+
+  .skip-link:focus {
+    top: var(--space-4);
+  }
+</style>

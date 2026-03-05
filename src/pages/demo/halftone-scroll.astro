@@ -1,0 +1,621 @@
+---
+import DemoEffectLayout from "../../layouts/DemoEffectLayout.astro";
+import fs from "node:fs";
+
+const halftones = [
+  "halftone-full-01", "halftone-full-02", "halftone-full-03", "halftone-full-04",
+  "halftone-16x9-01", "halftone-16x9-02", "halftone-16x9-03", "halftone-16x9-04",
+  "halftone-1x1-01", "halftone-1x1-02", "halftone-1x1-03", "halftone-1x1-04", "halftone-1x1-05",
+];
+
+const svgPath = "public/images/scanned-graphics/halftones/halftone-full-03.svg";
+const rawSvg = fs.readFileSync(svgPath, "utf-8");
+---
+
+<DemoEffectLayout title="Halftone Scroll Displacement Demo">
+  <div class="halftone-bg" id="halftone-bg" aria-hidden="true">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="0"
+      height="0"
+      style="position:absolute"
+    >
+      <defs>
+        <filter id="scroll-warp" x="-20%" y="-20%" width="140%" height="140%">
+          <feTurbulence
+            id="scroll-turbulence"
+            type="turbulence"
+            baseFrequency="0.005"
+            numOctaves="3"
+            seed="5"
+            result="noise"
+          />
+          <feDisplacementMap
+            id="scroll-displacement"
+            in="SourceGraphic"
+            in2="noise"
+            scale="0"
+            xChannelSelector="R"
+            yChannelSelector="G"
+          />
+          <feColorMatrix
+            id="scroll-color-matrix"
+            type="matrix"
+            values="0 0 0 0 0
+                    0 0 0 0 0.75
+                    0 0 0 0 0.7
+                    0 0 0 1 0"
+          />
+        </filter>
+      </defs>
+    </svg>
+    <div class="halftone-svg" id="halftone-svg" set:html={rawSvg} />
+  </div>
+
+  <div class="demo-overlay">
+    <a href="/demo/" class="back-link">&larr; Demo Pages</a>
+    <h1 class="demo-title">Scroll Displacement</h1>
+    <p class="demo-technique">Scroll-driven SVG displacement filter</p>
+  </div>
+
+  <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle controls" aria-expanded="false">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+      <circle cx="6" cy="4" r="1.5"/><line x1="6" y1="5.5" x2="6" y2="18"/>
+      <circle cx="14" cy="10" r="1.5"/><line x1="14" y1="2" x2="14" y2="8.5"/><line x1="14" y1="11.5" x2="14" y2="18"/>
+      <circle cx="10" cy="15" r="1.5"/><line x1="10" y1="2" x2="10" y2="13.5"/><line x1="10" y1="16.5" x2="10" y2="18"/>
+    </svg>
+  </button>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h2>Controls</h2>
+      <button class="sidebar-close" id="sidebar-close" aria-label="Close controls">&times;</button>
+    </div>
+    <p class="sidebar-description">
+      The halftone warps more as you scroll deeper into the page.
+      Displacement intensity and turbulence frequency are both tied to scroll position.
+    </p>
+    <div class="controls">
+      <div class="control-group">
+        <label for="max-disp">Max Displacement: <output id="max-disp-val">80</output></label>
+        <input type="range" id="max-disp" min="0" max="150" value="80" step="1" />
+      </div>
+      <div class="control-group">
+        <label for="freq-range">Frequency Range: <output id="freq-range-val">0.005 – 0.015</output></label>
+        <input type="range" id="freq-range" min="0.001" max="0.02" value="0.015" step="0.001" />
+      </div>
+      <div class="control-group">
+        <label for="scroll-opacity">Opacity: <output id="scroll-opacity-val">0.15</output></label>
+        <input type="range" id="scroll-opacity" min="0" max="1" value="0.15" step="0.01" />
+      </div>
+      <div class="control-group">
+        <label for="scroll-pattern">Halftone Pattern</label>
+        <select id="scroll-pattern">
+          {halftones.map(name => (
+            <option value={name} selected={name === "halftone-full-03"}>{name}</option>
+          ))}
+        </select>
+      </div>
+      <div class="control-group">
+        <label>Tint Color</label>
+        <div class="swatch-picker" id="tint-swatches">
+          <button class="swatch active" data-r="0" data-g="0.75" data-b="0.7" style="background:#00BFB3" title="Teal (default)"></button>
+          <button class="swatch" data-r="0.34" data-g="0.24" data-b="0.51" style="background:#563D82" title="Purple"></button>
+          <button class="swatch" data-r="0.9" data-g="0.45" data-b="0" style="background:#E57200" title="Orange"></button>
+          <button class="swatch" data-r="1" data-g="0.78" data-b="0.27" style="background:#FFC845" title="Yellow"></button>
+          <button class="swatch" data-r="0.72" data-g="0.75" data-b="0.06" style="background:#B7BF10" title="Lime"></button>
+          <button class="swatch" data-r="0.95" data-g="0.74" data-b="0.78" style="background:#F1BDC8" title="Pink"></button>
+          <button class="swatch" data-r="0" data-g="0.34" data-b="0.46" style="background:#005776" title="Navy"></button>
+          <button class="swatch" data-r="0.14" data-g="0.14" data-b="0.14" style="background:#231f20" title="Black"></button>
+          <button class="swatch swatch--custom" title="Custom">
+            <span>+</span>
+            <input type="color" value="#00BFB3" tabindex="-1" />
+          </button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="scroll-content" id="main">
+    <div class="scroll-spacer"></div>
+
+    <div class="floating-card">
+      <h2>How It Works</h2>
+      <p>
+        As scroll progress goes from 0% to 100%, the <code>feDisplacementMap scale</code> attribute
+        lerps from 0 to the max displacement value, and <code>feTurbulence baseFrequency</code>
+        shifts across its configured range.
+      </p>
+    </div>
+
+    <div class="floating-card">
+      <h2>Scroll Progress</h2>
+      <div class="scroll-meter">
+        <div class="scroll-meter-fill" id="scroll-meter-fill"></div>
+        <span class="scroll-meter-label" id="scroll-meter-label">0%</span>
+      </div>
+      <p>
+        Current displacement: <code id="current-disp">0</code><br/>
+        Current frequency: <code id="current-freq">0.005</code>
+      </p>
+    </div>
+
+    <div class="floating-card">
+      <h2>Performance Notes</h2>
+      <p>
+        SVG filters are CPU-intensive. This demo uses the smallest halftone file (~685KB)
+        and throttles updates to once per frame. On lower-end devices, consider reducing
+        the max displacement or using the CSS mask approach instead.
+      </p>
+    </div>
+
+    <div class="floating-card">
+      <h2>Keep Scrolling</h2>
+      <p>
+        The effect intensifies as you scroll further down. Try adjusting the controls
+        and then scrolling to see how the parameters interact.
+      </p>
+    </div>
+
+    <div class="scroll-spacer"></div>
+  </main>
+</DemoEffectLayout>
+
+<style>
+  .halftone-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .halftone-svg {
+    width: 100%;
+    height: 100%;
+    opacity: var(--scroll-opacity, 0.15);
+    filter: url(#scroll-warp);
+  }
+
+  .halftone-svg :global(svg) {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  /* Overlay info */
+  .demo-overlay {
+    position: fixed;
+    top: 5rem;
+    left: var(--space-6);
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  .back-link {
+    display: inline-block;
+    color: var(--color-muted);
+    text-decoration: none;
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-2);
+    pointer-events: auto;
+    background: hsla(var(--color-bg-rgb, 0 0% 99%), 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: var(--space-1) var(--space-2);
+    border-radius: 0.25rem;
+  }
+
+  .demo-title {
+    font-family: var(--font-heading);
+    font-size: var(--text-2xl);
+    margin-bottom: var(--space-1);
+    text-shadow: 0 1px 4px hsla(0, 0%, 0%, 0.3);
+  }
+
+  .demo-technique {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-shadow: 0 1px 4px hsla(0, 0%, 0%, 0.3);
+  }
+
+  /* Sidebar toggle */
+  .sidebar-toggle {
+    position: fixed;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 20;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: hsla(var(--color-bg-rgb, 0 0% 99%), 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--color-border);
+    border-right: none;
+    border-radius: 0.5rem 0 0 0.5rem;
+    cursor: pointer;
+    color: var(--color-text);
+    transition: background 0.2s ease;
+  }
+
+  .sidebar-toggle:hover {
+    background: hsla(var(--color-bg-rgb, 0 0% 99%), 0.9);
+  }
+
+  .sidebar-toggle[aria-expanded="true"] {
+    display: none;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 280px;
+    height: 100vh;
+    z-index: 30;
+    background: hsla(var(--color-bg-rgb, 0 0% 99%), 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-left: 1px solid var(--color-border);
+    padding: var(--space-6);
+    overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sidebar {
+      transition: none;
+    }
+  }
+
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-4);
+  }
+
+  .sidebar-header h2 {
+    font-family: var(--font-heading);
+    font-size: var(--text-lg);
+  }
+
+  .sidebar-close {
+    background: none;
+    border: none;
+    font-size: var(--text-xl);
+    cursor: pointer;
+    color: var(--color-muted);
+    padding: var(--space-1);
+    line-height: 1;
+  }
+
+  .sidebar-description {
+    color: var(--color-muted);
+    font-size: var(--text-sm);
+    line-height: 1.6;
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .control-group {
+    margin-bottom: var(--space-3);
+  }
+
+  .control-group label {
+    display: block;
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-1);
+  }
+
+  .control-group output {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-accent);
+  }
+
+  .control-group input[type="range"] {
+    width: 100%;
+    cursor: pointer;
+  }
+
+  .control-group select {
+    width: 100%;
+    padding: var(--space-2);
+    border: 1px solid var(--color-border);
+    border-radius: 0.375rem;
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-size: var(--text-sm);
+  }
+
+  .swatch-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+  }
+
+  .swatch {
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 0.375rem;
+    border: 2px solid transparent;
+    cursor: pointer;
+    padding: 0;
+    position: relative;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+  }
+
+  .swatch:hover {
+    transform: scale(1.15);
+  }
+
+  .swatch.active {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 1px var(--color-accent);
+  }
+
+  .swatch--custom {
+    background: conic-gradient(from 0deg, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00) !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .swatch--custom span {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    pointer-events: none;
+  }
+
+  .swatch--custom input[type="color"] {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    padding: 0;
+    border: none;
+  }
+
+  /* Scroll content — floating glass cards */
+  .scroll-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 var(--space-4);
+  }
+
+  .scroll-spacer {
+    height: 50vh;
+  }
+
+  .floating-card {
+    max-width: 24rem;
+    width: 100%;
+    background: hsla(var(--color-bg-rgb, 0 0% 99%), 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    padding: var(--space-6);
+    margin-bottom: var(--space-8);
+  }
+
+  .floating-card h2 {
+    font-family: var(--font-heading);
+    font-size: var(--text-lg);
+    margin-bottom: var(--space-3);
+  }
+
+  .floating-card p {
+    color: var(--color-muted);
+    font-size: var(--text-sm);
+    line-height: 1.6;
+  }
+
+  .floating-card code {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    background: var(--color-surface);
+    padding: 0.125em 0.375em;
+    border-radius: 0.25rem;
+  }
+
+  .scroll-meter {
+    position: relative;
+    height: 1.5rem;
+    background: var(--color-surface);
+    border-radius: 0.75rem;
+    overflow: hidden;
+    margin-bottom: var(--space-4);
+  }
+
+  .scroll-meter-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--color-teal), var(--color-lime));
+    border-radius: 0.75rem;
+    transition: width 0.1s linear;
+  }
+
+  .scroll-meter-label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text);
+    mix-blend-mode: difference;
+  }
+</style>
+
+<script>
+  // Sidebar toggle
+  const toggle = document.getElementById('sidebar-toggle')!;
+  const sidebar = document.getElementById('sidebar')!;
+  const closeBtn = document.getElementById('sidebar-close')!;
+
+  toggle.addEventListener('click', () => {
+    sidebar.classList.add('open');
+    toggle.setAttribute('aria-expanded', 'true');
+  });
+
+  closeBtn.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    toggle.setAttribute('aria-expanded', 'false');
+  });
+
+  // Effect controls
+  const turbulence = document.getElementById('scroll-turbulence')!;
+  const displacementEl = document.getElementById('scroll-displacement')!;
+  const colorMatrix = document.getElementById('scroll-color-matrix')!;
+  const container = document.querySelector('.halftone-svg') as HTMLElement;
+  const svgContainer = document.getElementById('halftone-svg') as HTMLElement;
+  const meterFill = document.getElementById('scroll-meter-fill') as HTMLElement;
+  const meterLabel = document.getElementById('scroll-meter-label') as HTMLElement;
+  const currentDispEl = document.getElementById('current-disp') as HTMLElement;
+  const currentFreqEl = document.getElementById('current-freq') as HTMLElement;
+
+  let maxDisp = 80;
+  let freqMin = 0.005;
+  let freqMax = 0.015;
+  let opacity = 0.15;
+  let ticking = false;
+
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  function getScrollProgress(): number {
+    const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+    if (scrollHeight <= 0) return 0;
+    return Math.min(1, Math.max(0, window.scrollY / scrollHeight));
+  }
+
+  function updateDisplacement() {
+    if (prefersReducedMotion.matches) {
+      displacementEl.setAttribute('scale', '0');
+      return;
+    }
+
+    const progress = getScrollProgress();
+    const scale = progress * maxDisp;
+    const freq = freqMin + progress * (freqMax - freqMin);
+
+    displacementEl.setAttribute('scale', String(Math.round(scale)));
+    turbulence.setAttribute('baseFrequency', `${freq.toFixed(4)} ${freq.toFixed(4)}`);
+
+    const pct = Math.round(progress * 100);
+    meterFill.style.width = `${pct}%`;
+    meterLabel.textContent = `${pct}%`;
+    currentDispEl.textContent = String(Math.round(scale));
+    currentFreqEl.textContent = freq.toFixed(4);
+
+    ticking = false;
+  }
+
+  function onScroll() {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(updateDisplacement);
+    }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  updateDisplacement();
+
+  // Controls
+  const maxDispInput = document.getElementById('max-disp') as HTMLInputElement;
+  const maxDispVal = document.getElementById('max-disp-val') as HTMLOutputElement;
+  maxDispInput.addEventListener('input', () => {
+    maxDisp = parseInt(maxDispInput.value);
+    maxDispVal.textContent = String(maxDisp);
+    updateDisplacement();
+  });
+
+  const freqRangeInput = document.getElementById('freq-range') as HTMLInputElement;
+  const freqRangeVal = document.getElementById('freq-range-val') as HTMLOutputElement;
+  freqRangeInput.addEventListener('input', () => {
+    freqMax = parseFloat(freqRangeInput.value);
+    freqRangeVal.textContent = `${freqMin} – ${freqMax}`;
+    updateDisplacement();
+  });
+
+  const opacityInput = document.getElementById('scroll-opacity') as HTMLInputElement;
+  const opacityVal = document.getElementById('scroll-opacity-val') as HTMLOutputElement;
+  opacityInput.addEventListener('input', () => {
+    opacity = parseFloat(opacityInput.value);
+    opacityVal.textContent = String(opacity);
+    container.style.setProperty('--scroll-opacity', String(opacity));
+  });
+
+  // Pattern switcher
+  const patternSelect = document.getElementById('scroll-pattern') as HTMLSelectElement;
+  patternSelect.addEventListener('change', () => {
+    const url = `/images/scanned-graphics/halftones/${patternSelect.value}.svg`;
+    fetch(url)
+      .then(r => r.text())
+      .then(svg => { svgContainer.innerHTML = svg; });
+  });
+
+  // Tint color via feColorMatrix
+  function setTintColor(r: number, g: number, b: number) {
+    colorMatrix.setAttribute('values',
+      `0 0 0 0 ${r}  0 0 0 0 ${g}  0 0 0 0 ${b}  0 0 0 1 0`
+    );
+  }
+
+  function hexToRgb01(hex: string): [number, number, number] {
+    const n = parseInt(hex.replace('#', ''), 16);
+    return [(n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255];
+  }
+
+  const swatchPicker = document.getElementById('tint-swatches')!;
+
+  swatchPicker.querySelectorAll('.swatch:not(.swatch--custom)').forEach(swatch => {
+    swatch.addEventListener('click', () => {
+      swatchPicker.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+      swatch.classList.add('active');
+      const el = swatch as HTMLElement;
+      setTintColor(
+        parseFloat(el.dataset.r!),
+        parseFloat(el.dataset.g!),
+        parseFloat(el.dataset.b!)
+      );
+      const customBtn = swatchPicker.querySelector('.swatch--custom') as HTMLElement;
+      customBtn.style.background = '';
+    });
+  });
+
+  const customBtn = swatchPicker.querySelector('.swatch--custom') as HTMLElement;
+  const colorInput = customBtn.querySelector('input[type="color"]') as HTMLInputElement;
+
+  colorInput.addEventListener('input', () => {
+    swatchPicker.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+    customBtn.classList.add('active');
+    customBtn.style.background = colorInput.value;
+    const [r, g, b] = hexToRgb01(colorInput.value);
+    setTintColor(r, g, b);
+  });
+</script>
