@@ -6,15 +6,12 @@ import BentoEvents from '../../components/landing/BentoEvents.astro';
 import Button from '../../components/ui/Button.astro';
 import PastGallery from '../../components/sections/PastGallery.astro';
 import { formatDateRange } from '../../lib/utils/format';
+import HalftoneDisplacement from '../../components/effects/HalftoneDisplacement.astro';
 import { getCurrentPhase } from '../../lib/utils/phase';
-import { isPhaseBefore, isPhaseAtLeast } from '../../config/phases';
+import { isPhaseAtLeast, isPhaseBefore } from '../../config/phases';
 
 const phase = getCurrentPhase(Astro.url);
 
-// Redirect to home if phase is before pre-event (no exhibition content yet)
-if (isPhaseBefore(phase, 'pre-event')) {
-  return Astro.redirect('/');
-}
 
 const event = await getEntry('events', 'showcase');
 if (!event) throw new Error('Event showcase not found');
@@ -26,6 +23,14 @@ const isPostEvent = isPhaseAtLeast(phase, 'post-event');
 ---
 
 <BaseLayout title="Graduation Exhibitions" themeKey="showcase">
+  <HalftoneDisplacement
+    scale={20}
+    frequency={0.006}
+    speed={0.005}
+    opacity={0.25}
+    tint={[0.05, 0.2, 0.35]}
+  />
+
   {/* ── Hero ── */}
   <section class="showcase-hero" data-cursor-scope>
     <div class="showcase-hero__seal" aria-hidden="true"></div>
@@ -82,12 +87,18 @@ const isPostEvent = isPhaseAtLeast(phase, 'post-event');
         {formatDateRange(event.data.date, event.data.endDate)} &middot; {event.data.location}
       </p>
       <div class="showcase-hero__cta">
-        {isPostEvent ? (
-          <Button href="/showcase/works/" variant="primary">Browse Student Work</Button>
-        ) : (
+        {isPhaseBefore(phase, 'pre-event') && (
+          <Button href="#about" variant="outline">Learn More</Button>
+        )}
+        {isPhaseAtLeast(phase, 'pre-event') && !isPostEvent && (
           <Button href="https://www.eventbrite.com/" variant="primary">RSVP</Button>
         )}
-        <Button href="#about" variant="outline">Learn More</Button>
+        {isPhaseAtLeast(phase, 'pre-event') && !isPostEvent && (
+          <Button href="#about" variant="outline">Learn More</Button>
+        )}
+        {isPostEvent && (
+          <Button href="/showcase/works/" variant="primary">Browse Student Work</Button>
+        )}
       </div>
     </div>
     <div class="showcase-hero__scroll" aria-hidden="true">
@@ -127,16 +138,18 @@ const isPostEvent = isPhaseAtLeast(phase, 'post-event');
   </section>
 
   {/* ── All Celebration Events ── */}
-  <section class="all-events-section">
-    <div class="container">
-      <span class="section-label reveal">Class of 2026</span>
-      <h2 class="section-heading reveal">All Celebration Events</h2>
-      <p class="all-events-desc reveal">
-        From commencement ceremonies to thesis exhibitions and showcases, explore the full range of events celebrating the Class of 2026.
-      </p>
-      <BentoEvents events={events} />
-    </div>
-  </section>
+  {isPhaseAtLeast(phase, 'pre-event') && (
+    <section class="all-events-section">
+      <div class="container">
+        <span class="section-label reveal">Class of 2026</span>
+        <h2 class="section-heading reveal">All Celebration Events</h2>
+        <p class="all-events-desc reveal">
+          From commencement ceremonies to thesis exhibitions and showcases, explore the full range of events celebrating the Class of 2026.
+        </p>
+        <BentoEvents events={events} />
+      </div>
+    </section>
+  )}
 
   {/* ── Past Exhibitions Gallery ── */}
   <PastGallery
@@ -161,6 +174,11 @@ const isPostEvent = isPhaseAtLeast(phase, 'post-event');
 <script src="../../scripts/cursor-track.ts"></script>
 
 <style>
+  /* Invert arrows to white for dark background */
+  :global(.signup-section .floating-img) {
+    filter: brightness(0) invert(1);
+  }
+
   /* ── Hero ── */
   .showcase-hero {
     position: relative;

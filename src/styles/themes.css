@@ -165,32 +165,35 @@
 }
 
 /* --------------------------------------------------------------------------
-   Showcase
-   Bold, energetic
+   Showcase / Graduation Exhibitions
+   Dark navy + lime
    -------------------------------------------------------------------------- */
 [data-theme="showcase"] {
-  --color-bg: #FDFAF5;
-  --color-text: #222222;
-  --color-accent: #E57200;
-  --color-surface: #F7F3E9;
-  --color-border: #E2DDD3;
-  --color-muted: #6A737C;
-  --color-bg-rgb: 253, 250, 245;
-  --color-accent-rgb: 229, 114, 0;
-  --color-header-bg: rgba(253, 250, 245, 0.85);
-  --color-dropdown-bg: rgba(253, 250, 245, 0.92);
-  --color-mobile-bg: rgba(253, 250, 245, 0.95);
-  --color-accent-tint: rgba(229, 114, 0, 0.15);
-  --color-accent-shadow: rgba(229, 114, 0, 0.15);
-  --color-shimmer-base: #E57200;
-  --color-shimmer-highlight: #FFC845;
-  --color-shimmer-warm: #CC6600;
-  --theme-scheme: light;
+  --theme-scheme: dark;
+  --color-bg: #0C2340;
+  --color-text: #f5f0e8;
+  --color-accent: #B7BF10;
+  --color-surface: #122D4D;
+  --color-border: #1E3A5F;
+  --color-muted: #8DA3B8;
+  --color-bg-rgb: 12, 35, 64;
+  --color-accent-rgb: 183, 191, 16;
+  --color-header-bg: rgba(12, 35, 64, 0.88);
+  --color-dropdown-bg: rgba(12, 35, 64, 0.94);
+  --color-mobile-bg: rgba(12, 35, 64, 0.96);
+  --color-accent-tint: rgba(183, 191, 16, 0.15);
+  --color-accent-shadow: rgba(183, 191, 16, 0.20);
+  --color-shimmer-base: #B7BF10;
+  --color-shimmer-highlight: #D4DB5E;
+  --color-shimmer-warm: #9AA00D;
   --radius-card: 6px;
   --radius-sm: 4px;
-  --shadow-card-rest: 0 1px 3px rgba(0, 0, 0, 0.04);
-  --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.08);
-  --theme-gradient: linear-gradient(135deg, #E57200, #FFC845);
+  --shadow-card-rest: 0 1px 3px rgba(0, 0, 0, 0.2);
+  --shadow-card-hover: 0 8px 30px rgba(0, 0, 0, 0.3);
+  --theme-gradient: linear-gradient(135deg, #B7BF10, #D4DB5E);
+  --gradient-prismatic: linear-gradient(var(--gradient-angle, 135deg), #B7BF10, #0C2340, #3DD6C9);
+  --grid-opacity: 0.10;
+  --flare-opacity: 0.5;
 }
 
 /* --------------------------------------------------------------------------

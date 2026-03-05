@@ -1,0 +1,129 @@
+---
+import fs from "node:fs";
+
+interface Props {
+  /** Halftone SVG filename (without path/extension) */
+  pattern?: string;
+  /** Displacement scale (default 15) */
+  scale?: number;
+  /** Turbulence base frequency (default 0.004) */
+  frequency?: number;
+  /** Animation speed (default 0.004) */
+  speed?: number;
+  /** Layer opacity (default 0.2) */
+  opacity?: number;
+  /** Tint color as [r, g, b] in 0–1 range */
+  tint?: [number, number, number];
+}
+
+const {
+  pattern = "halftone-full-03",
+  scale = 15,
+  frequency = 0.004,
+  speed = 0.004,
+  opacity = 0.2,
+  tint = [0, 0.75, 0.7],
+} = Astro.props;
+
+const svgPath = `public/images/scanned-graphics/halftones/${pattern}.svg`;
+const rawSvg = fs.readFileSync(svgPath, "utf-8")
+  .replace(/<svg([^>]*)>/, (match, attrs) => {
+    // Strip fixed width/height and add preserveAspectRatio for full coverage
+    const cleaned = attrs
+      .replace(/\s*width="[^"]*"/g, '')
+      .replace(/\s*height="[^"]*"/g, '');
+    return `<svg${cleaned} width="100%" height="100%" preserveAspectRatio="xMidYMid slice">`;
+  });
+
+const filterId = `halftone-warp-bg`;
+---
+
+<div class="halftone-displacement-bg" aria-hidden="true" style={`--hd-opacity:${opacity}`}>
+  <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute">
+    <defs>
+      <filter id={filterId} x="-20%" y="-20%" width="140%" height="140%">
+        <feTurbulence
+          id="hd-turbulence"
+          type="turbulence"
+          baseFrequency={String(frequency)}
+          numOctaves="3"
+          seed="2"
+          result="noise"
+        />
+        <feDisplacementMap
+          id="hd-displacement"
+          in="SourceGraphic"
+          in2="noise"
+          scale={String(scale)}
+          xChannelSelector="R"
+          yChannelSelector="G"
+        />
+        <feColorMatrix
+          type="matrix"
+          values={`0 0 0 0 ${tint[0]}  0 0 0 0 ${tint[1]}  0 0 0 0 ${tint[2]}  0 0 0 1 0`}
+        />
+      </filter>
+    </defs>
+  </svg>
+  <div class="halftone-displacement-svg" set:html={rawSvg} style={`filter:url(#${filterId})`} />
+</div>
+
+<style>
+  .halftone-displacement-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .halftone-displacement-svg {
+    width: 100%;
+    height: 100%;
+    opacity: var(--hd-opacity, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .halftone-displacement-svg :global(svg) {
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    display: block;
+    object-fit: cover;
+    scale: 1.5;
+  }
+</style>
+
+<script define:vars={{ speed, frequency }}>
+  const turbulence = document.getElementById('hd-turbulence');
+  if (turbulence) {
+    let time = 0;
+    const baseFreq = frequency;
+    const animSpeed = speed;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let animId;
+
+    function animate() {
+      time += animSpeed;
+      const freq = baseFreq + Math.sin(time) * baseFreq * 0.5;
+      turbulence.setAttribute('baseFrequency', `${freq} ${freq}`);
+      animId = requestAnimationFrame(animate);
+    }
+
+    if (!prefersReducedMotion.matches) {
+      animate();
+    }
+
+    prefersReducedMotion.addEventListener('change', () => {
+      if (prefersReducedMotion.matches) {
+        cancelAnimationFrame(animId);
+        turbulence.setAttribute('baseFrequency', `${baseFreq} ${baseFreq}`);
+      } else {
+        animate();
+      }
+    });
+  }
+</script>

@@ -1,0 +1,288 @@
+---
+/**
+ * ParticleFieldArrows — Canvas particle system using scanned arrow SVGs
+ * Loads arrow SVG files as images and renders them as floating, drifting particles.
+ * Purely decorative, aria-hidden, and respects prefers-reduced-motion.
+ */
+
+interface Props {
+  colors?: string[];
+  count?: number;
+  sizeRange?: [number, number];
+  opacityRange?: [number, number];
+}
+
+const {
+  colors,
+  count = 40,
+  sizeRange = [24, 64],
+  opacityRange = [0.12, 0.45],
+} = Astro.props;
+---
+
+<canvas
+  class="particle-field-arrows"
+  aria-hidden="true"
+  data-count={count}
+  data-size-range={JSON.stringify(sizeRange)}
+  data-opacity-range={JSON.stringify(opacityRange)}
+  data-colors={colors ? JSON.stringify(colors) : ''}
+></canvas>
+
+<style>
+  .particle-field-arrows {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+  }
+</style>
+
+<script>
+  const ARROW_SRCS = [
+    '/images/scanned-graphics/arrows/arrow-02.svg',
+    '/images/scanned-graphics/arrows/arrow-03.svg',
+    '/images/scanned-graphics/arrows/arrow-04.svg',
+    '/images/scanned-graphics/arrows/arrow-05.svg',
+    '/images/scanned-graphics/arrows/arrow-06.svg',
+    '/images/scanned-graphics/arrows/arrow-07.svg',
+    '/images/scanned-graphics/arrows/arrow-08.svg',
+    '/images/scanned-graphics/arrows/arrow-09.svg',
+    '/images/scanned-graphics/arrows/arrow-10.svg',
+    '/images/scanned-graphics/arrows/arrow-11.svg',
+    '/images/scanned-graphics/arrows/arrow-12.svg',
+    '/images/scanned-graphics/arrows/arrow-13.svg',
+  ];
+
+  function initParticleFieldArrows() {
+    const canvas = document.querySelector<HTMLCanvasElement>('.particle-field-arrows');
+    if (!canvas) return;
+
+    if ((canvas as any).__pfaRunning) return;
+    (canvas as any).__pfaRunning = true;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function readConfig() {
+      return {
+        count: parseInt(canvas!.dataset.count || '40', 10),
+        sizeRange: JSON.parse(canvas!.dataset.sizeRange || '[24,64]') as [number, number],
+        opacityRange: JSON.parse(canvas!.dataset.opacityRange || '[0.12,0.45]') as [number, number],
+        speedMult: parseFloat(canvas!.dataset.speedMult || '1'),
+      };
+    }
+
+    // Colors for tinting
+    let COLORS: string[] = [];
+    const colorsAttr = canvas.dataset.colors;
+    if (colorsAttr) {
+      COLORS = JSON.parse(colorsAttr);
+    } else {
+      const style = getComputedStyle(document.documentElement);
+      COLORS = [
+        style.getPropertyValue('--color-celebration-primary').trim() || '#00BFB3',
+        style.getPropertyValue('--color-celebration-secondary').trim() || '#563D82',
+        style.getPropertyValue('--color-celebration-warm').trim() || '#FFC845',
+        style.getPropertyValue('--color-celebration-energy').trim() || '#E57200',
+        style.getPropertyValue('--color-celebration-deep').trim() || '#005776',
+      ];
+    }
+
+    // Load arrow images
+    const arrowImages: HTMLImageElement[] = [];
+    let loadedCount = 0;
+
+    function onAllLoaded() {
+      const cfg = readConfig();
+      if (prefersReducedMotion) {
+        resize();
+        const particles = Array.from({ length: cfg.count }, () => createParticle(cfg));
+        particles.forEach(drawParticle);
+      } else {
+        startAnimation(cfg);
+      }
+    }
+
+    for (const src of ARROW_SRCS) {
+      const img = new Image();
+      img.onload = () => {
+        loadedCount++;
+        if (loadedCount === ARROW_SRCS.length) onAllLoaded();
+      };
+      img.onerror = () => {
+        loadedCount++;
+        if (loadedCount === ARROW_SRCS.length) onAllLoaded();
+      };
+      img.src = src;
+      arrowImages.push(img);
+    }
+
+    // Pre-render tinted arrow canvases for each color + arrow combo
+    const tintCache = new Map<string, HTMLCanvasElement>();
+
+    function getTintedArrow(img: HTMLImageElement, color: string): HTMLCanvasElement {
+      const key = `${img.src}:${color}`;
+      if (tintCache.has(key)) return tintCache.get(key)!;
+
+      const offscreen = document.createElement('canvas');
+      offscreen.width = img.naturalWidth;
+      offscreen.height = img.naturalHeight;
+      const offCtx = offscreen.getContext('2d')!;
+
+      // Draw the arrow
+      offCtx.drawImage(img, 0, 0);
+
+      // Tint: use source-in composite to recolor the filled pixels
+      offCtx.globalCompositeOperation = 'source-in';
+      offCtx.fillStyle = color;
+      offCtx.fillRect(0, 0, offscreen.width, offscreen.height);
+
+      tintCache.set(key, offscreen);
+      return offscreen;
+    }
+
+    interface Particle {
+      x: number;
+      y: number;
+      size: number;
+      color: string;
+      opacity: number;
+      rotation: number;
+      rotationSpeed: number;
+      speed: number;
+      drift: number;
+      driftPhase: number;
+      imgIndex: number;
+      flipX: boolean;
+    }
+
+    function resize() {
+      const dpr = window.devicePixelRatio || 1;
+      canvas!.width = window.innerWidth * dpr;
+      canvas!.height = window.innerHeight * dpr;
+      ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function createParticle(cfg: ReturnType<typeof readConfig>): Particle {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      const [minSize, maxSize] = cfg.sizeRange;
+      const [minOpacity, maxOpacity] = cfg.opacityRange;
+      const validImages = arrowImages.filter(img => img.naturalWidth > 0);
+      return {
+        x: Math.random() * w,
+        y: Math.random() * h,
+        size: minSize + Math.random() * (maxSize - minSize),
+        color: COLORS[Math.floor(Math.random() * COLORS.length)],
+        opacity: minOpacity + Math.random() * (maxOpacity - minOpacity),
+        rotation: Math.random() * Math.PI * 2,
+        rotationSpeed: (Math.random() - 0.5) * 0.008,
+        speed: 0.1 + Math.random() * 0.25,
+        drift: 0.3 + Math.random() * 0.7,
+        driftPhase: Math.random() * Math.PI * 2,
+        imgIndex: Math.floor(Math.random() * validImages.length),
+        flipX: Math.random() > 0.5,
+      };
+    }
+
+    function drawParticle(p: Particle) {
+      const c = ctx!;
+      const validImages = arrowImages.filter(img => img.naturalWidth > 0);
+      if (validImages.length === 0) return;
+
+      const img = validImages[p.imgIndex % validImages.length];
+      const tinted = getTintedArrow(img, p.color);
+
+      const aspect = img.naturalWidth / img.naturalHeight;
+      const drawH = p.size;
+      const drawW = drawH * aspect;
+
+      c.save();
+      c.translate(p.x, p.y);
+      c.rotate(p.rotation);
+      c.globalAlpha = p.opacity;
+      if (p.flipX) c.scale(-1, 1);
+      c.drawImage(tinted, -drawW / 2, -drawH / 2, drawW, drawH);
+      c.restore();
+    }
+
+    function startAnimation(initialCfg: ReturnType<typeof readConfig>) {
+      let cfg = initialCfg;
+      let particles = Array.from({ length: cfg.count }, () => createParticle(cfg));
+      let time = 0;
+      let configGeneration = 0;
+      let lastAppliedGeneration = 0;
+
+      canvas!.addEventListener('particle-field-arrows:update', () => { configGeneration++; });
+
+      const SCROLL_SENSITIVITY = 0.08;
+      const SCROLL_INFLUENCE_ATTACK = 0.15;
+      const SCROLL_INFLUENCE_DECAY = 0.03;
+      const SCROLL_SPEED_BOOST = 2.5;
+      const SCROLL_ROTATION_BOOST = 4.0;
+      const SCROLL_DRIFT_BOOST = 2.0;
+
+      let lastScrollY = window.scrollY;
+      let scrollInfluence = 0;
+
+      resize();
+      window.addEventListener('resize', resize);
+
+      function animate() {
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        ctx!.clearRect(0, 0, w, h);
+        time += 0.01;
+
+        if (configGeneration !== lastAppliedGeneration) {
+          lastAppliedGeneration = configGeneration;
+          cfg = readConfig();
+          tintCache.clear();
+          particles = Array.from({ length: cfg.count }, () => createParticle(cfg));
+        }
+
+        const currentScrollY = window.scrollY;
+        const scrollDelta = currentScrollY - lastScrollY;
+        lastScrollY = currentScrollY;
+
+        const target = Math.max(-1, Math.min(1, scrollDelta * SCROLL_SENSITIVITY));
+        const lerpRate = Math.abs(target) > Math.abs(scrollInfluence)
+          ? SCROLL_INFLUENCE_ATTACK
+          : SCROLL_INFLUENCE_DECAY;
+        scrollInfluence += (target - scrollInfluence) * lerpRate;
+
+        const sm = cfg.speedMult;
+        const speedBoost = scrollInfluence * SCROLL_SPEED_BOOST;
+        const rotMultiplier = 1 + Math.abs(scrollInfluence) * SCROLL_ROTATION_BOOST;
+        const driftMultiplier = 1 + Math.abs(scrollInfluence) * SCROLL_DRIFT_BOOST;
+
+        for (const p of particles) {
+          p.y -= (p.speed * sm) + speedBoost;
+          p.x += Math.sin(time + p.driftPhase) * p.drift * 0.3 * driftMultiplier;
+          p.rotation += p.rotationSpeed * rotMultiplier;
+
+          if (p.y < -p.size) {
+            p.y = h + p.size;
+            p.x = Math.random() * w;
+          }
+          if (p.x < -p.size) p.x = w + p.size;
+          if (p.x > w + p.size) p.x = -p.size;
+
+          drawParticle(p);
+        }
+
+        requestAnimationFrame(animate);
+      }
+
+      animate();
+    }
+  }
+
+  initParticleFieldArrows();
+  document.addEventListener('astro:page-load', initParticleFieldArrows);
+</script>
