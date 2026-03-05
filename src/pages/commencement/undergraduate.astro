@@ -1,4 +1,11 @@
 ---
 import CeremonyPage from '../../components/events/CeremonyPage.astro';
+import { getCurrentPhase } from '../../lib/utils/phase';
+import { isPhaseBefore } from '../../config/phases';
+
+const phase = getCurrentPhase(Astro.url);
+if (isPhaseBefore(phase, 'pre-event')) {
+  return Astro.redirect('/commencement/');
+}
 ---
 <CeremonyPage eventId="commencement-undergraduate" breadcrumbLabel="Undergraduate" />

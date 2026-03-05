@@ -1,11 +1,13 @@
 ---
 import { getCollection } from 'astro:content';
+import { CURRENT_PHASE, isPhaseBefore } from '../../config/phases';
 import EventLayout from '../../layouts/EventLayout.astro';
 import EventHero from '../../components/events/EventHero.astro';
 import EventDetails from '../../components/events/EventDetails.astro';
 import Breadcrumb from '../../components/ui/Breadcrumb.astro';
 
 export async function getStaticPaths() {
+  if (isPhaseBefore(CURRENT_PHASE, 'pre-event')) return [];
   const events = await getCollection('events');
   const celebrations = events.filter(e => e.data.type === 'celebration');
   return celebrations.map(event => ({

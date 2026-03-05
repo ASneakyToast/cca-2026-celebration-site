@@ -1,5 +1,7 @@
 ---
 import { getEntry } from "astro:content";
+import { getCurrentPhase } from '../../../lib/utils/phase';
+import { isPhaseBefore } from '../../../config/phases';
 import EventLayout from "../../../layouts/EventLayout.astro";
 import Breadcrumb from "../../../components/ui/Breadcrumb.astro";
 import TableOfContents from "../../../components/ui/TableOfContents.astro";
@@ -12,6 +14,11 @@ import InMemoriam from "../../../components/sections/InMemoriam.astro";
 import Button from "../../../components/ui/Button.astro";
 import DownloadLink from "../../../components/ui/DownloadLink.astro";
 import { getCandidatesGroupedByDivision } from "../../../lib/utils/collections";
+
+const phase = getCurrentPhase(Astro.url);
+if (isPhaseBefore(phase, 'pre-event')) {
+  return Astro.redirect('/commencement/');
+}
 
 const eventId = "commencement-undergraduate";
 const event = await getEntry("events", eventId);
