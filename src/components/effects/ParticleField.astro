@@ -1,0 +1,276 @@
+---
+/**
+ * ParticleField — Configurable canvas particle system
+ * Renders geometric shapes or custom SVG paths floating upward with rotation and sine-wave drift.
+ * Purely decorative, aria-hidden, and respects prefers-reduced-motion.
+ */
+
+interface Props {
+  mode?: 'geometric' | 'svg';
+  colors?: string[];
+  count?: number;
+  sizeRange?: [number, number];
+  opacityRange?: [number, number];
+  svgPaths?: { d: string; viewBox: [number, number] }[];
+}
+
+const {
+  mode = 'geometric',
+  colors,
+  count = 70,
+  sizeRange = [3, 8],
+  opacityRange = [0.3, 0.8],
+  svgPaths = [],
+} = Astro.props;
+---
+
+<canvas
+  class="particle-field"
+  aria-hidden="true"
+  data-mode={mode}
+  data-count={count}
+  data-size-range={JSON.stringify(sizeRange)}
+  data-opacity-range={JSON.stringify(opacityRange)}
+  data-colors={colors ? JSON.stringify(colors) : ''}
+  data-svg-paths={svgPaths.length ? JSON.stringify(svgPaths) : ''}
+></canvas>
+
+<style>
+  .particle-field {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+  }
+</style>
+
+<script>
+  function initParticleField() {
+    const canvas = document.querySelector<HTMLCanvasElement>('.particle-field');
+    if (!canvas) return;
+
+    // Prevent duplicate animation loops
+    if ((canvas as any).__pfRunning) return;
+    (canvas as any).__pfRunning = true;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Read initial config from data attributes
+    const mode = (canvas.dataset.mode || 'geometric') as 'geometric' | 'svg';
+
+    function readConfig() {
+      return {
+        count: parseInt(canvas!.dataset.count || '70', 10),
+        sizeRange: JSON.parse(canvas!.dataset.sizeRange || '[3,8]') as [number, number],
+        opacityRange: JSON.parse(canvas!.dataset.opacityRange || '[0.3,0.8]') as [number, number],
+        speedMult: parseFloat(canvas!.dataset.speedMult || '1'),
+      };
+    }
+
+    // Colors: use provided or read CSS vars
+    let COLORS: string[];
+    const colorsAttr = canvas.dataset.colors;
+    if (colorsAttr) {
+      COLORS = JSON.parse(colorsAttr);
+    } else {
+      const style = getComputedStyle(document.documentElement);
+      COLORS = [
+        style.getPropertyValue('--color-celebration-primary').trim() || '#00BFB3',
+        style.getPropertyValue('--color-celebration-secondary').trim() || '#563D82',
+        style.getPropertyValue('--color-celebration-warm').trim() || '#FFC845',
+        style.getPropertyValue('--color-celebration-energy').trim() || '#E57200',
+        style.getPropertyValue('--color-celebration-deep').trim() || '#005776',
+      ];
+    }
+
+    // SVG paths for svg mode
+    let path2DObjects: { path: Path2D; vw: number; vh: number }[] = [];
+
+    if (mode === 'svg') {
+      const pathsAttr = canvas.dataset.svgPaths;
+      if (pathsAttr) {
+        const svgPathDefs: { d: string; viewBox: [number, number] }[] = JSON.parse(pathsAttr);
+        path2DObjects = svgPathDefs.map((sp) => ({
+          path: new Path2D(sp.d),
+          vw: sp.viewBox[0],
+          vh: sp.viewBox[1],
+        }));
+      }
+    }
+
+    interface Particle {
+      x: number;
+      y: number;
+      size: number;
+      color: string;
+      opacity: number;
+      rotation: number;
+      rotationSpeed: number;
+      speed: number;
+      drift: number;
+      driftPhase: number;
+      shape: 'rect' | 'circle' | 'triangle';
+      pathIndex: number;
+    }
+
+    function resize() {
+      const dpr = window.devicePixelRatio || 1;
+      canvas!.width = window.innerWidth * dpr;
+      canvas!.height = window.innerHeight * dpr;
+      ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function createParticle(cfg: ReturnType<typeof readConfig>): Particle {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      const shapes: Particle['shape'][] = ['rect', 'circle', 'triangle'];
+      const [minSize, maxSize] = cfg.sizeRange;
+      const [minOpacity, maxOpacity] = cfg.opacityRange;
+      return {
+        x: Math.random() * w,
+        y: Math.random() * h,
+        size: minSize + Math.random() * (maxSize - minSize),
+        color: COLORS[Math.floor(Math.random() * COLORS.length)],
+        opacity: minOpacity + Math.random() * (maxOpacity - minOpacity),
+        rotation: Math.random() * Math.PI * 2,
+        rotationSpeed: (Math.random() - 0.5) * 0.02,
+        speed: 0.15 + Math.random() * 0.35,
+        drift: 0.3 + Math.random() * 0.7,
+        driftPhase: Math.random() * Math.PI * 2,
+        shape: shapes[Math.floor(Math.random() * shapes.length)],
+        pathIndex: path2DObjects.length > 0
+          ? Math.floor(Math.random() * path2DObjects.length)
+          : 0,
+      };
+    }
+
+    function drawParticle(p: Particle) {
+      const c = ctx!;
+      c.save();
+      c.translate(p.x, p.y);
+      c.rotate(p.rotation);
+      c.globalAlpha = p.opacity;
+      c.fillStyle = p.color;
+
+      if (mode === 'svg' && path2DObjects.length > 0) {
+        const { path, vw, vh } = path2DObjects[p.pathIndex];
+        const maxDim = Math.max(vw, vh);
+        const scale = p.size / maxDim;
+        c.scale(scale, scale);
+        c.translate(-vw / 2, -vh / 2);
+        c.fill(path);
+      } else {
+        switch (p.shape) {
+          case 'rect':
+            c.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+            break;
+          case 'circle':
+            c.beginPath();
+            c.arc(0, 0, p.size / 2, 0, Math.PI * 2);
+            c.fill();
+            break;
+          case 'triangle':
+            c.beginPath();
+            c.moveTo(0, -p.size / 2);
+            c.lineTo(p.size / 2, p.size / 2);
+            c.lineTo(-p.size / 2, p.size / 2);
+            c.closePath();
+            c.fill();
+            break;
+        }
+      }
+
+      c.restore();
+    }
+
+    let cfg = readConfig();
+
+    if (prefersReducedMotion) {
+      resize();
+      const particles = Array.from({ length: cfg.count }, () => createParticle(cfg));
+      particles.forEach(drawParticle);
+    } else {
+      let particles = Array.from({ length: cfg.count }, () => createParticle(cfg));
+      let time = 0;
+      let configGeneration = 0;
+      let lastAppliedGeneration = 0;
+
+      // Listen for config changes from demo controls
+      canvas.addEventListener('particle-field:update', () => { configGeneration++; });
+
+      // Scroll-reactive wind gust constants
+      const SCROLL_SENSITIVITY = 0.08;
+      const SCROLL_INFLUENCE_ATTACK = 0.15;
+      const SCROLL_INFLUENCE_DECAY = 0.03;
+      const SCROLL_SPEED_BOOST = 2.5;
+      const SCROLL_ROTATION_BOOST = 4.0;
+      const SCROLL_DRIFT_BOOST = 2.0;
+
+      // Scroll tracking state
+      let lastScrollY = window.scrollY;
+      let scrollInfluence = 0;
+
+      resize();
+      window.addEventListener('resize', resize);
+
+      function animate() {
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        ctx!.clearRect(0, 0, w, h);
+        time += 0.01;
+
+        // Check if config changed
+        if (configGeneration !== lastAppliedGeneration) {
+          lastAppliedGeneration = configGeneration;
+          cfg = readConfig();
+          // Rebuild particles with new config
+          particles = Array.from({ length: cfg.count }, () => createParticle(cfg));
+        }
+
+        // Compute scroll velocity and smooth into wind influence
+        const currentScrollY = window.scrollY;
+        const scrollDelta = currentScrollY - lastScrollY;
+        lastScrollY = currentScrollY;
+
+        const target = Math.max(-1, Math.min(1, scrollDelta * SCROLL_SENSITIVITY));
+        const lerpRate = Math.abs(target) > Math.abs(scrollInfluence)
+          ? SCROLL_INFLUENCE_ATTACK
+          : SCROLL_INFLUENCE_DECAY;
+        scrollInfluence += (target - scrollInfluence) * lerpRate;
+
+        // Derive per-frame modifiers from scroll influence
+        const sm = cfg.speedMult;
+        const speedBoost = scrollInfluence * SCROLL_SPEED_BOOST;
+        const rotMultiplier = 1 + Math.abs(scrollInfluence) * SCROLL_ROTATION_BOOST;
+        const driftMultiplier = 1 + Math.abs(scrollInfluence) * SCROLL_DRIFT_BOOST;
+
+        for (const p of particles) {
+          p.y -= (p.speed * sm) + speedBoost;
+          p.x += Math.sin(time + p.driftPhase) * p.drift * 0.3 * driftMultiplier;
+          p.rotation += p.rotationSpeed * rotMultiplier;
+
+          if (p.y < -p.size) {
+            p.y = h + p.size;
+            p.x = Math.random() * w;
+          }
+          if (p.x < -p.size) p.x = w + p.size;
+          if (p.x > w + p.size) p.x = -p.size;
+
+          drawParticle(p);
+        }
+
+        requestAnimationFrame(animate);
+      }
+
+      animate();
+    }
+  }
+
+  initParticleField();
+  document.addEventListener('astro:page-load', initParticleField);
+</script>
