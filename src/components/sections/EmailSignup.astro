@@ -67,7 +67,7 @@ const {
     data-cursor-strength="0.04"
     data-cursor-max="30"
     data-cursor-lerp="0.08"
-    src="https://storage.googleapis.com/ccaedu-prod/media/images/Doodle-spiral.original.svg"
+    data-random-arrow
     alt=""
     aria-hidden="true"
   />
@@ -77,12 +77,13 @@ const {
     data-cursor-strength="0.05"
     data-cursor-max="35"
     data-cursor-lerp="0.1"
-    src="https://storage.googleapis.com/ccaedu-prod/media/images/Doodle-flower-teal.original.svg"
+    data-random-arrow
     alt=""
     aria-hidden="true"
   />
 </section>
 
+<script src="../../scripts/random-arrows.ts"></script>
 <script>
   const form = document.querySelector('.signup-form') as HTMLFormElement | null;
   const successEl = document.querySelector('.signup-success') as HTMLElement | null;
@@ -210,6 +211,7 @@ const {
     opacity: 1;
     cursor: pointer;
     z-index: 2;
+    object-fit: contain;
     transition: transform 0.4s var(--ease-out-expo);
   }
 

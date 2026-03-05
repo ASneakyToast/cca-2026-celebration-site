@@ -12,7 +12,7 @@ import { formatDate } from '../../lib/utils/format';
 import { getCelebrationEvents, getPeopleByRole } from '../../lib/utils/collections';
 import PhaseGate from '../../components/PhaseGate.astro';
 import { getCurrentPhase, isContentVisible } from '../../lib/utils/phase';
-import { isPhaseAtLeast } from '../../config/phases';
+import { isPhaseAtLeast, isPhaseBefore } from '../../config/phases';
 
 const events = await getCollection('events');
 const undergradEvent = events.find(e => e.id === 'commencement-undergraduate');
@@ -112,7 +112,14 @@ const isPostEvent = isPhaseAtLeast(phase, 'post-event');
       <span class="section-label reveal">Ceremonies</span>
       <h2 class="section-heading reveal">Two Ceremonies, One Celebration</h2>
       <div class="ceremony-cards">
-        {undergradEvent && (
+        {undergradEvent && isPhaseBefore(phase, 'pre-event') ? (
+          <div class="ceremony-info reveal">
+            <h3 class="ceremony-info__title">{undergradEvent.data.title}</h3>
+            <time class="ceremony-info__date">{formatDate(undergradEvent.data.date)}</time>
+            <p class="ceremony-info__meta">{undergradEvent.data.time}</p>
+            <p class="ceremony-info__meta">{undergradEvent.data.location}</p>
+          </div>
+        ) : undergradEvent && (
           <a href="/commencement/undergraduate/" class="ceremony-card reveal">
             <div class="ceremony-card__accent" aria-hidden="true"></div>
             <span class="ceremony-card__badge">Undergraduate</span>
@@ -124,7 +131,14 @@ const isPostEvent = isPhaseAtLeast(phase, 'post-event');
           </a>
         )}
 
-        {gradEvent && (
+        {gradEvent && isPhaseBefore(phase, 'pre-event') ? (
+          <div class="ceremony-info reveal">
+            <h3 class="ceremony-info__title">{gradEvent.data.title}</h3>
+            <time class="ceremony-info__date">{formatDate(gradEvent.data.date)}</time>
+            <p class="ceremony-info__meta">{gradEvent.data.time}</p>
+            <p class="ceremony-info__meta">{gradEvent.data.location}</p>
+          </div>
+        ) : gradEvent && (
           <a href="/commencement/graduate/" class="ceremony-card reveal">
             <div class="ceremony-card__accent" aria-hidden="true"></div>
             <span class="ceremony-card__badge">Graduate</span>
@@ -181,7 +195,7 @@ const isPostEvent = isPhaseAtLeast(phase, 'post-event');
   />
 
   {/* ── In Memoriam ── */}
-  {inMemoriam.length > 0 && (
+  {isPhaseAtLeast(phase, 'during-event') && inMemoriam.length > 0 && (
     <section class="memoriam-section">
       <div class="container">
         <span class="section-label reveal">In Memoriam</span>
@@ -206,6 +220,11 @@ const isPostEvent = isPhaseAtLeast(phase, 'post-event');
 <script src="../../scripts/cursor-track.ts"></script>
 
 <style>
+  /* Invert arrows to white for commencement color scheme */
+  :global(.signup-section .floating-img) {
+    filter: brightness(0) invert(1);
+  }
+
   /* ── Hero ── */
   .comm-hero {
     position: relative;
@@ -494,6 +513,31 @@ const isPostEvent = isPhaseAtLeast(phase, 'post-event');
 
   .ceremony-card:hover .ceremony-card__cta {
     letter-spacing: 0.05em;
+  }
+
+  /* ── Ceremony info (non-card, save-the-date phase) ── */
+  .ceremony-info {
+  }
+
+  .ceremony-info__title {
+    font-size: var(--text-2xl);
+    line-height: 1.2;
+    margin-bottom: var(--space-4);
+  }
+
+  .ceremony-info__date {
+    display: block;
+    font-size: var(--text-lg);
+    font-weight: 600;
+    color: var(--color-accent);
+    margin-bottom: var(--space-2);
+  }
+
+  .ceremony-info__meta {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+    margin-bottom: var(--space-1);
   }
 
   /* ── Celebrations grid ── */

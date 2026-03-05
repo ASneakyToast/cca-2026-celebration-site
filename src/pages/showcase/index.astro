@@ -116,7 +116,7 @@ const fallbackImages = [
       data-cursor-strength="0.04"
       data-cursor-max="30"
       data-cursor-lerp="0.08"
-      src="https://storage.googleapis.com/ccaedu-prod/media/images/Doodle-spiral.original.svg"
+      data-random-arrow
       alt=""
       aria-hidden="true"
     />
@@ -126,7 +126,7 @@ const fallbackImages = [
       data-cursor-strength="0.05"
       data-cursor-max="35"
       data-cursor-lerp="0.1"
-      src="https://storage.googleapis.com/ccaedu-prod/media/images/Doodle-flower-teal.original.svg"
+      data-random-arrow
       alt=""
       aria-hidden="true"
     />
@@ -136,6 +136,7 @@ const fallbackImages = [
 
 <script src="../../scripts/cursor-track.ts"></script>
 <script src="../../scripts/doodle-antics.ts"></script>
+<script src="../../scripts/random-arrows.ts"></script>
 
 <script>
   const ctaSection = document.querySelector('.students-cta') as HTMLElement | null;
@@ -281,6 +282,7 @@ const fallbackImages = [
     opacity: 1;
     cursor: pointer;
     z-index: 2;
+    object-fit: contain;
     transition: transform 0.4s var(--ease-out-expo);
   }
 
