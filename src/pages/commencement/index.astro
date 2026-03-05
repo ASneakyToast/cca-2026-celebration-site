@@ -1,6 +1,8 @@
 ---
 import { getCollection, getEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import ParticleField from '../../components/effects/ParticleField.astro';
+import { chimeraPaths } from '../../data/chimera-paths';
 import CelebrationCard from '../../components/events/CelebrationCard.astro';
 import EmailSignup from '../../components/sections/EmailSignup.astro';
 import Button from '../../components/ui/Button.astro';
@@ -62,6 +64,15 @@ const isPostEvent = new Date() > latestDate;
 ---
 
 <BaseLayout title="Commencement" themeKey="commencement">
+  <ParticleField
+    mode="svg"
+    svgPaths={chimeraPaths}
+    colors={['#563D82', '#00BFB3', '#005776']}
+    count={60}
+    sizeRange={[24, 64]}
+    opacityRange={[0.1, 0.4]}
+  />
+
   {/* ── Hero ── */}
   <section class="comm-hero" data-cursor-scope>
     <div class="comm-hero__seal" aria-hidden="true"></div>
@@ -256,8 +267,7 @@ const isPostEvent = new Date() > latestDate;
   .comm-hero__title {
     font-family: var(--font-display);
     font-size: clamp(3rem, 8vw, 8rem);
-    font-style: italic;
-    font-weight: 700;
+    font-weight: normal;
     line-height: 1;
     margin: 0;
   }

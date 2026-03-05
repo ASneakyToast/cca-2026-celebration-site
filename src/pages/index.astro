@@ -1,6 +1,8 @@
 ---
 import { getCollection, getEntry } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import ParticleField from '../components/effects/ParticleField.astro';
+import { chimeraPaths } from '../data/chimera-paths';
 import EmailSignup from '../components/sections/EmailSignup.astro';
 import QuoteBlock from '../components/ui/QuoteBlock.astro';
 import Button from '../components/ui/Button.astro';
@@ -24,6 +26,15 @@ const isPostEvent = new Date() > latestDate;
 ---
 
 <BaseLayout title="2026 Celebrations" description="Celebrate the achievements of CCA's Class of 2026 at commencement ceremonies, exhibitions, and showcases.">
+
+  <ParticleField
+    mode="svg"
+    svgPaths={chimeraPaths}
+    colors={['#00BFB3', '#563D82', '#FFC845', '#E57200', '#005776']}
+    count={35}
+    sizeRange={[14, 40]}
+    opacityRange={[0.08, 0.3]}
+  />
 
   <!-- 1. Hero -->
   <section class="hero" data-cursor-scope>
@@ -284,8 +295,6 @@ const isPostEvent = new Date() > latestDate;
     display: block;
     font-family: var(--font-display);
     font-size: clamp(6rem, 20vw, 18rem);
-    font-style: italic;
-    font-weight: 700;
     line-height: 1;
   }
 
@@ -525,8 +534,6 @@ const isPostEvent = new Date() > latestDate;
   .anchor-section__number {
     font-family: var(--font-display);
     font-size: clamp(5rem, 12vw, 10rem);
-    font-style: italic;
-    font-weight: 700;
     line-height: 1.15;
   }
 
