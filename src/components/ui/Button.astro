@@ -1,16 +1,27 @@
 ---
 interface Props {
   href?: string;
-  variant?: "primary" | "secondary" | "outline";
+  variant?: "primary" | "secondary" | "outline" | "link";
+  arrow?: string;
   [key: string]: any;
 }
 
-const { href, variant = "primary", ...rest } = Astro.props;
+const { href, variant = "primary", arrow, ...rest } = Astro.props;
 const Tag = href ? "a" : "button";
+
+// Pick a random arrow SVG (1-13, skipping 1) if variant is link and no arrow specified
+const arrowIndex = arrow ?? `0${2 + Math.floor(Math.random() * 12)}`.slice(-2);
 ---
 
 <Tag href={href} class:list={["btn", `btn-${variant}`]} {...rest}>
   <slot />
+  {variant === "link" && (
+    <span
+      class="btn-link__arrow"
+      aria-hidden="true"
+      style={`--arrow-src: url(/images/scanned-graphics/arrows/arrow-${arrowIndex}.svg)`}
+    />
+  )}
 </Tag>
 
 <style>
@@ -83,5 +94,50 @@ const Tag = href ? "a" : "button";
 
   .btn-outline:hover::before {
     transform: scaleX(1);
+  }
+
+  /* ── Link: text + wavy arrow, no box ── */
+  .btn-link {
+    background: none;
+    padding: 0 var(--space-10) var(--space-8) 0;
+    border-radius: 0;
+    color: var(--color-accent);
+    font-family: var(--font-heading);
+    font-size: var(--text-lg);
+    font-weight: 700;
+    display: inline-block;
+    position: relative;
+    overflow: visible;
+    transition: color var(--duration-base) var(--ease-out-expo);
+  }
+
+  .btn-link:hover {
+    color: color-mix(in srgb, var(--color-accent) 80%, #000);
+  }
+
+  .btn-link:hover .btn-link__arrow {
+    transform: translateX(6px);
+  }
+
+  .btn-link:active {
+    transform: none;
+  }
+
+  .btn-link__arrow {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 48px;
+    height: 48px;
+    background: currentColor;
+    mask-image: var(--arrow-src);
+    -webkit-mask-image: var(--arrow-src);
+    mask-size: contain;
+    -webkit-mask-size: contain;
+    mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
+    mask-position: center;
+    -webkit-mask-position: center;
+    transition: transform var(--duration-base) var(--ease-out-expo);
   }
 </style>

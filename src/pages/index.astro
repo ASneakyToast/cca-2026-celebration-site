@@ -6,8 +6,6 @@ import { chimeraPaths } from '../data/chimera-paths';
 import EmailSignup from '../components/sections/EmailSignup.astro';
 import QuoteBlock from '../components/ui/QuoteBlock.astro';
 import Button from '../components/ui/Button.astro';
-import { formatDateRange } from '../lib/utils/format';
-import PhaseGate from '../components/PhaseGate.astro';
 import { getCurrentPhase } from '../lib/utils/phase';
 import { isPhaseAtLeast } from '../config/phases';
 
@@ -101,11 +99,8 @@ const isPostEvent = isPhaseAtLeast(phase, 'post-event');
           <Button href="#events" variant="outline">Browse Events</Button>
         ) : (
           <Button href="#events" variant="primary">Explore Events</Button>
-          <Button href="/commencement/" variant="outline">Commencement</Button>
+          <Button href="/subscribe/" variant="outline">Subscribe for Updates</Button>
         )}
-      </div>
-      <div class="hero__date-badge stagger-6">
-        <span>Commencement&ensp;&mdash;&ensp;May 16, 2026</span>
       </div>
     </div>
     <div class="hero__scroll" aria-hidden="true">
@@ -145,12 +140,9 @@ const isPostEvent = isPhaseAtLeast(phase, 'post-event');
               </h2>
             </div>
             <div class="anchor-section__body">
-              <p class="anchor-section__meta">
-                {formatDateRange(commencementEntry.data.date)} &middot; {commencementEntry.data.location}
-              </p>
               <p class="anchor-section__desc">{commencementEntry.data.description}</p>
               <div class="anchor-section__cta">
-                <Button href="/commencement/" variant="primary">Commencement Details</Button>
+                <Button href="/commencement/" variant="link">Commencement Details</Button>
               </div>
             </div>
           </div>
@@ -176,26 +168,22 @@ const isPostEvent = isPhaseAtLeast(phase, 'post-event');
   />
 
   <!-- 5. Graduation Exhibitions -->
-  <PhaseGate hiddenIn={['save-the-date']}>
     {showcaseEntry && (
       <section class="anchor-section anchor-section--exhibitions reveal">
         <div class="container">
           <div class="anchor-section__layout anchor-section__layout--reverse">
             <div class="anchor-section__content">
               <div class="anchor-section__header">
-                <span class="section-label">May 8–10, 2026</span>
+                <span class="section-label">May 15, 2026</span>
                 <h2 class="anchor-section__title">
                   <span class="anchor-section__number shimmer-text">700<sup>+</sup></span>
                   <span class="anchor-section__name">Graduating Students</span>
                 </h2>
               </div>
               <div class="anchor-section__body">
-                <p class="anchor-section__meta">
-                  {formatDateRange(showcaseEntry.data.date, showcaseEntry.data.endDate)} &middot; {showcaseEntry.data.location}
-                </p>
                 <p class="anchor-section__desc">{showcaseEntry.data.description}</p>
                 <div class="anchor-section__cta">
-                  <Button href="/thesis/" variant="primary">Explore Exhibitions</Button>
+                  <Button href="/thesis/" variant="link">Explore Exhibitions</Button>
                 </div>
               </div>
             </div>
@@ -212,10 +200,9 @@ const isPostEvent = isPhaseAtLeast(phase, 'post-event');
         </div>
       </section>
     )}
-  </PhaseGate>
 
   <!-- 7. Email Signup -->
-  <section class="signup-section">
+  <section id="subscribe" class="signup-section">
     <div class="signup-section__glow" aria-hidden="true"></div>
     <EmailSignup heading="Don't Miss a Moment" description="Sign up for the CCA mailing list to receive updates on commencement, exhibitions, showcases, and more." />
   </section>
@@ -327,20 +314,6 @@ const isPostEvent = isPhaseAtLeast(phase, 'post-event');
     justify-content: center;
   }
 
-  .hero__date-badge {
-    margin-top: var(--space-8);
-    padding: var(--space-2) var(--space-5);
-    border-radius: 999px;
-    border: 1px solid transparent;
-    background:
-      var(--color-bg) padding-box,
-      var(--gradient-prismatic) border-box;
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--color-muted);
-  }
 
   /* ---- Seal watermark ---- */
   .hero__seal {
