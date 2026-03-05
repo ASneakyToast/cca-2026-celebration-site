@@ -1,0 +1,68 @@
+---
+import { getFrameData } from '../../lib/utils/frame-data';
+
+interface Props {
+  /** Frame ID, e.g. "frame-01" */
+  frameId: string;
+  /** Image URL */
+  src: string;
+  /** Alt text (empty string for decorative) */
+  alt?: string;
+  /** CSS class for the wrapper */
+  class?: string;
+  /** Unique ID suffix for clip-path (must be unique per page) */
+  uid?: string;
+}
+
+const {
+  frameId,
+  src,
+  alt = '',
+  class: className,
+  uid = frameId,
+} = Astro.props;
+
+const frame = getFrameData(frameId);
+---
+
+<div class:list={['framed-image', className]}>
+  <svg
+    viewBox={frame.viewBox}
+    xmlns="http://www.w3.org/2000/svg"
+    class="framed-image__svg"
+    aria-hidden={alt === '' ? 'true' : undefined}
+    role={alt ? 'img' : undefined}
+    aria-label={alt || undefined}
+  >
+    <defs>
+      <clipPath id={`frame-clip-${uid}`}>
+        <path d={frame.clipPathD} />
+      </clipPath>
+    </defs>
+
+    <image
+      href={src}
+      x={frame.minX}
+      y={frame.minY}
+      width={frame.width}
+      height={frame.height}
+      preserveAspectRatio="xMidYMid slice"
+      clip-path={`url(#frame-clip-${uid})`}
+    />
+
+    <Fragment set:html={frame.pathsVisual} />
+  </svg>
+</div>
+
+<style>
+  .framed-image {
+    display: block;
+  }
+
+  .framed-image__svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    color: var(--frame-color, #231f20);
+  }
+</style>

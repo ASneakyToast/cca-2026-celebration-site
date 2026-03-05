@@ -5,6 +5,7 @@ import EmailSignup from '../../components/sections/EmailSignup.astro';
 import BentoEvents from '../../components/landing/BentoEvents.astro';
 import Button from '../../components/ui/Button.astro';
 import PastGallery from '../../components/sections/PastGallery.astro';
+import FramedImage from '../../components/ui/FramedImage.astro';
 import { formatDateRange } from '../../lib/utils/format';
 import HalftoneDisplacement from '../../components/effects/HalftoneDisplacement.astro';
 import { getCurrentPhase } from '../../lib/utils/phase';
@@ -35,54 +36,60 @@ const isPostEvent = isPhaseAtLeast(phase, 'post-event');
   <section class="showcase-hero" data-cursor-scope>
     <div class="showcase-hero__seal" aria-hidden="true"></div>
     <div class="showcase-hero__collage" aria-hidden="true">
-      <img
-        src="https://storage.googleapis.com/ccaedu-prod/media/images/large_digital_jpg-CCA_EOY-Show_SP25-115-jrl2.original.jpg"
-        alt=""
+      <div
         class="showcase-hero__fragment showcase-hero__fragment--1"
         data-cursor-track
         data-cursor-direction="towards"
         data-cursor-strength="0.035"
         data-cursor-max="36"
         data-cursor-lerp="0.06"
-        loading="eager"
-      />
-      <img
-        src="https://storage.googleapis.com/ccaedu-prod/media/images/large_digital_jpg-CCA_EOY-Show_SP25-115-jrl2.original.jpg"
-        alt=""
+      >
+        <FramedImage
+          frameId="frame-04"
+          src="https://storage.googleapis.com/ccaedu-prod/media/images/large_digital_jpg-CCA_EOY-Show_SP25-115-jrl2.original.jpg"
+          uid="thesis-hero-1"
+        />
+      </div>
+      <div
         class="showcase-hero__fragment showcase-hero__fragment--2"
         data-cursor-track
         data-cursor-direction="towards"
         data-cursor-strength="0.055"
         data-cursor-max="28"
         data-cursor-lerp="0.12"
-        loading="eager"
+      >
+        <FramedImage
+          frameId="frame-01"
+          src="https://storage.googleapis.com/ccaedu-prod/media/images/large_digital_jpg-CCA_EOY-Show_SP25-115-jrl2.original.jpg"
+          uid="thesis-hero-2"
+        />
+      </div>
+      <img
+        class="showcase-hero__fragment showcase-hero__doodle showcase-hero__doodle--1"
+        data-cursor-track
+        data-cursor-strength="0.05"
+        data-cursor-max="45"
+        data-cursor-lerp="0.12"
+        data-random-arrow
+        alt=""
+        width="70"
+        height="70"
       />
       <img
-        src="https://storage.googleapis.com/ccaedu-prod/media/images/large_digital_jpg-CCA_EOY-Show_SP25-115-jrl2.original.jpg"
-        alt=""
-        class="showcase-hero__fragment showcase-hero__fragment--3"
+        class="showcase-hero__fragment showcase-hero__doodle showcase-hero__doodle--2"
         data-cursor-track
-        data-cursor-direction="towards"
-        data-cursor-strength="0.042"
-        data-cursor-max="50"
-        data-cursor-lerp="0.08"
-        loading="eager"
-      />
-      <img
-        src="https://storage.googleapis.com/ccaedu-prod/media/images/large_digital_jpg-CCA_EOY-Show_SP25-115-jrl2.original.jpg"
+        data-cursor-strength="0.038"
+        data-cursor-max="32"
+        data-cursor-lerp="0.09"
+        data-random-arrow
         alt=""
-        class="showcase-hero__fragment showcase-hero__fragment--4"
-        data-cursor-track
-        data-cursor-direction="towards"
-        data-cursor-strength="0.06"
-        data-cursor-max="42"
-        data-cursor-lerp="0.14"
-        loading="eager"
+        width="60"
+        height="60"
       />
     </div>
     <div class="showcase-hero__content">
       <span class="showcase-hero__label">CCA 2026</span>
-      <h1 class="showcase-hero__title shimmer-text">Graduation Exhibitions</h1>
+      <h1 class="showcase-hero__title shimmer-text">Graduation<br />Exhibitions</h1>
       <p class="showcase-hero__subtitle">
         {formatDateRange(event.data.date, event.data.endDate)} &middot; {event.data.location}
       </p>
@@ -193,6 +200,8 @@ const isPostEvent = isPhaseAtLeast(phase, 'post-event');
 </BaseLayout>
 
 <script src="../../scripts/cursor-track.ts"></script>
+<script src="../../scripts/doodle-antics.ts"></script>
+<script src="../../scripts/random-arrows.ts"></script>
 
 <style>
   /* Invert arrows to white for dark background */
@@ -267,78 +276,74 @@ const isPostEvent = isPhaseAtLeast(phase, 'post-event');
 
   .showcase-hero__fragment {
     position: absolute;
-    border-radius: var(--radius-card);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    --frame-color: #fff;
   }
 
   .showcase-hero__fragment--1 {
-    top: 6%;
-    right: 3%;
-    width: clamp(140px, 28vw, 360px);
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
-    object-position: center 30%;
+    top: 4%;
+    right: 2%;
+    width: clamp(180px, 34vw, 460px);
     rotate: 3deg;
   }
 
   .showcase-hero__fragment--2 {
     bottom: 8%;
-    left: 2%;
-    width: clamp(120px, 22vw, 280px);
-    aspect-ratio: 3 / 4;
-    object-fit: cover;
-    object-position: 70% center;
-    rotate: -5deg;
+    left: 8%;
+    width: clamp(120px, 22vw, 300px);
+    rotate: -4deg;
   }
 
-  .showcase-hero__fragment--3 {
-    top: 10%;
-    left: 5%;
-    width: clamp(80px, 15vw, 200px);
-    aspect-ratio: 1;
-    object-fit: cover;
-    object-position: 30% 60%;
-    rotate: 7deg;
+  .showcase-hero__doodle {
+    border-radius: 0;
+    pointer-events: auto;
+    cursor: pointer;
+    filter: brightness(0) invert(1);
   }
 
-  .showcase-hero__fragment--4 {
-    bottom: 10%;
-    right: 5%;
-    width: clamp(100px, 18vw, 230px);
-    aspect-ratio: 3 / 2;
-    object-fit: cover;
-    object-position: center;
-    rotate: -3deg;
+  .showcase-hero__doodle--1 {
+    bottom: 28%;
+    right: 7%;
+    width: clamp(70px, 9vw, 130px);
+    rotate: 15deg;
+  }
+
+  .showcase-hero__doodle--2 {
+    top: 14%;
+    left: 7%;
+    width: clamp(50px, 7vw, 100px);
+    rotate: -8deg;
   }
 
   @media (prefers-reduced-motion: no-preference) {
     .showcase-hero__fragment {
+      opacity: 0;
       animation: fragment-enter 0.6s var(--ease-out-expo) both;
     }
 
     .showcase-hero__fragment--1 { animation-delay: 0.1s; }
     .showcase-hero__fragment--2 { animation-delay: 0.25s; }
-    .showcase-hero__fragment--3 { animation-delay: 0.4s; }
-    .showcase-hero__fragment--4 { animation-delay: 0.55s; }
+    .showcase-hero__doodle--1 { animation-delay: 0.4s; }
+    .showcase-hero__doodle--2 { animation-delay: 0.55s; }
   }
 
-  /* Mobile: hide fragments 3 & 4, reduce visibility of remaining */
   @media (max-width: 767px) {
-    .showcase-hero__fragment--3,
-    .showcase-hero__fragment--4 {
-      display: none;
+    .showcase-hero__collage {
+      opacity: 0.5;
     }
 
     .showcase-hero__fragment--1 {
-      width: clamp(100px, 35vw, 180px);
-      opacity: 0.7;
+      width: clamp(120px, 44vw, 240px);
+      right: -5%;
     }
 
     .showcase-hero__fragment--2 {
-      width: clamp(90px, 28vw, 150px);
-      opacity: 0.7;
+      width: clamp(90px, 32vw, 170px);
+      left: -3%;
     }
 
+    .showcase-hero__doodle {
+      display: none;
+    }
   }
 
   .showcase-hero__seal {
