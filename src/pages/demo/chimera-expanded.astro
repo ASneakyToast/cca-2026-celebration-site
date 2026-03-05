@@ -1,0 +1,88 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const shapes = [
+  "chimera-expanded-shape01",
+  "chimera-expanded-shape02",
+  "chimera-expanded-shape03",
+  "chimera-expanded-shape04",
+];
+---
+
+<BaseLayout title="Chimera Expanded Shapes" minimalHeader={true}>
+  <main class="demo-scanned">
+    <a href="/demo/" class="back-link">&larr; Demo Pages</a>
+    <h1>Chimera Expanded Shapes</h1>
+    <p class="subtitle">4 decorative shape SVGs from the Chimera Expanded set.</p>
+
+    <div class="grid">
+      {shapes.map((name) => (
+        <figure class="card">
+          <img src={`/images/chimera-expanded/${name}.svg`} alt={name} loading="lazy" />
+          <figcaption>{name}</figcaption>
+        </figure>
+      ))}
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .demo-scanned {
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: var(--space-8) var(--space-4) var(--space-16);
+  }
+
+  .back-link {
+    display: inline-block;
+    color: var(--color-muted);
+    text-decoration: none;
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-4);
+  }
+
+  .back-link:hover {
+    color: var(--color-accent);
+  }
+
+  h1 {
+    font-family: var(--font-heading);
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-2);
+  }
+
+  .subtitle {
+    color: var(--color-muted);
+    margin-bottom: var(--space-10);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+    gap: var(--space-4);
+  }
+
+  .card {
+    margin: 0;
+    padding: var(--space-4);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    text-align: center;
+  }
+
+  .card img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 12rem;
+    object-fit: contain;
+    margin-bottom: var(--space-2);
+  }
+
+  .card figcaption {
+    font-size: var(--text-xs);
+    color: var(--color-muted);
+    font-family: var(--font-mono);
+  }
+</style>
