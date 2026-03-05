@@ -1,0 +1,239 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const brandColors = [
+  { name: "Teal", var: "--color-teal", hex: "#00BFB3" },
+  { name: "Yellow", var: "--color-yellow", hex: "#FFC845" },
+  { name: "Lime", var: "--color-lime", hex: "#B7BF10" },
+  { name: "Pink", var: "--color-pink", hex: "#F1BDC8" },
+  { name: "Orange", var: "--color-orange", hex: "#E57200" },
+  { name: "Purple", var: "--color-purple", hex: "#563D82" },
+  { name: "Navy", var: "--color-navy", hex: "#005776" },
+  { name: "Sand", var: "--color-sand", hex: "#F7F3E9" },
+  { name: "Dark Teal", var: "--color-dark-teal", hex: "#002f40" },
+];
+
+const semanticColors = [
+  { name: "Background", var: "--color-bg", hex: "#FDFAF5" },
+  { name: "Text", var: "--color-text", hex: "#1a1a1a" },
+  { name: "Accent", var: "--color-accent", hex: "#00BFB3" },
+  { name: "Surface", var: "--color-surface", hex: "#F5F0E5" },
+  { name: "Border", var: "--color-border", hex: "#DDD7CA" },
+  { name: "Muted", var: "--color-muted", hex: "#6A737C" },
+];
+
+const shimmerColors = [
+  { name: "Shimmer Base", var: "--color-shimmer-base", hex: "#FFC845" },
+  { name: "Shimmer Highlight", var: "--color-shimmer-highlight", hex: "#fff8e0" },
+  { name: "Shimmer Warm", var: "--color-shimmer-warm", hex: "#E57200" },
+];
+
+const celebrationAliases = [
+  { name: "Primary", var: "--color-celebration-primary", ref: "--color-teal" },
+  { name: "Secondary", var: "--color-celebration-secondary", ref: "--color-purple" },
+  { name: "Warm", var: "--color-celebration-warm", ref: "--color-yellow" },
+  { name: "Energy", var: "--color-celebration-energy", ref: "--color-orange" },
+  { name: "Deep", var: "--color-celebration-deep", ref: "--color-navy" },
+];
+
+const gradients = [
+  { name: "Prismatic", var: "--gradient-prismatic", css: "linear-gradient(135deg, #00BFB3, #563D82, #E57200)" },
+  { name: "Hero", var: "--gradient-hero", css: "linear-gradient(160deg, #005776 0%, #0f0f1a 40%, #563D82 100%)" },
+  { name: "Gold", var: "--gradient-gold", css: "linear-gradient(135deg, #FFC845, #E57200)" },
+  { name: "Theme", var: "--theme-gradient", css: "linear-gradient(135deg, #00BFB3, #005776)" },
+];
+---
+
+<BaseLayout title="Brand Colors" minimalHeader={true}>
+  <main class="colors-page">
+    <h1>Brand Colors</h1>
+    <p class="subtitle">CCA 2026 Celebration design tokens from <code>themes.css</code>.</p>
+
+    <section class="color-section">
+      <h2 class="section-heading">Brand Palette</h2>
+      <div class="swatch-grid">
+        {brandColors.map((c) => (
+          <div class="swatch-card">
+            <div class="swatch" style={`background-color: var(${c.var})`} />
+            <div class="swatch-info">
+              <strong>{c.name}</strong>
+              <code>{c.var}</code>
+              <span class="hex">{c.hex}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="color-section">
+      <h2 class="section-heading">Semantic Colors</h2>
+      <div class="swatch-grid">
+        {semanticColors.map((c) => (
+          <div class="swatch-card">
+            <div class="swatch" style={`background-color: var(${c.var})`} />
+            <div class="swatch-info">
+              <strong>{c.name}</strong>
+              <code>{c.var}</code>
+              <span class="hex">{c.hex}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="color-section">
+      <h2 class="section-heading">Shimmer Tokens</h2>
+      <div class="swatch-grid">
+        {shimmerColors.map((c) => (
+          <div class="swatch-card">
+            <div class="swatch" style={`background-color: var(${c.var})`} />
+            <div class="swatch-info">
+              <strong>{c.name}</strong>
+              <code>{c.var}</code>
+              <span class="hex">{c.hex}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="color-section">
+      <h2 class="section-heading">Celebration Accent Spectrum</h2>
+      <p class="section-note">Semantic aliases that map to the brand palette.</p>
+      <div class="swatch-grid">
+        {celebrationAliases.map((c) => (
+          <div class="swatch-card">
+            <div class="swatch" style={`background-color: var(${c.var})`} />
+            <div class="swatch-info">
+              <strong>{c.name}</strong>
+              <code>{c.var}</code>
+              <span class="hex">{c.ref}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="color-section">
+      <h2 class="section-heading">Gradients</h2>
+      <div class="gradient-grid">
+        {gradients.map((g) => (
+          <div class="gradient-card">
+            <div class="gradient-swatch" style={`background: ${g.css}`} />
+            <div class="swatch-info">
+              <strong>{g.name}</strong>
+              <code>{g.var}</code>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .colors-page {
+    max-width: 64rem;
+    margin: 0 auto;
+    padding: var(--space-12) var(--space-4);
+  }
+
+  h1 {
+    font-family: var(--font-heading);
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-2);
+  }
+
+  .subtitle {
+    color: var(--color-muted);
+    margin-bottom: var(--space-10);
+  }
+
+  .subtitle code {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    background: var(--color-surface);
+    padding: 0.15em 0.4em;
+    border-radius: var(--radius-sm);
+  }
+
+  .color-section + .color-section {
+    margin-top: var(--space-10);
+    padding-top: var(--space-10);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .section-heading {
+    font-family: var(--font-heading);
+    font-size: var(--text-xl);
+    color: var(--color-muted);
+    margin-bottom: var(--space-4);
+  }
+
+  .section-note {
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+    margin-bottom: var(--space-4);
+  }
+
+  .swatch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+    gap: var(--space-4);
+  }
+
+  .swatch-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+
+  .swatch {
+    height: 5rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .swatch-info {
+    padding: var(--space-3) var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .swatch-info strong {
+    font-family: var(--font-heading);
+    font-size: var(--text-sm);
+  }
+
+  .swatch-info code {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-muted);
+  }
+
+  .swatch-info .hex {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-muted);
+    opacity: 0.7;
+  }
+
+  .gradient-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+    gap: var(--space-4);
+  }
+
+  .gradient-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+
+  .gradient-swatch {
+    height: 6rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+</style>
