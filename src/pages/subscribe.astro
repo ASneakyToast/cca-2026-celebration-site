@@ -1,30 +1,27 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import ParticleField from '../components/effects/ParticleField.astro';
+import { chimeraPaths } from '../data/chimera-paths';
 import EmailSignup from '../components/sections/EmailSignup.astro';
 ---
 
 <BaseLayout title="Subscribe" description="Sign up for the CCA 2026 Celebrations mailing list to receive event updates and RSVP reminders." minimalHeader>
+  <ParticleField
+    mode="svg"
+    svgPaths={chimeraPaths}
+    colors={['#00BFB3', '#563D82', '#FFC845', '#E57200', '#005776']}
+    count={25}
+    sizeRange={[14, 40]}
+    opacityRange={[0.08, 0.3]}
+  />
+
   <div class="subscribe-page">
-    <div class="subscribe-layout">
-
-      <div class="subscribe-visual" aria-hidden="true">
-        <div class="visual-content">
-          <span class="visual-year">2026</span>
-          <span class="visual-label">CCA Celebrations</span>
-          <div class="visual-dots">
-            <span></span><span></span><span></span>
-          </div>
-        </div>
-      </div>
-
-      <div class="subscribe-main">
-        <h1 class="subscribe-title">Stay Updated</h1>
-        <p class="subscribe-intro">
-          Join the CCA 2026 Celebrations mailing list. We'll send you event announcements, schedule changes, RSVP reminders, and other important updates as commencement, graduation exhibitions, and thesis exhibitions approach.
-        </p>
-        <EmailSignup heading="" description="" />
-      </div>
-
+    <div class="subscribe-main">
+      <h1 class="subscribe-title">Stay Updated</h1>
+      <p class="subscribe-intro">
+        Join the CCA 2026 Celebrations mailing list. We'll send you event announcements, schedule changes, RSVP reminders, and other important updates as commencement, graduation exhibitions, and thesis exhibitions approach.
+      </p>
+      <EmailSignup heading="" description="" />
     </div>
   </div>
 </BaseLayout>
@@ -33,110 +30,21 @@ import EmailSignup from '../components/sections/EmailSignup.astro';
   .subscribe-page {
     display: flex;
     flex-direction: column;
-    min-height: calc(100dvh - 60px); /* fill below header */
-  }
-
-  .subscribe-layout {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 0;
-    flex: 1;
-  }
-
-  /* ---- Decorative left panel ---- */
-  .subscribe-visual {
-    display: none;
-    background: var(--gradient-hero);
-    color: #f5f0e8;
-    position: relative;
-    overflow: hidden;
-  }
-
-  /* Subtle diagonal texture */
-  .subscribe-visual::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(
-      -45deg,
-      transparent,
-      transparent 40px,
-      rgba(255, 255, 255, 0.03) 40px,
-      rgba(255, 255, 255, 0.03) 41px
-    );
-  }
-
-  /* Prismatic accent bar along the right edge */
-  .subscribe-visual::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 4px;
-    background: var(--gradient-prismatic);
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .subscribe-visual::after {
-      animation: prismatic-shift 6s linear infinite;
-    }
-  }
-
-  .visual-content {
-    position: relative;
-    display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100%;
-    padding: var(--space-10);
-    gap: var(--space-3);
-  }
-
-  .visual-year {
-    font-family: var(--font-display);
-    font-size: clamp(4rem, 6vw, 6rem);
-    line-height: 1;
-    letter-spacing: -0.03em;
-    background: linear-gradient(180deg, #f5f0e8 20%, #E8A830 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .visual-label {
-    font-family: var(--font-heading);
-    font-size: var(--text-base);
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    opacity: 0.7;
-  }
-
-  .visual-dots {
-    display: flex;
-    gap: var(--space-2);
-    margin-top: var(--space-2);
-  }
-
-  .visual-dots span {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.35);
-  }
-
-  .visual-dots span:nth-child(2) {
-    background: var(--color-celebration-primary);
-  }
-
-  /* ---- Right / main column ---- */
-  .subscribe-main {
+    min-height: calc(100dvh - 60px);
     padding: var(--space-10) var(--space-8);
+  }
+
+  .subscribe-main {
     text-align: center;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    align-items: center;
+    max-width: 640px;
+    width: 100%;
+    position: relative;
+    z-index: 1;
   }
 
   .subscribe-title {
@@ -150,10 +58,9 @@ import EmailSignup from '../components/sections/EmailSignup.astro';
     font-size: var(--text-base);
     margin-bottom: var(--space-8);
     max-width: 55ch;
-    margin-inline: auto;
   }
 
-  /* Flatten the EmailSignup card when embedded here */
+  /* Let the EmailSignup card render with its full styling */
   .subscribe-main :global(.signup-section) {
     padding-block: 0;
   }
@@ -162,57 +69,20 @@ import EmailSignup from '../components/sections/EmailSignup.astro';
     padding-inline: 0;
   }
 
-  .subscribe-main :global(.signup-card) {
-    max-width: none;
-    background: transparent;
-    border: none;
-    border-radius: 0;
-    padding: 0;
-    box-shadow: none;
-    text-align: inherit;
-    cursor: default;
-    transform: none;
-  }
-
-  .subscribe-main :global(.signup-card-wrapper:hover .signup-card) {
-    transform: none;
-    box-shadow: none;
-  }
-
-  .subscribe-main :global(.floating-img) {
-    display: none;
-  }
-
   .subscribe-main :global(.signup-card-wrapper) {
     max-width: none;
-    cursor: default;
   }
 
-  .subscribe-main :global(.signup-card::before) {
-    display: none;
+  .subscribe-main :global(.signup-card) {
+    max-width: none;
   }
 
-  .subscribe-main :global(.signup-fields) {
-    justify-content: flex-start;
+  /* Pull floating arrows closer on this narrower layout */
+  .subscribe-main :global(.floating-img-behind) {
+    left: calc(50% - 380px);
   }
 
-  /* ---- Desktop two-column ---- */
-  @media (min-width: 768px) {
-    .subscribe-layout {
-      grid-template-columns: 5fr 7fr;
-    }
-
-    .subscribe-visual {
-      display: block;
-    }
-
-    .subscribe-main {
-      text-align: left;
-      padding: var(--space-16) clamp(var(--space-10), 5vw, var(--space-24));
-    }
-
-    .subscribe-intro {
-      margin-inline: 0;
-    }
+  .subscribe-main :global(.floating-img-front) {
+    right: calc(50% - 360px);
   }
 </style>
