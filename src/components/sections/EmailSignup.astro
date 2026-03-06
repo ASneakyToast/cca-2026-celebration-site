@@ -1,17 +1,21 @@
 ---
 import Button from '../ui/Button.astro';
 import ArrowLoop3D from '../effects/ArrowLoop3D.astro';
+import ChimeraLoop3D from '../effects/ChimeraLoop3D.astro';
 
 interface Props {
   heading?: string;
   description?: string;
   buttonText?: string;
+  /** Use 'chimera' for chimera expanded shapes instead of arrows */
+  doodleVariant?: 'arrows' | 'chimera';
 }
 
 const {
   heading = "Stay in the Loop",
   description = "Sign up for the CCA 2026 Celebrations mailing list to get event updates, RSVP reminders, and more.",
   buttonText = "Subscribe",
+  doodleVariant = "arrows",
 } = Astro.props;
 ---
 
@@ -56,17 +60,30 @@ const {
     data-cursor-lerp="0.08"
     aria-hidden="true"
   >
-    <ArrowLoop3D
-      id="signup-arrow-1"
-      cycleDuration={3}
-      fadeOverlap={0.15}
-      scaleAmount={0.04}
-      spinDegrees={180}
-      spinAxis="Y"
-      perspective={300}
-      sizeVariance={0.3}
-      color="#ffffff"
-    />
+    {doodleVariant === 'chimera' ? (
+      <ChimeraLoop3D
+        id="signup-chimera-1"
+        cycleDuration={4}
+        fadeOverlap={0.3}
+        elasticIntensity={1}
+        skewAmount={15}
+        driftSpeed={1}
+        sizeVariance={0.25}
+        color="#ffffff"
+      />
+    ) : (
+      <ArrowLoop3D
+        id="signup-arrow-1"
+        cycleDuration={3}
+        fadeOverlap={0.15}
+        scaleAmount={0.04}
+        spinDegrees={180}
+        spinAxis="Y"
+        perspective={300}
+        sizeVariance={0.3}
+        color="#ffffff"
+      />
+    )}
   </div>
   <div
     class="floating-img floating-img-front"
@@ -76,22 +93,37 @@ const {
     data-cursor-lerp="0.1"
     aria-hidden="true"
   >
-    <ArrowLoop3D
-      id="signup-arrow-2"
-      cycleDuration={3}
-      fadeOverlap={0.15}
-      scaleAmount={0.04}
-      spinDegrees={180}
-      spinAxis="Y"
-      perspective={300}
-      sizeVariance={0.3}
-      color="#ffffff"
-      startDelay={1.5}
-    />
+    {doodleVariant === 'chimera' ? (
+      <ChimeraLoop3D
+        id="signup-chimera-2"
+        cycleDuration={4}
+        fadeOverlap={0.3}
+        elasticIntensity={1}
+        skewAmount={15}
+        driftSpeed={1}
+        sizeVariance={0.25}
+        color="#ffffff"
+        startDelay={2}
+      />
+    ) : (
+      <ArrowLoop3D
+        id="signup-arrow-2"
+        cycleDuration={3}
+        fadeOverlap={0.15}
+        scaleAmount={0.04}
+        spinDegrees={180}
+        spinAxis="Y"
+        perspective={300}
+        sizeVariance={0.3}
+        color="#ffffff"
+        startDelay={1.5}
+      />
+    )}
   </div>
 </section>
 
 <script src="../../scripts/arrow-loop-3d.ts"></script>
+<script src="../../scripts/chimera-loop-3d.ts"></script>
 <script>
   // Find the component's own section (not an outer wrapper that shares the class name)
   const signupSection = document.querySelector('.signup-card-wrapper')?.closest('.signup-section') as HTMLElement | null;

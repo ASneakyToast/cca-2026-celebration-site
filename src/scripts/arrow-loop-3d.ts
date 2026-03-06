@@ -1,6 +1,8 @@
 /**
  * Initializes all [data-arrow-loop] elements on the page with
  * a 3D spinning arrow cycle animation.
+ *
+ * Uses CSS mask-image + background-color for pixel-perfect color accuracy.
  */
 
 const arrowIds = [
@@ -26,7 +28,7 @@ interface SlotState {
 interface LoopInstance {
   el: HTMLElement;
   slotEls: [HTMLElement, HTMLElement];
-  imgs: [HTMLImageElement, HTMLImageElement];
+  shapeEls: [HTMLElement, HTMLElement];
   state: [SlotState, SlotState];
   cycleDuration: number;
   fadeOverlap: number;
@@ -34,6 +36,8 @@ interface LoopInstance {
   spinDegrees: number;
   spinAxis: 'X' | 'Y' | 'random';
   sizeVariance: number;
+  colors: string[];
+  colorIndex: number;
   arrowIndex: number;
   startDelay: number;
   started: boolean;
@@ -49,7 +53,15 @@ function kick(inst: LoopInstance, slot: 0 | 1, now: number) {
   const arrow = arrowIds[inst.arrowIndex % arrowIds.length];
   inst.arrowIndex++;
 
-  inst.imgs[slot].src = `/images/scanned-graphics/arrows/${arrow}.svg`;
+  const color = inst.colors[inst.colorIndex % inst.colors.length];
+  inst.colorIndex++;
+
+  const shapeEl = inst.shapeEls[slot];
+  const url = `/images/scanned-graphics/arrows/${arrow}.svg`;
+  shapeEl.style.maskImage = `url('${url}')`;
+  shapeEl.style.setProperty('-webkit-mask-image', `url('${url}')`);
+  shapeEl.style.backgroundColor = color;
+
   s.phase = 'spin-in';
   s.start = now;
   s.dir = Math.random() < 0.5 ? -1 : 1;
@@ -119,15 +131,15 @@ function init() {
       el.querySelector('[data-slot="a"]') as HTMLElement,
       el.querySelector('[data-slot="b"]') as HTMLElement,
     ] as [HTMLElement, HTMLElement];
-    const imgs = [
-      el.querySelector('[data-img="a"]') as HTMLImageElement,
-      el.querySelector('[data-img="b"]') as HTMLImageElement,
-    ] as [HTMLImageElement, HTMLImageElement];
+    const shapeEls = [
+      el.querySelector('[data-shape="a"]') as HTMLElement,
+      el.querySelector('[data-shape="b"]') as HTMLElement,
+    ] as [HTMLElement, HTMLElement];
 
     const inst: LoopInstance = {
       el,
       slotEls,
-      imgs,
+      shapeEls,
       state: [
         { phase: 'idle', start: 0, dir: 1, axis: 'Y', sizeMult: 1 },
         { phase: 'idle', start: 0, dir: 1, axis: 'Y', sizeMult: 1 },
@@ -138,6 +150,8 @@ function init() {
       spinDegrees: parseFloat(el.dataset.spinDegrees || '180'),
       spinAxis: (el.dataset.spinAxis || 'Y') as 'X' | 'Y' | 'random',
       sizeVariance: parseFloat(el.dataset.sizeVariance || '0.3'),
+      colors: (el.dataset.colors || '#ffffff').split(','),
+      colorIndex: 0,
       arrowIndex: Math.floor(Math.random() * arrowIds.length),
       startDelay: parseFloat(el.dataset.startDelay || '0'),
       started: false,
@@ -147,9 +161,11 @@ function init() {
       kick(inst, 0, performance.now());
       inst.started = true;
     } else if (reducedMotion) {
-      // Show a static arrow
       const arrow = arrowIds[inst.arrowIndex % arrowIds.length];
-      imgs[0].src = `/images/scanned-graphics/arrows/${arrow}.svg`;
+      const url = `/images/scanned-graphics/arrows/${arrow}.svg`;
+      shapeEls[0].style.maskImage = `url('${url}')`;
+      shapeEls[0].style.setProperty('-webkit-mask-image', `url('${url}')`);
+      shapeEls[0].style.backgroundColor = inst.colors[0];
       slotEls[0].style.opacity = '1';
     }
 

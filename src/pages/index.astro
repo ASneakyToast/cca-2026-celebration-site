@@ -4,6 +4,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import ParticleField from '../components/effects/ParticleField.astro';
 import { chimeraPaths } from '../data/chimera-paths';
 import EmailSignup from '../components/sections/EmailSignup.astro';
+import ChimeraLoop3D from '../components/effects/ChimeraLoop3D.astro';
+import ArrowLoop3D from '../components/effects/ArrowLoop3D.astro';
 import QuoteBlock from '../components/ui/QuoteBlock.astro';
 import Button from '../components/ui/Button.astro';
 import { getCurrentPhase } from '../lib/utils/phase';
@@ -61,28 +63,43 @@ const isPostEvent = isPhaseAtLeast(phase, 'post-event');
         width="480"
         height="640"
       />
-      <img
+      <div
         class="hero__fragment hero__fragment--3 hero__doodle"
         data-cursor-track
         data-cursor-strength="0.05"
         data-cursor-max="45"
         data-cursor-lerp="0.12"
-        data-random-arrow
-        alt=""
-        width="70"
-        height="70"
-      />
-      <img
+      >
+        <ArrowLoop3D
+          id="hero-arrow-1"
+          cycleDuration={3}
+          fadeOverlap={0.15}
+          scaleAmount={0.04}
+          spinDegrees={180}
+          spinAxis="Y"
+          perspective={300}
+          sizeVariance={0.3}
+          colors={['#00BFB3', '#563D82', '#E57200', '#FFC845', '#005776']}
+        />
+      </div>
+      <div
         class="hero__fragment hero__fragment--4 hero__doodle"
         data-cursor-track
         data-cursor-strength="0.038"
         data-cursor-max="32"
         data-cursor-lerp="0.09"
-        data-random-arrow
-        alt=""
-        width="60"
-        height="60"
-      />
+      >
+        <ChimeraLoop3D
+          id="hero-chimera"
+          cycleDuration={4}
+          fadeOverlap={0.3}
+          elasticIntensity={0.8}
+          skewAmount={10}
+          driftSpeed={0.8}
+          sizeVariance={0.15}
+          colors={['#00BFB3', '#563D82', '#E57200', '#FFC845', '#005776']}
+        />
+      </div>
     </div>
     <div class="hero__content" id="hero-content">
       <span class="hero__eyebrow stagger-1">California College of the Arts</span>
@@ -212,7 +229,8 @@ const isPostEvent = isPhaseAtLeast(phase, 'post-event');
 <script src="../scripts/hero-scale.ts"></script>
 <script src="../scripts/cursor-track.ts"></script>
 <script src="../scripts/doodle-antics.ts"></script>
-<script src="../scripts/random-arrows.ts"></script>
+<script src="../scripts/arrow-loop-3d.ts"></script>
+<script src="../scripts/chimera-loop-3d.ts"></script>
 
 <!-- Hero parallax: fade + translate content on scroll -->
 <script>
