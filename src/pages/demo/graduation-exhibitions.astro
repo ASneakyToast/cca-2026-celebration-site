@@ -1,0 +1,155 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const primary = [
+  {
+    file: "graduation-exhibitions-logo-primary.svg",
+    label: "Primary — #00bfb3 / #b7bf10 / #fff",
+    dark: true,
+  },
+];
+
+const singleColor = [
+  { file: "grad-exhibitions-01.svg", label: "Near-black — #231f20", dark: false },
+  { file: "grad-exhibitions-02.svg", label: "White — #fff", dark: true },
+  { file: "grad-exhibitions-03.svg", label: "Navy — #002f40", dark: false },
+  { file: "grad-exhibitions-04.svg", label: "Teal-blue — #007096", dark: false },
+  { file: "grad-exhibitions-05.svg", label: "Celebration teal — #00bfb3", dark: false },
+  { file: "grad-exhibitions-06.svg", label: "Lime — #b7bf10", dark: false },
+];
+
+const twoColor = [
+  { file: "grad-exhibitions-12.svg", label: "Navy / Teal-blue — #002f40 / #007096", dark: false },
+  { file: "grad-exhibitions-15.svg", label: "Navy / Teal-blue — #002f40 / #007096", dark: false },
+  { file: "grad-exhibitions-13.svg", label: "Navy / Celebration teal — #002f40 / #00bfb3", dark: false },
+  { file: "grad-exhibitions-19.svg", label: "Navy / Celebration teal — #002f40 / #00bfb3", dark: false },
+  { file: "grad-exhibitions-14.svg", label: "Navy / Lime — #002f40 / #b7bf10", dark: false },
+  { file: "grad-exhibitions-23.svg", label: "Navy / Lime — #002f40 / #b7bf10", dark: false },
+  { file: "grad-exhibitions-17.svg", label: "Teal-blue / Celebration teal — #007096 / #00bfb3", dark: false },
+  { file: "grad-exhibitions-20.svg", label: "Teal-blue / Celebration teal — #007096 / #00bfb3", dark: false },
+  { file: "grad-exhibitions-18.svg", label: "Teal-blue / Lime — #007096 / #b7bf10", dark: false },
+  { file: "grad-exhibitions-24.svg", label: "Teal-blue / Lime — #007096 / #b7bf10", dark: false },
+  { file: "grad-exhibitions-22.svg", label: "Celebration teal / Lime — #00bfb3 / #b7bf10", dark: false },
+  { file: "grad-exhibitions-25.svg", label: "Celebration teal / Lime — #00bfb3 / #b7bf10", dark: false },
+];
+
+const threeColor = [
+  { file: "grad-exhibitions-07.svg", label: "Teal-blue / Celebration teal / White — #007096 / #00bfb3 / #fff", dark: true },
+  { file: "grad-exhibitions-09.svg", label: "Celebration teal / Lime / White — #00bfb3 / #b7bf10 / #fff", dark: true },
+  { file: "grad-exhibitions-10.svg", label: "Teal-blue / Lime / White — #007096 / #b7bf10 / #fff", dark: true },
+];
+
+const sections = [
+  { title: "Primary", items: primary },
+  { title: "Single Color", items: singleColor },
+  { title: "Two Color", items: twoColor },
+  { title: "Three Color", items: threeColor },
+];
+---
+
+<BaseLayout title="Graduation Exhibitions Logo" minimalHeader={true}>
+  <main class="demo-logos">
+    <a href="/demo/" class="back-link">&larr; Demo Pages</a>
+    <h1>Graduation Exhibitions Logo</h1>
+    <p class="subtitle">22 logo variants across the brand color palette.</p>
+
+    {sections.map(({ title, items }) => (
+      <section>
+        <h2>{title} <span class="count">({items.length})</span></h2>
+        <div class="grid">
+          {items.map(({ file, label, dark }) => (
+            <figure class:list={["card", { "card--dark": dark }]}>
+              <img src={`/images/graduation-exhibitions/${file}`} alt={label} loading="lazy" />
+              <figcaption>{label}</figcaption>
+            </figure>
+          ))}
+        </div>
+      </section>
+    ))}
+  </main>
+</BaseLayout>
+
+<style>
+  .demo-logos {
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: var(--space-8) var(--space-4) var(--space-16);
+  }
+
+  .back-link {
+    display: inline-block;
+    color: var(--color-muted);
+    text-decoration: none;
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-4);
+  }
+
+  .back-link:hover {
+    color: var(--color-accent);
+  }
+
+  h1 {
+    font-family: var(--font-heading);
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-2);
+  }
+
+  .subtitle {
+    color: var(--color-muted);
+    margin-bottom: var(--space-10);
+  }
+
+  section {
+    margin-bottom: var(--space-12);
+  }
+
+  h2 {
+    font-family: var(--font-heading);
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-4);
+  }
+
+  .count {
+    color: var(--color-muted);
+    font-weight: 400;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+    gap: var(--space-4);
+  }
+
+  .card {
+    margin: 0;
+    padding: var(--space-6);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    text-align: center;
+  }
+
+  .card--dark {
+    background: #231f20;
+    border-color: #231f20;
+  }
+
+  .card--dark figcaption {
+    color: #fff;
+  }
+
+  .card img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 12rem;
+    object-fit: contain;
+    margin-bottom: var(--space-2);
+  }
+
+  .card figcaption {
+    font-size: var(--text-xs);
+    color: var(--color-muted);
+    font-family: var(--font-mono);
+  }
+</style>

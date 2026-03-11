@@ -1,0 +1,144 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const primary = [
+  { file: "commencement-primary-00.svg", label: "White — #fff", dark: true },
+  { file: "commencement-primary-01.svg", label: "White — #fff", dark: true },
+  { file: "commencement-primary-07.svg", label: "Navy / Celebration teal — #002f40 / #00bfb3", dark: false },
+  { file: "commencement-primary-14.svg", label: "Navy / Celebration teal — #002f40 / #00bfb3", dark: false },
+  { file: "commencement-primary-38.svg", label: "Navy / Celebration teal — #002f40 / #00bfb3", dark: false },
+  { file: "commencement-primary-12.svg", label: "Navy / Gold — #002f40 / #f2b23a", dark: false },
+  { file: "commencement-primary-15.svg", label: "Navy / Gold — #002f40 / #f2b23a", dark: false },
+  { file: "commencement-primary-39.svg", label: "Navy / Gold — #002f40 / #f2b23a", dark: false },
+  { file: "commencement-primary-08.svg", label: "Navy / Celebration teal / Gold — #002f40 / #00bfb3 / #f2b23a", dark: false },
+  { file: "commencement-primary-13.svg", label: "Navy / Celebration teal / Gold — #002f40 / #00bfb3 / #f2b23a", dark: false },
+];
+
+const secondary = [
+  { file: "commencement-secondary-02.svg", label: "Navy / White — #002f40 / #fff", dark: true },
+  { file: "commencement-secondary-03.svg", label: "Teal-blue / White — #007096 / #fff", dark: true },
+  { file: "commencement-secondary-29.svg", label: "Navy / Celebration teal — #002f40 / #00bfb3", dark: false },
+  { file: "commencement-secondary-30.svg", label: "Navy / Gold — #002f40 / #f2b23a", dark: false },
+  { file: "commencement-secondary-06.svg", label: "Navy / Light gold / White — #002f40 / #ffdd9e / #fff", dark: true },
+  { file: "commencement-secondary-10.svg", label: "Teal-blue / Celebration teal / White — #007096 / #00bfb3 / #fff", dark: true },
+  { file: "commencement-secondary-11.svg", label: "Teal-blue / Gold / White — #007096 / #f2b23a / #fff", dark: true },
+  { file: "commencement-secondary-32.svg", label: "Navy / Celebration teal / White — #002f40 / #00bfb3 / #fff", dark: true },
+  { file: "commencement-secondary-33.svg", label: "Navy / Gold / White — #002f40 / #f2b23a / #fff", dark: true },
+  { file: "commencement-secondary-34.svg", label: "Navy / Celebration teal / Gold — #002f40 / #00bfb3 / #f2b23a", dark: false },
+  { file: "commencement-secondary-35.svg", label: "Navy / Celebration teal / Gold — #002f40 / #00bfb3 / #f2b23a", dark: false },
+  { file: "commencement-secondary-36.svg", label: "Navy / Celebration teal / Gold / White — #002f40 / #00bfb3 / #f2b23a / #fff", dark: true },
+  { file: "commencement-secondary-37.svg", label: "Navy / Celebration teal / Gold / White — #002f40 / #00bfb3 / #f2b23a / #fff", dark: true },
+];
+
+const sections = [
+  { title: "Primary", items: primary },
+  { title: "Secondary", items: secondary },
+];
+---
+
+<BaseLayout title="Commencement Logo" minimalHeader={true}>
+  <main class="demo-logos">
+    <a href="/demo/" class="back-link">&larr; Demo Pages</a>
+    <h1>Commencement Logo</h1>
+    <p class="subtitle">23 logo variants — primary and secondary lockups across the brand palette.</p>
+
+    {sections.map(({ title, items }) => (
+      <section>
+        <h2>{title} <span class="count">({items.length})</span></h2>
+        <div class="grid">
+          {items.map(({ file, label, dark }) => (
+            <figure class:list={["card", { "card--dark": dark }]}>
+              <img src={`/images/commencement/${file}`} alt={label} loading="lazy" />
+              <figcaption>{label}</figcaption>
+            </figure>
+          ))}
+        </div>
+      </section>
+    ))}
+  </main>
+</BaseLayout>
+
+<style>
+  .demo-logos {
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: var(--space-8) var(--space-4) var(--space-16);
+  }
+
+  .back-link {
+    display: inline-block;
+    color: var(--color-muted);
+    text-decoration: none;
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-4);
+  }
+
+  .back-link:hover {
+    color: var(--color-accent);
+  }
+
+  h1 {
+    font-family: var(--font-heading);
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-2);
+  }
+
+  .subtitle {
+    color: var(--color-muted);
+    margin-bottom: var(--space-10);
+  }
+
+  section {
+    margin-bottom: var(--space-12);
+  }
+
+  h2 {
+    font-family: var(--font-heading);
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-4);
+  }
+
+  .count {
+    color: var(--color-muted);
+    font-weight: 400;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+    gap: var(--space-4);
+  }
+
+  .card {
+    margin: 0;
+    padding: var(--space-6);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    text-align: center;
+  }
+
+  .card--dark {
+    background: #231f20;
+    border-color: #231f20;
+  }
+
+  .card--dark figcaption {
+    color: #fff;
+  }
+
+  .card img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 12rem;
+    object-fit: contain;
+    margin-bottom: var(--space-2);
+  }
+
+  .card figcaption {
+    font-size: var(--text-xs);
+    color: var(--color-muted);
+    font-family: var(--font-mono);
+  }
+</style>

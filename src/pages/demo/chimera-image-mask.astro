@@ -1,0 +1,255 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const shapes = [
+  { id: "shape01", label: "Shape 01", file: "chimera-expanded-shape01.svg", aspect: "tall" },
+  { id: "shape02", label: "Shape 02", file: "chimera-expanded-shape02.svg", aspect: "wide" },
+  { id: "shape03", label: "Shape 03", file: "chimera-expanded-shape03.svg", aspect: "tall" },
+  { id: "shape04", label: "Shape 04", file: "chimera-expanded-shape04.svg", aspect: "square" },
+];
+
+const seeds = ["alpine", "coast", "garden", "studio", "mural", "gallery"];
+---
+
+<BaseLayout title="Chimera Image Masks" minimalHeader={true}>
+  <main class="demo-masks">
+    <a href="/demo/" class="back-link">&larr; Demo Pages</a>
+    <h1>Chimera Image Masks</h1>
+    <p class="subtitle">Chimera expanded shapes as CSS mask-image over photographs.</p>
+
+    <div class="controls">
+      <label class="control">
+        <span>Background</span>
+        <input type="color" id="bg-color" value="#ffffff" />
+      </label>
+      <label class="control">
+        <span>Mask size</span>
+        <select id="mask-size">
+          <option value="contain">contain</option>
+          <option value="cover">cover</option>
+          <option value="150% 150%">150%</option>
+          <option value="200% 200%">200%</option>
+        </select>
+      </label>
+      <label class="control">
+        <span>Image set</span>
+        <select id="image-set">
+          <option value="photos">Placeholder photos</option>
+          <option value="gradient">Gradient fill</option>
+          <option value="solid">Solid color</option>
+        </select>
+      </label>
+    </div>
+
+    <!-- Column headers -->
+    <div class="grid-header">
+      {shapes.map((shape) => (
+        <div class="col-label">{shape.label}</div>
+      ))}
+    </div>
+
+    <!-- Grid: each row is one seed image, each column is one shape -->
+    {seeds.map((seed, rowIdx) => (
+      <div class="grid-row">
+        {shapes.map((shape) => (
+          <figure class="card">
+            <div
+              class="masked-image"
+              data-seed={seed}
+              data-row={rowIdx}
+              style={`
+                background-image: url(https://picsum.photos/seed/chimera-${seed}/800/800);
+                mask-image: url(/images/chimera-expanded/${shape.file});
+                -webkit-mask-image: url(/images/chimera-expanded/${shape.file});
+              `}
+            />
+            <figcaption>{shape.id} / {seed}</figcaption>
+          </figure>
+        ))}
+      </div>
+    ))}
+  </main>
+</BaseLayout>
+
+<script>
+  const bgColorInput = document.getElementById("bg-color") as HTMLInputElement;
+  const maskSizeSelect = document.getElementById("mask-size") as HTMLSelectElement;
+  const imageSetSelect = document.getElementById("image-set") as HTMLSelectElement;
+  const maskedImages = document.querySelectorAll<HTMLDivElement>(".masked-image");
+
+  const originalUrls = Array.from(maskedImages).map(
+    (el) => el.style.backgroundImage
+  );
+
+  bgColorInput.addEventListener("input", () => {
+    maskedImages.forEach((el) => {
+      el.style.backgroundColor = bgColorInput.value;
+    });
+    // Also set on cards for visible background
+    document.querySelectorAll<HTMLElement>(".card").forEach((card) => {
+      card.style.backgroundColor = bgColorInput.value;
+    });
+  });
+
+  maskSizeSelect.addEventListener("change", () => {
+    const val = maskSizeSelect.value;
+    maskedImages.forEach((el) => {
+      el.style.maskSize = val;
+      el.style.setProperty("-webkit-mask-size", val);
+    });
+  });
+
+  imageSetSelect.addEventListener("change", () => {
+    const set = imageSetSelect.value;
+    maskedImages.forEach((el, i) => {
+      const row = parseInt(el.dataset.row || "0", 10);
+      switch (set) {
+        case "photos":
+          el.style.backgroundImage = originalUrls[i];
+          break;
+        case "gradient": {
+          const hue = (row * 60) % 360;
+          el.style.backgroundImage = `linear-gradient(135deg, hsl(${hue}, 80%, 60%), hsl(${(hue + 120) % 360}, 80%, 40%))`;
+          break;
+        }
+        case "solid": {
+          const hue = (row * 60) % 360;
+          el.style.backgroundImage = `linear-gradient(0deg, hsl(${hue}, 70%, 50%), hsl(${hue}, 70%, 50%))`;
+          break;
+        }
+      }
+    });
+  });
+</script>
+
+<style>
+  .demo-masks {
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: var(--space-8) var(--space-4) var(--space-16);
+  }
+
+  .back-link {
+    display: inline-block;
+    color: var(--color-muted);
+    text-decoration: none;
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-4);
+  }
+
+  .back-link:hover { color: var(--color-accent); }
+
+  h1 {
+    font-family: var(--font-heading);
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-2);
+  }
+
+  .subtitle {
+    color: var(--color-muted);
+    margin-bottom: var(--space-6);
+  }
+
+  .controls {
+    display: flex;
+    gap: var(--space-6);
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: var(--space-8);
+    padding: var(--space-4);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+  }
+
+  .control {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+  }
+
+  .control input[type="color"] {
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.25rem;
+    cursor: pointer;
+    padding: 0;
+    background: none;
+  }
+
+  .control select {
+    padding: var(--space-1) var(--space-2);
+    border: 1px solid var(--color-border);
+    border-radius: 0.25rem;
+    background: var(--color-background);
+    color: var(--color-text);
+    font-size: var(--text-sm);
+  }
+
+  .grid-header {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-4);
+    margin-bottom: var(--space-2);
+  }
+
+  .col-label {
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+    font-weight: 600;
+  }
+
+  .grid-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+
+  .card {
+    margin: 0;
+    padding: var(--space-3);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    text-align: center;
+  }
+
+  .masked-image {
+    aspect-ratio: 1;
+    background-size: cover;
+    background-position: center;
+    mask-size: contain;
+    -webkit-mask-size: contain;
+    mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
+    mask-position: center;
+    -webkit-mask-position: center;
+    margin-bottom: var(--space-2);
+  }
+
+  .card figcaption {
+    font-size: var(--text-xs);
+    color: var(--color-muted);
+    font-family: var(--font-mono);
+  }
+
+  @media (max-width: 48rem) {
+    .grid-header,
+    .grid-row {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 28rem) {
+    .grid-header,
+    .grid-row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
