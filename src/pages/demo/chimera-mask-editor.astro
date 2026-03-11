@@ -114,9 +114,23 @@ const shapes = Array.from({ length: shapeCount }, (_, i) => {
         <!-- Background color -->
         <section class="panel-section">
           <h2>Background</h2>
+          <div class="bg-swatches" id="bg-swatches">
+            <button class="swatch active" data-color="#ffffff" title="White" style="background:#ffffff;"></button>
+            <button class="swatch" data-color="#FDFAF5" title="Sand Light" style="background:#FDFAF5;"></button>
+            <button class="swatch" data-color="#F7F3E9" title="Sand" style="background:#F7F3E9;"></button>
+            <button class="swatch" data-color="#1a1a1a" title="Black" style="background:#1a1a1a;"></button>
+            <button class="swatch" data-color="#00BFB3" title="Teal" style="background:#00BFB3;"></button>
+            <button class="swatch" data-color="#002f40" title="Dark Teal" style="background:#002f40;"></button>
+            <button class="swatch" data-color="#005776" title="Navy" style="background:#005776;"></button>
+            <button class="swatch" data-color="#563D82" title="Purple" style="background:#563D82;"></button>
+            <button class="swatch" data-color="#FFC845" title="Yellow" style="background:#FFC845;"></button>
+            <button class="swatch" data-color="#E57200" title="Orange" style="background:#E57200;"></button>
+            <button class="swatch" data-color="#B7BF10" title="Lime" style="background:#B7BF10;"></button>
+            <button class="swatch" data-color="#F1BDC8" title="Pink" style="background:#F1BDC8;"></button>
+          </div>
           <div class="bg-options">
             <label class="field field-inline">
-              <span>Color</span>
+              <span>Custom</span>
               <input type="color" id="bg-color" value="#ffffff" />
             </label>
             <label class="field field-inline">
@@ -435,14 +449,33 @@ const shapes = Array.from({ length: shapeCount }, (_, i) => {
   // Background
   const bgColorInput = document.getElementById('bg-color') as HTMLInputElement;
   const bgTransparentCheck = document.getElementById('bg-transparent') as HTMLInputElement;
+  const bgSwatches = document.getElementById('bg-swatches')!;
+
+  function selectBgColor(color: string) {
+    bgColor = color;
+    bgColorInput.value = color;
+    bgTransparentCheck.checked = false;
+    bgTransparent = false;
+    render();
+  }
+
+  bgSwatches.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest('.swatch') as HTMLButtonElement | null;
+    if (!btn) return;
+    bgSwatches.querySelector('.active')?.classList.remove('active');
+    btn.classList.add('active');
+    selectBgColor(btn.dataset.color!);
+  });
 
   bgColorInput.addEventListener('input', () => {
+    bgSwatches.querySelector('.active')?.classList.remove('active');
     bgColor = bgColorInput.value;
     render();
   });
 
   bgTransparentCheck.addEventListener('change', () => {
     bgTransparent = bgTransparentCheck.checked;
+    if (bgTransparent) bgSwatches.querySelector('.active')?.classList.remove('active');
     render();
   });
 
@@ -760,6 +793,41 @@ const shapes = Array.from({ length: shapeCount }, (_, i) => {
     cursor: pointer;
     padding: 0;
     background: none;
+  }
+
+  .bg-swatches {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: var(--space-3);
+  }
+
+  .swatch {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 4px;
+    border: 2px solid var(--color-border);
+    cursor: pointer;
+    padding: 0;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+  }
+
+  .swatch:hover {
+    border-color: var(--color-muted);
+    transform: scale(1.1);
+  }
+
+  .swatch.active {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-accent);
+  }
+
+  /* Outline light swatches so they're visible on white bg */
+  .swatch[data-color="#ffffff"],
+  .swatch[data-color="#FDFAF5"],
+  .swatch[data-color="#F7F3E9"],
+  .swatch[data-color="#F1BDC8"] {
+    border-color: #d0cdc5;
   }
 
   .bg-options {
